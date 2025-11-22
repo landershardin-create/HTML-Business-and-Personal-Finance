@@ -1,1 +1,102 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Multi-Individual Asset Tracker</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .profile { margin-bottom: 20px; }
+    .assets { margin-top: 10px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #f0f0f0; }
+  </style>
+</head>
+<body>
+  <h1>Personal Asset Tracker</h1>
+
+  <!-- Profile Selection -->
+  <div class="profile">
+    <label for="profileSelect">Select Individual:</label>
+    <select id="profileSelect">
+      <option value="Alice">Alice</option>
+      <option value="Bob">Bob</option>
+      <option value="Charlie">Charlie</option>
+    </select>
+  </div>
+
+  <!-- Asset Input -->
+  <div class="assets">
+    <label>Asset Name: <input type="text" id="assetName"></label>
+    <label>Value ($): <input type="number" id="assetValue"></label>
+    <button onclick="addAsset()">Add Asset</button>
+  </div>
+
+  <!-- Display Table -->
+  <h2>Assets</h2>
+  <table id="assetTable">
+    <thead>
+      <tr>
+        <th>Individual</th>
+        <th>Asset</th>
+        <th>Value ($)</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <!-- Totals -->
+  <h2>Totals</h2>
+  <div id="totals"></div>
+
+  <script>
+    const data = {}; // { individual: [{asset, value}, ...] }
+
+    function addAsset() {
+      const person = document.getElementById('profileSelect').value;
+      const asset = document.getElementById('assetName').value.trim();
+      const value = parseFloat(document.getElementById('assetValue').value);
+
+      if (!asset || isNaN(value)) {
+        alert("Please enter valid asset name and value.");
+        return;
+      }
+
+      if (!data[person]) data[person] = [];
+      data[person].push({ asset, value });
+
+      renderTable();
+      renderTotals();
+
+      // clear inputs
+      document.getElementById('assetName').value = '';
+      document.getElementById('assetValue').value = '';
+    }
+
+    function renderTable() {
+      const tbody = document.querySelector('#assetTable tbody');
+      tbody.innerHTML = '';
+      for (const person in data) {
+        data[person].forEach(entry => {
+          const row = `<tr>
+            <td>${person}</td>
+            <td>${entry.asset}</td>
+            <td>${entry.value.toFixed(2)}</td>
+          </tr>`;
+          tbody.innerHTML += row;
+        });
+      }
+    }
+
+    function renderTotals() {
+      let html = '<ul>';
+      for (const person in data) {
+        const total = data[person].reduce((sum, e) => sum + e.value, 0);
+        html += `<li>${person}: $${total.toFixed(2)}</li>`;
+      }
+      html += '</ul>';
+      document.getElementById('totals').innerHTML = html;
+    }
+  </script>
+</body>
+</html>
