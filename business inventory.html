@@ -1,1 +1,116 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Multi-Business Inventory Tracker</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .container { max-width: 800px; margin: auto; }
+    .business-section { margin-top: 20px; padding: 15px; border: 1px solid #ccc; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #f4f4f4; }
+    .totals { margin-top: 10px; font-weight: bold; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>Multi-Business Inventory Tracker</h2>
+
+  <!-- Business Selector -->
+  <label for="businessSelect">Select Business:</label>
+  <select id="businessSelect">
+    <option value="BusinessA">Business A</option>
+    <option value="BusinessB">Business B</option>
+    <option value="BusinessC">Business C</option>
+  </select>
+
+  <!-- Inventory Input Form -->
+  <div class="business-section">
+    <h3>Add Inventory Item</h3>
+    <label>Item Name: <input type="text" id="itemName"></label><br><br>
+    <label>Quantity: <input type="number" id="itemQty"></label><br><br>
+    <label>Price per Unit: <input type="number" id="itemPrice" step="0.01"></label><br><br>
+    <button onclick="addItem()">Add Item</button>
+  </div>
+
+  <!-- Inventory Table -->
+  <div class="business-section">
+    <h3>Inventory Records</h3>
+    <table id="inventoryTable">
+      <thead>
+        <tr>
+          <th>Business</th>
+          <th>Item</th>
+          <th>Quantity</th>
+          <th>Price</th>
+          <th>Total Value</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div class="totals" id="totals"></div>
+  </div>
+</div>
+
+<script>
+  // Store inventory per business
+  const inventoryData = {
+    BusinessA: [],
+    BusinessB: [],
+    BusinessC: []
+  };
+
+  function addItem() {
+    const business = document.getElementById('businessSelect').value;
+    const name = document.getElementById('itemName').value;
+    const qty = parseInt(document.getElementById('itemQty').value);
+    const price = parseFloat(document.getElementById('itemPrice').value);
+
+    if (!name || isNaN(qty) || isNaN(price)) {
+      alert("Please enter valid item details.");
+      return;
+    }
+
+    const total = qty * price;
+    inventoryData[business].push({ name, qty, price, total });
+
+    renderTable();
+    clearInputs();
+  }
+
+  function renderTable() {
+    const tbody = document.querySelector('#inventoryTable tbody');
+    tbody.innerHTML = '';
+
+    let grandTotal = 0;
+
+    for (const [business, items] of Object.entries(inventoryData)) {
+      items.forEach(item => {
+        const row = `<tr>
+          <td>${business}</td>
+          <td>${item.name}</td>
+          <td>${item.qty}</td>
+          <td>
+
+{item.price.toFixed(2)}</td>
+          <td>
+
+{item.total.toFixed(2)}</td>
+        </tr>`;
+        tbody.innerHTML += row;
+        grandTotal += item.total;
+      });
+    }
+
+    document.getElementById('totals').innerText = `Grand Total Value: $${grandTotal.toFixed(2)}`;
+  }
+
+  function clearInputs() {
+    document.getElementById('itemName').value = '';
+    document.getElementById('itemQty').value = '';
+    document.getElementById('itemPrice').value = '';
+  }
+</script>
+</body>
+</html>
