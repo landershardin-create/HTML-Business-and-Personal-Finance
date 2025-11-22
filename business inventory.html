@@ -2,20 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Multi-Business Inventory Tracker</title>
+  <title>Multi-Business Inventory In/Out Tracker</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; }
-    .container { max-width: 800px; margin: auto; }
-    .business-section { margin-top: 20px; padding: 15px; border: 1px solid #ccc; }
+    .container { max-width: 900px; margin: auto; }
+    .section { margin-top: 20px; padding: 15px; border: 1px solid #ccc; }
     table { width: 100%; border-collapse: collapse; margin-top: 10px; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
     th { background: #f4f4f4; }
-    .totals { margin-top: 10px; font-weight: bold; }
+    .totals { margin-top: 10px; font-weight: bold; white-space: pre-line; }
   </style>
 </head>
 <body>
 <div class="container">
-  <h2>Multi-Business Inventory Tracker</h2>
+  <h2>Multi-Business Inventory In/Out Tracker</h2>
 
   <!-- Business Selector -->
   <label for="businessSelect">Select Business:</label>
@@ -26,24 +26,31 @@
   </select>
 
   <!-- Inventory Input Form -->
-  <div class="business-section">
-    <h3>Add Inventory Item</h3>
+  <div class="section">
+    <h3>Record Inventory Transaction</h3>
     <label>Item Name: <input type="text" id="itemName"></label><br><br>
     <label>Quantity: <input type="number" id="itemQty"></label><br><br>
     <label>Price per Unit: <input type="number" id="itemPrice" step="0.01"></label><br><br>
-    <button onclick="addItem()">Add Item</button>
+    <label>Transaction Type:</label>
+    <select id="transactionType">
+      <option value="in">In (Purchase/Restock)</option>
+      <option value="out">Out (Sale/Usage)</option>
+    </select><br><br>
+    <button onclick="recordTransaction()">Record Transaction</button>
   </div>
 
   <!-- Inventory Table -->
-  <div class="business-section">
+  <div class="section">
     <h3>Inventory Records</h3>
     <table id="inventoryTable">
       <thead>
         <tr>
           <th>Business</th>
           <th>Item</th>
-          <th>Quantity</th>
-          <th>Price</th>
+          <th>Quantity In</th>
+          <th>Quantity Out</th>
+          <th>Balance</th>
+          <th>Unit Price</th>
           <th>Total Value</th>
         </tr>
       </thead>
@@ -56,24 +63,37 @@
 <script>
   // Store inventory per business
   const inventoryData = {
-    BusinessA: [],
-    BusinessB: [],
-    BusinessC: []
+    BusinessA: {},
+    BusinessB: {},
+    BusinessC: {}
   };
 
-  function addItem() {
+  function recordTransaction() {
     const business = document.getElementById('businessSelect').value;
     const name = document.getElementById('itemName').value;
     const qty = parseInt(document.getElementById('itemQty').value);
     const price = parseFloat(document.getElementById('itemPrice').value);
+    const type = document.getElementById('transactionType').value;
 
     if (!name || isNaN(qty) || isNaN(price)) {
-      alert("Please enter valid item details.");
+      alert("Please enter valid transaction details.");
       return;
     }
 
-    const total = qty * price;
-    inventoryData[business].push({ name, qty, price, total });
+    // Initialize item record if not exists
+    if (!inventoryData[business][name]) {
+      inventoryData[business][name] = { in: 0, out: 0, price: price };
+    }
+
+    // Update transaction
+    if (type === "in") {
+      inventoryData[business][name].in += qty;
+    } else {
+      inventoryData[business][name].out += qty;
+    }
+
+    // Update price (latest transaction price)
+    inventoryData[business][name].price = price;
 
     renderTable();
     clearInputs();
@@ -84,32 +104,51 @@
     tbody.innerHTML = '';
 
     let grandTotal = 0;
+    let businessTotals = {};
 
     for (const [business, items] of Object.entries(inventoryData)) {
-      items.forEach(item => {
+      let subtotal = 0;
+      for (const [itemName, record] of Object.entries(items)) {
+        const balance = record.in - record.out;
+        const totalValue = balance * record.price;
         const row = `<tr>
           <td>${business}</td>
-          <td>${item.name}</td>
-          <td>${item.qty}</td>
+          <td>${itemName}</td>
+          <td>${record.in}</td>
+          <td>${record.out}</td>
+          <td>${balance}</td>
           <td>
 
-{item.price.toFixed(2)}</td>
+{record.price.toFixed(2)}</td>
           <td>
 
-{item.total.toFixed(2)}</td>
+{totalValue.toFixed(2)}</td>
         </tr>`;
         tbody.innerHTML += row;
-        grandTotal += item.total;
-      });
+        subtotal += totalValue;
+        grandTotal += totalValue;
+      }
+      businessTotals[business] = subtotal;
     }
 
-    document.getElementById('totals').innerText = `Grand Total Value: $${grandTotal.toFixed(2)}`;
+    let totalsText = "Business Totals:\n";
+    for (const [business, subtotal] of Object.entries(businessTotals)) {
+      totalsText += `${business}:
+
+{subtotal.toFixed(2)}\n`;
+    }
+    totalsText += `Grand Total Inventory Value: 
+
+{grandTotal.toFixed(2)}`;
+
+    document.getElementById('totals').innerText = totalsText;
   }
 
   function clearInputs() {
     document.getElementById('itemName').value = '';
     document.getElementById('itemQty').value = '';
     document.getElementById('itemPrice').value = '';
+    document.getElementById('transactionType').value = 'in';
   }
 </script>
 </body>
