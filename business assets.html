@@ -1,1 +1,131 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Multi-Business Asset Tracker</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .container { max-width: 900px; margin: auto; }
+    .section { margin-top: 20px; padding: 15px; border: 1px solid #ccc; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #f4f4f4; }
+    .totals { margin-top: 10px; font-weight: bold; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>Multi-Business Asset Tracker</h2>
+
+  <!-- Business Selector -->
+  <label for="businessSelect">Select Business:</label>
+  <select id="businessSelect">
+    <option value="BusinessA">Business A</option>
+    <option value="BusinessB">Business B</option>
+    <option value="BusinessC">Business C</option>
+  </select>
+
+  <!-- Asset Input Form -->
+  <div class="section">
+    <h3>Add Asset</h3>
+    <label>Asset Name: <input type="text" id="assetName"></label><br><br>
+    <label>Category: <input type="text" id="assetCategory"></label><br><br>
+    <label>Value ($): <input type="number" id="assetValue" step="0.01"></label><br><br>
+    <label>Depreciation Rate (% per year): <input type="number" id="assetDep" step="0.01"></label><br><br>
+    <button onclick="addAsset()">Add Asset</button>
+  </div>
+
+  <!-- Asset Table -->
+  <div class="section">
+    <h3>Asset Records</h3>
+    <table id="assetTable">
+      <thead>
+        <tr>
+          <th>Business</th>
+          <th>Asset</th>
+          <th>Category</th>
+          <th>Value</th>
+          <th>Depreciation Rate</th>
+          <th>Annual Depreciation</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div class="totals" id="totals"></div>
+  </div>
+</div>
+
+<script>
+  // Store assets per business
+  const assetData = {
+    BusinessA: [],
+    BusinessB: [],
+    BusinessC: []
+  };
+
+  function addAsset() {
+    const business = document.getElementById('businessSelect').value;
+    const name = document.getElementById('assetName').value;
+    const category = document.getElementById('assetCategory').value;
+    const value = parseFloat(document.getElementById('assetValue').value);
+    const depRate = parseFloat(document.getElementById('assetDep').value);
+
+    if (!name || !category || isNaN(value) || isNaN(depRate)) {
+      alert("Please enter valid asset details.");
+      return;
+    }
+
+    const annualDep = value * (depRate / 100);
+    assetData[business].push({ name, category, value, depRate, annualDep });
+
+    renderTable();
+    clearInputs();
+  }
+
+  function renderTable() {
+    const tbody = document.querySelector('#assetTable tbody');
+    tbody.innerHTML = '';
+
+    let grandTotal = 0;
+    let businessTotals = {};
+
+    for (const [business, assets] of Object.entries(assetData)) {
+      let subtotal = 0;
+      assets.forEach(asset => {
+        const row = `<tr>
+          <td>${business}</td>
+          <td>${asset.name}</td>
+          <td>${asset.category}</td>
+          <td>$${asset.value.toFixed(2)}</td>
+          <td>${asset.depRate.toFixed(2)}%</td>
+          <td>$${asset.annualDep.toFixed(2)}</td>
+        </tr>`;
+        tbody.innerHTML += row;
+        subtotal += asset.value;
+        grandTotal += asset.value;
+      });
+      businessTotals[business] = subtotal;
+    }
+
+    let totalsText = "Business Totals:\n";
+    for (const [business, subtotal] of Object.entries(businessTotals)) {
+      totalsText += `${business}:
+
+{subtotal.toFixed(2)}\n`;
+    }
+    totalsText += `Grand Total Assets: 
+
+{grandTotal.toFixed(2)}`;
+
+    document.getElementById('totals').innerText = totalsText;
+  }
+
+  function clearInputs() {
+    document.getElementById('assetName').value = '';
+    document.getElementById('assetCategory').value = '';
+    document.getElementById('assetValue').value = '';
+    document.getElementById('assetDep').value = '';
+  }
+</script>
+</body>
+</html>
