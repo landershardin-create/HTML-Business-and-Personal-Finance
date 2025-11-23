@@ -5,11 +5,11 @@
   <title>Multi-Individual Asset Tracker</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; }
-    .profile { margin-bottom: 20px; }
-    .assets { margin-top: 10px; }
+    .profile, .assets { margin-bottom: 20px; }
     table { border-collapse: collapse; width: 100%; margin-top: 10px; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
     th { background: #f0f0f0; }
+    .totals { margin-top: 20px; }
   </style>
 </head>
 <body>
@@ -27,6 +27,7 @@
 
   <!-- Asset Input -->
   <div class="assets">
+    <label>Serial/Tag: <input type="text" id="assetTag"></label>
     <label>Asset Name: <input type="text" id="assetName"></label>
     <label>Value ($): <input type="number" id="assetValue"></label>
     <button onclick="addAsset()">Add Asset</button>
@@ -38,6 +39,7 @@
     <thead>
       <tr>
         <th>Individual</th>
+        <th>Serial/Tag</th>
         <th>Asset</th>
         <th>Value ($)</th>
       </tr>
@@ -46,29 +48,41 @@
   </table>
 
   <!-- Totals -->
-  <h2>Totals</h2>
-  <div id="totals"></div>
+  <div class="totals">
+    <h2>Totals</h2>
+    <div id="totals"></div>
+  </div>
 
   <script>
-    const data = {}; // { individual: [{asset, value}, ...] }
+    const data = {}; // { individual: [{tag, asset, value}, ...] }
 
     function addAsset() {
       const person = document.getElementById('profileSelect').value;
+      const tag = document.getElementById('assetTag').value.trim();
       const asset = document.getElementById('assetName').value.trim();
       const value = parseFloat(document.getElementById('assetValue').value);
 
-      if (!asset || isNaN(value)) {
-        alert("Please enter valid asset name and value.");
+      if (!tag || !asset || isNaN(value)) {
+        alert("Please enter valid serial/tag, asset name, and value.");
         return;
       }
 
       if (!data[person]) data[person] = [];
-      data[person].push({ asset, value });
+
+      // Prevent duplicate tags for same person
+      const exists = data[person].some(entry => entry.tag === tag);
+      if (exists) {
+        alert("This serial/tag already exists for " + person);
+        return;
+      }
+
+      data[person].push({ tag, asset, value });
 
       renderTable();
       renderTotals();
 
       // clear inputs
+      document.getElementById('assetTag').value = '';
       document.getElementById('assetName').value = '';
       document.getElementById('assetValue').value = '';
     }
@@ -80,6 +94,7 @@
         data[person].forEach(entry => {
           const row = `<tr>
             <td>${person}</td>
+            <td>${entry.tag}</td>
             <td>${entry.asset}</td>
             <td>${entry.value.toFixed(2)}</td>
           </tr>`;
