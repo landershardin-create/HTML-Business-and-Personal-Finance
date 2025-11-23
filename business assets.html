@@ -2,15 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Multi-Business Asset Tracker</title>
+  <title>Multi-Business Asset Tracker with Depreciation</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; }
-    .container { max-width: 900px; margin: auto; }
+    .container { max-width: 1100px; margin: auto; }
     .section { margin-top: 20px; padding: 15px; border: 1px solid #ccc; }
     table { width: 100%; border-collapse: collapse; margin-top: 10px; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
     th { background: #f4f4f4; }
-    .totals { margin-top: 10px; font-weight: bold; }
+    .totals { margin-top: 10px; font-weight: bold; white-space: pre-line; }
   </style>
 </head>
 <body>
@@ -28,10 +28,12 @@
   <!-- Asset Input Form -->
   <div class="section">
     <h3>Add Asset</h3>
+    <label>Asset Tag / Barcode: <input type="text" id="assetTag"></label><br><br>
     <label>Asset Name: <input type="text" id="assetName"></label><br><br>
     <label>Category: <input type="text" id="assetCategory"></label><br><br>
     <label>Value ($): <input type="number" id="assetValue" step="0.01"></label><br><br>
     <label>Depreciation Rate (% per year): <input type="number" id="assetDep" step="0.01"></label><br><br>
+    <label>Years in Service: <input type="number" id="assetYears"></label><br><br>
     <button onclick="addAsset()">Add Asset</button>
   </div>
 
@@ -42,11 +44,14 @@
       <thead>
         <tr>
           <th>Business</th>
-          <th>Asset</th>
+          <th>Asset Tag</th>
+          <th>Name</th>
           <th>Category</th>
           <th>Value</th>
           <th>Depreciation Rate</th>
           <th>Annual Depreciation</th>
+          <th>Accumulated Depreciation</th>
+          <th>Net Book Value</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -56,27 +61,33 @@
 </div>
 
 <script>
-  // Store assets per business
+  // Store assets per business keyed by asset tag/barcode
   const assetData = {
-    BusinessA: [],
-    BusinessB: [],
-    BusinessC: []
+    BusinessA: {},
+    BusinessB: {},
+    BusinessC: {}
   };
 
   function addAsset() {
     const business = document.getElementById('businessSelect').value;
-    const name = document.getElementById('assetName').value;
-    const category = document.getElementById('assetCategory').value;
+    const tag = document.getElementById('assetTag').value.trim();
+    const name = document.getElementById('assetName').value.trim();
+    const category = document.getElementById('assetCategory').value.trim();
     const value = parseFloat(document.getElementById('assetValue').value);
     const depRate = parseFloat(document.getElementById('assetDep').value);
+    const years = parseInt(document.getElementById('assetYears').value);
 
-    if (!name || !category || isNaN(value) || isNaN(depRate)) {
+    if (!tag || !name || !category || isNaN(value) || isNaN(depRate) || isNaN(years)) {
       alert("Please enter valid asset details.");
       return;
     }
 
     const annualDep = value * (depRate / 100);
-    assetData[business].push({ name, category, value, depRate, annualDep });
+    const accumulatedDep = annualDep * years;
+    const netBookValue = Math.max(value - accumulatedDep, 0);
+
+    // Save asset keyed by tag
+    assetData[business][tag] = { name, category, value, depRate, annualDep, accumulatedDep, netBookValue };
 
     renderTable();
     clearInputs();
@@ -91,29 +102,36 @@
 
     for (const [business, assets] of Object.entries(assetData)) {
       let subtotal = 0;
-      assets.forEach(asset => {
+      for (const [tag, record] of Object.entries(assets)) {
         const row = `<tr>
           <td>${business}</td>
-          <td>${asset.name}</td>
-          <td>${asset.category}</td>
-          <td>$${asset.value.toFixed(2)}</td>
-          <td>${asset.depRate.toFixed(2)}%</td>
-          <td>$${asset.annualDep.toFixed(2)}</td>
+          <td>${tag}</td>
+          <td>${record.name}</td>
+          <td>${record.category}</td>
+          <td>$${record.value.toFixed(2)}</td>
+          <td>${record.depRate.toFixed(2)}%</td>
+          <td>
+
+{record.annualDep.toFixed(2)}</td>
+          <td>
+
+{record.accumulatedDep.toFixed(2)}</td>
+          <td>$${record.netBookValue.toFixed(2)}</td>
         </tr>`;
         tbody.innerHTML += row;
-        subtotal += asset.value;
-        grandTotal += asset.value;
-      });
+        subtotal += record.netBookValue;
+        grandTotal += record.netBookValue;
+      }
       businessTotals[business] = subtotal;
     }
 
-    let totalsText = "Business Totals:\n";
+    let totalsText = "Business Net Book Values:\n";
     for (const [business, subtotal] of Object.entries(businessTotals)) {
       totalsText += `${business}:
 
 {subtotal.toFixed(2)}\n`;
     }
-    totalsText += `Grand Total Assets: 
+    totalsText += `Grand Total Net Book Value: 
 
 {grandTotal.toFixed(2)}`;
 
@@ -121,10 +139,12 @@
   }
 
   function clearInputs() {
+    document.getElementById('assetTag').value = '';
     document.getElementById('assetName').value = '';
     document.getElementById('assetCategory').value = '';
     document.getElementById('assetValue').value = '';
     document.getElementById('assetDep').value = '';
+    document.getElementById('assetYears').value = '';
   }
 </script>
 </body>
