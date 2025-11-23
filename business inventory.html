@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Multi-Business Inventory In/Out Tracker</title>
+  <title>Multi-Business Inventory Tracker with History</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; }
-    .container { max-width: 900px; margin: auto; }
+    .container { max-width: 1000px; margin: auto; }
     .section { margin-top: 20px; padding: 15px; border: 1px solid #ccc; }
     table { width: 100%; border-collapse: collapse; margin-top: 10px; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
@@ -28,6 +28,7 @@
   <!-- Inventory Input Form -->
   <div class="section">
     <h3>Record Inventory Transaction</h3>
+    <label>Barcode/Asset Tag: <input type="text" id="itemTag"></label><br><br>
     <label>Item Name: <input type="text" id="itemName"></label><br><br>
     <label>Quantity: <input type="number" id="itemQty"></label><br><br>
     <label>Price per Unit: <input type="number" id="itemPrice" step="0.01"></label><br><br>
@@ -46,6 +47,7 @@
       <thead>
         <tr>
           <th>Business</th>
+          <th>Barcode/Tag</th>
           <th>Item</th>
           <th>Quantity In</th>
           <th>Quantity Out</th>
@@ -58,44 +60,76 @@
     </table>
     <div class="totals" id="totals"></div>
   </div>
+
+  <!-- Transaction History -->
+  <div class="section">
+    <h3>Transaction History</h3>
+    <table id="historyTable">
+      <thead>
+        <tr>
+          <th>Date/Time</th>
+          <th>Business</th>
+          <th>Barcode/Tag</th>
+          <th>Item</th>
+          <th>Type</th>
+          <th>Quantity</th>
+          <th>Unit Price</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 </div>
 
 <script>
-  // Store inventory per business
+  // Store inventory per business keyed by barcode/asset tag
   const inventoryData = {
     BusinessA: {},
     BusinessB: {},
     BusinessC: {}
   };
 
+  // Transaction history log
+  const transactionHistory = [];
+
   function recordTransaction() {
     const business = document.getElementById('businessSelect').value;
-    const name = document.getElementById('itemName').value;
+    const tag = document.getElementById('itemTag').value.trim();
+    const name = document.getElementById('itemName').value.trim();
     const qty = parseInt(document.getElementById('itemQty').value);
     const price = parseFloat(document.getElementById('itemPrice').value);
     const type = document.getElementById('transactionType').value;
 
-    if (!name || isNaN(qty) || isNaN(price)) {
+    if (!tag || !name || isNaN(qty) || isNaN(price)) {
       alert("Please enter valid transaction details.");
       return;
     }
 
     // Initialize item record if not exists
-    if (!inventoryData[business][name]) {
-      inventoryData[business][name] = { in: 0, out: 0, price: price };
+    if (!inventoryData[business][tag]) {
+      inventoryData[business][tag] = { name, in: 0, out: 0, price: price };
     }
 
     // Update transaction
     if (type === "in") {
-      inventoryData[business][name].in += qty;
+      inventoryData[business][tag].in += qty;
     } else {
-      inventoryData[business][name].out += qty;
+      inventoryData[business][tag].out += qty;
     }
 
-    // Update price (latest transaction price)
-    inventoryData[business][name].price = price;
+    // Update name and price (latest transaction)
+    inventoryData[business][tag].name = name;
+    inventoryData[business][tag].price = price;
+
+    // Log transaction with timestamp
+    const timestamp = new Date().toLocaleString();
+    transactionHistory.push({
+      timestamp, business, tag, name, type, qty, price, total: qty * price
+    });
 
     renderTable();
+    renderHistory();
     clearInputs();
   }
 
@@ -108,12 +142,13 @@
 
     for (const [business, items] of Object.entries(inventoryData)) {
       let subtotal = 0;
-      for (const [itemName, record] of Object.entries(items)) {
+      for (const [tag, record] of Object.entries(items)) {
         const balance = record.in - record.out;
         const totalValue = balance * record.price;
         const row = `<tr>
           <td>${business}</td>
-          <td>${itemName}</td>
+          <td>${tag}</td>
+          <td>${record.name}</td>
           <td>${record.in}</td>
           <td>${record.out}</td>
           <td>${balance}</td>
@@ -144,7 +179,31 @@
     document.getElementById('totals').innerText = totalsText;
   }
 
+  function renderHistory() {
+    const tbody = document.querySelector('#historyTable tbody');
+    tbody.innerHTML = '';
+
+    transactionHistory.forEach(tx => {
+      const row = `<tr>
+        <td>${tx.timestamp}</td>
+        <td>${tx.business}</td>
+        <td>${tx.tag}</td>
+        <td>${tx.name}</td>
+        <td>${tx.type}</td>
+        <td>${tx.qty}</td>
+        <td>
+
+{tx.price.toFixed(2)}</td>
+        <td>
+
+{tx.total.toFixed(2)}</td>
+      </tr>`;
+      tbody.innerHTML += row;
+    });
+  }
+
   function clearInputs() {
+    document.getElementById('itemTag').value = '';
     document.getElementById('itemName').value = '';
     document.getElementById('itemQty').value = '';
     document.getElementById('itemPrice').value = '';
