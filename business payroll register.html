@@ -5,7 +5,7 @@
   <title>Payroll Register</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; background: #f9f9f9; }
-    .register { max-width: 1200px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; }
+    .register { max-width: 1300px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; }
     h1 { text-align: center; margin-bottom: 10px; }
     table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
     th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
@@ -15,6 +15,8 @@
     .company-header { text-align: center; margin-bottom: 20px; }
     #companySelect { margin: 10px auto 30px; display: block; padding: 8px; font-size: 1em; }
     .state-dropdown { width: 175px; }
+    .type-dropdown { width: 130px; }
+    .type-custom { width: 110px; display: none; }
     .deduction-total { font-weight: bold; color: #125;}
   </style>
 </head>
@@ -22,7 +24,6 @@
 
   <div class="register">
     <h1>Payroll Register</h1>
-
     <!-- Company Header -->
     <div class="company-header" role="region" aria-label="Company Summary">
       <h2 id="headerCompanyName">Company Name</h2>
@@ -30,20 +31,19 @@
       <p id="headerType">Type: <span></span></p>
       <p id="headerRole">Role: <span></span></p>
     </div>
-
     <!-- Company Selector -->
     <label for="companySelect"><strong>Select Company:</strong></label>
     <select id="companySelect" onchange="showCompany()">
       <option value="acme">Acme Corp</option>
       <option value="zenith">Zenith LLC</option>
     </select>
-
     <!-- Business: Acme Corp -->
     <div class="business-section" id="acme">
       <div class="business-header">Business: Acme Corp</div>
       <table>
         <thead>
           <tr>
+            <th>Type</th>
             <th>Employee Name</th>
             <th>Position</th>
             <th>Pay Period</th>
@@ -91,6 +91,14 @@
         </thead>
         <tbody>
           <tr>
+            <td>
+              <select class="type-dropdown" onchange="showCustomType(this)">
+                <option value="Employee">Employee</option>
+                <option value="Contractor">Contractor</option>
+                <option value="Custom">Custom...</option>
+              </select>
+              <input type="text" class="type-custom" placeholder="Enter type" onblur="hideCustomType(this)" />
+            </td>
             <td>Alice</td>
             <td>Manager</td>
             <td>Oct 2025</td>
@@ -107,6 +115,14 @@
             <td>Exceeded targets</td>
           </tr>
           <tr>
+            <td>
+              <select class="type-dropdown" onchange="showCustomType(this)">
+                <option value="Employee">Employee</option>
+                <option value="Contractor">Contractor</option>
+                <option value="Custom">Custom...</option>
+              </select>
+              <input type="text" class="type-custom" placeholder="Enter type" onblur="hideCustomType(this)" />
+            </td>
             <td>Bob</td>
             <td>Developer</td>
             <td>Oct 2025</td>
@@ -123,6 +139,14 @@
             <td>-</td>
           </tr>
           <tr>
+            <td>
+              <select class="type-dropdown" onchange="showCustomType(this)">
+                <option value="Employee">Employee</option>
+                <option value="Contractor">Contractor</option>
+                <option value="Custom">Custom...</option>
+              </select>
+              <input type="text" class="type-custom" placeholder="Enter type" onblur="hideCustomType(this)" />
+            </td>
             <td>Charlie</td>
             <td>Designer</td>
             <td>Oct 2025</td>
@@ -142,13 +166,13 @@
       </table>
       <div class="summary">Total Net Pay: $13,703</div>
     </div>
-
     <!-- Business: Zenith LLC -->
     <div class="business-section" id="zenith" style="display:none;">
       <div class="business-header">Business: Zenith LLC</div>
       <table>
         <thead>
           <tr>
+            <th>Type</th>
             <th>Employee Name</th>
             <th>Position</th>
             <th>Pay Period</th>
@@ -196,6 +220,14 @@
         </thead>
         <tbody>
           <tr>
+            <td>
+              <select class="type-dropdown" onchange="showCustomType(this)">
+                <option value="Employee">Employee</option>
+                <option value="Contractor">Contractor</option>
+                <option value="Custom">Custom...</option>
+              </select>
+              <input type="text" class="type-custom" placeholder="Enter type" onblur="hideCustomType(this)" />
+            </td>
             <td>Dana</td>
             <td>Analyst</td>
             <td>Oct 2025</td>
@@ -212,6 +244,14 @@
             <td>Weekend support</td>
           </tr>
           <tr>
+            <td>
+              <select class="type-dropdown" onchange="showCustomType(this)">
+                <option value="Employee">Employee</option>
+                <option value="Contractor">Contractor</option>
+                <option value="Custom">Custom...</option>
+              </select>
+              <input type="text" class="type-custom" placeholder="Enter type" onblur="hideCustomType(this)" />
+            </td>
             <td>Eli</td>
             <td>Support</td>
             <td>Oct 2025</td>
@@ -238,6 +278,22 @@
       const selected = document.getElementById("companySelect").value;
       document.getElementById("acme").style.display = selected === "acme" ? "block" : "none";
       document.getElementById("zenith").style.display = selected === "zenith" ? "block" : "none";
+    }
+    function showCustomType(sel) {
+      var input = sel.nextElementSibling;
+      if (sel.value === "Custom") {
+        input.style.display = "inline-block";
+        input.focus();
+      } else {
+        input.style.display = "none";
+      }
+    }
+    function hideCustomType(input) {
+      if (!input.value) {
+        input.style.display = "none";
+        var select = input.previousElementSibling;
+        select.value = "Employee";
+      }
     }
   </script>
 
