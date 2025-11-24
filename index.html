@@ -3,30 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GitHub Tabbed Dashboard</title>
+  <title>Dashboard</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-    }
-    .tab-container {
-      display: flex;
-      background-color: #333;
-    }
-    .tab {
-      padding: 14px 20px;
-      cursor: pointer;
-      color: white;
-      border: none;
-      background: none;
-      outline: none;
-    }
-    .tab:hover {
-      background-color: #555;
-    }
-    .tab.active {
-      background-color: #007acc;
     }
     #content {
       padding: 20px;
@@ -44,55 +26,57 @@
 </head>
 <body>
   <div class="dropdown-container">
-    <details>
+    <details open>
       <summary>Home</summary>
-      <button onclick="loadTab(event, 'welcome')">Welcome</button>
+      <button onclick="loadTab('welcome')">Welcome</button>
     </details>
 
     <details>
       <summary>Business Menu</summary>
-      <button onclick="loadTab(event, 'businessassets')">Assets</button>
-      <button onclick="loadTab(event, 'businessbalsheet')">Balance Sheet</button>
-      <button onclick="loadTab(event, 'companydashboard')">Company Manager</button>
-      <button onclick="loadTab(event, 'businesscashflow')">Cash Flow</button>
-      <button onclick="loadTab(event, 'businessdebttoequity')">Debt to Equity</button>
-      <button onclick="loadTab(event, 'businessincomeexpense')">Income & Expense</button>
-      <button onclick="loadTab(event, 'businessinventory')">Inventory</button>
-      <button onclick="loadTab(event, 'businessjournal')">Journal</button>
-      <button onclick="loadTab(event, 'businessnetworth')">Net Worth</button>
-      <button onclick="loadTab(event, 'businesspayroll')">Payroll Register</button>
-      <button onclick="loadTab(event, 'businesspersonnel')">Personnel Records</button>
-      <button onclick="loadTab(event, 'businesstimekeeping')">Timesheet</button>
+      <button onclick="loadTab('businessassets')">Assets</button>
+      <button onclick="loadTab('businessbalsheet')">Balance Sheet</button>
+      <button onclick="loadTab('companydashboard')">Company Manager</button>
+      <button onclick="loadTab('businesscashflow')">Cash Flow</button>
+      <button onclick="loadTab('businessdebttoequity')">Debt to Equity</button>
+      <button onclick="loadTab('businessincomeexpense')">Income & Expense</button>
+      <button onclick="loadTab('businessinventory')">Inventory</button>
+      <button onclick="loadTab('businessjournal')">Journal</button>
+      <button onclick="loadTab('businessnetworth')">Net Worth</button>
+      <button onclick="loadTab('businesspayroll')">Payroll Register</button>
+      <button onclick="loadTab('businesspersonnel')">Personnel Records</button>
+      <button onclick="loadTab('businesstimekeeping')">Timesheet</button>
     </details>
 
     <details>
       <summary>Contributor Menu</summary>
-      <button onclick="loadTab(event, 'contributordashboard')">Onboarding</button>
+      <button onclick="loadTab('contributordashboard')">Onboarding</button>
     </details>
 
     <details>
       <summary>Personal Menu</summary>
-      <button onclick="loadTab(event, 'personalassets')">Assets</button>
-      <button onclick="loadTab(event, 'personalbalsheet')">Balance Sheet</button>
-      <button onclick="loadTab(event, 'personalcashflow')">Cash Flow</button>
-      <button onclick="loadTab(event, 'personalincomeexpense')">Income & Expense</button>
-      <button onclick="loadTab(event, 'personaljournal')">Journal</button>
-      <button onclick="loadTab(event, 'personalnetworth')">Net Worth</button>
-      <button onclick="loadTab(event, 'personalprofile')">Profile Info.</button>
+      <button onclick="loadTab('personalassets')">Assets</button>
+      <button onclick="loadTab('personalbalsheet')">Balance Sheet</button>
+      <button onclick="loadTab('personalcashflow')">Cash Flow</button>
+      <button onclick="loadTab('personalincomeexpense')">Income & Expense</button>
+      <button onclick="loadTab('personaljournal')">Journal</button>
+      <button onclick="loadTab('personalnetworth')">Net Worth</button>
+      <button onclick="loadTab('personalprofile')">Profile Info.</button>
     </details>
     
-    <details>
+    <details open>
       <summary>Support</summary>
-      <button onclick="loadTab(event, 'readme')">Read Me</button>
+      <button onclick="loadTab('readme')">Read Me</button>
     </details>
   </div>
 
   <div id="content">Loading...</div>
 
+  <!-- Markdown renderer -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script>
     const sources = {
       modules: 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/modules/',
-      dashboard: 'https://github.com/landershardin-create/HTML-Business-and-Personal-Finance/blob/dashboard/'
+      dashboard: 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/main/'
     };
 
     const tabs = {
@@ -123,7 +107,7 @@
       readme: { file: 'README.md', base: 'dashboard' }
     };
 
-    function loadTab(event, tabName) {
+    function loadTab(tabName) {
       const tab = tabs[tabName];
       if (!tab) {
         document.getElementById('content').innerHTML = `<p>Tab "${tabName}" not found.</p>`;
@@ -132,19 +116,17 @@
 
       const url = sources[tab.base] + tab.file;
 
-      // Optional: highlight active tab
-      document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
-      if (event?.target?.classList.contains('tab')) {
-        event.target.classList.add('active');
-      }
-
       fetch(url)
         .then(response => {
           if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
           return response.text();
         })
-        .then(html => {
-          document.getElementById('content').innerHTML = html;
+        .then(text => {
+          if (tab.file.endsWith('.md')) {
+            document.getElementById('content').innerHTML = marked.parse(text);
+          } else {
+            document.getElementById('content').innerHTML = text;
+          }
         })
         .catch(err => {
           document.getElementById('content').innerHTML = `<p>Error loading ${tabName} tab.</p>`;
@@ -152,8 +134,8 @@
         });
     }
 
-    // Load default tab on page load
-    window.onload = () => loadTab(null, 'welcome');
+    // Load default tab
+    window.onload = () => loadTab('welcome');
   </script>
 </body>
 </html>
