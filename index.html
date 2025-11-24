@@ -38,7 +38,6 @@
     <details open>
       <summary>Home</summary>
       <button onclick="loadTab(event, 'welcome')">Welcome</button>
-      <button onclick="loadTab(event, 'readme')">Read Me</button>
     </details>
 
     <details>
@@ -72,6 +71,11 @@
       <button onclick="loadTab(event, 'personalnetworth')">Net Worth</button>
       <button onclick="loadTab(event, 'personalprofile')">Profile Info.</button>
     </details>
+    
+    <details open>
+      <summary>Support</summary>
+      <button onclick="loadTab(event, 'readme')">Read Me</button>
+    </details>
   </div>
 
   <div id="content">Loading...</div>
@@ -80,7 +84,6 @@
     const baseURL = 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/modules/';
     const tabs = {
       welcome: 'welcome.html',
-      readme: 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/dashboard/README.md'
       businessassets: 'business assets.html',
       businessbalsheet: 'business balance sheet.html',
       businesscashflow: 'business cash flow.html',
@@ -101,6 +104,10 @@
       personalnetworth: 'personal net worth.html',
       personaljournal: 'personal accounting journal.html',
       personalprofile: 'personal dashboard.html',
+    const baseURL = 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/dashboard/';
+    const tabs = {
+      welcome: 'welcome.html',
+      };
     };
 
     function loadTab(event, tabName) {
