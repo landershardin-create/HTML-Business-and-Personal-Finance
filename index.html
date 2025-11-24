@@ -31,6 +31,15 @@
     #content {
       padding: 20px;
     }
+    .dropdown-container details {
+      margin-bottom: 8px;
+    }
+    .dropdown-container button {
+      display: block;
+      margin: 4px 0;
+      padding: 8px 12px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -81,46 +90,59 @@
   <div id="content">Loading...</div>
 
   <script>
-    const baseURL = 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/modules/';
-    const tabs = {
-      welcome: 'welcome.html',
-      businessassets: 'business assets.html',
-      businessbalsheet: 'business balance sheet.html',
-      businesscashflow: 'business cash flow.html',
-      companydashboard: 'company dashboard.html',
-      businessdebttoequity: 'business debt-to-equity.html',
-      businessincomeexpense: 'business income and expense.html',
-      businessinventory: 'business inventory.html',
-      businessjournal: 'business accounting journal.html',
-      businessnetworth: 'business net worth.html',
-      businesspayroll: 'business payroll register.html',
-      businesspersonnel: 'business personnel registry.html',
-      businesstimekeeping: 'business timesheet.html',
-      contributordashboard: 'contributor-dashboard.html',
-      personalassets: 'personal assets.html',
-      personalbalsheet: 'personal balance sheet.html',
-      personalcashflow: 'personal cash flow.html',
-      personalincomeexpense: 'personal income and expense.html',
-      personalnetworth: 'personal net worth.html',
-      personaljournal: 'personal accounting journal.html',
-      personalprofile: 'personal dashboard.html',
+    const sources = {
+      modules: 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/modules/',
+      dashboard: 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/dashboard/'
     };
-    const baseURL = 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/dashboard/';
+
     const tabs = {
-      readme: 'README.me',
+      // Modules
+      welcome: { file: 'welcome.html', base: 'modules' },
+      businessassets: { file: 'business assets.html', base: 'modules' },
+      businessbalsheet: { file: 'business balance sheet.html', base: 'modules' },
+      businesscashflow: { file: 'business cash flow.html', base: 'modules' },
+      companydashboard: { file: 'company dashboard.html', base: 'modules' },
+      businessdebttoequity: { file: 'business debt-to-equity.html', base: 'modules' },
+      businessincomeexpense: { file: 'business income and expense.html', base: 'modules' },
+      businessinventory: { file: 'business inventory.html', base: 'modules' },
+      businessjournal: { file: 'business accounting journal.html', base: 'modules' },
+      businessnetworth: { file: 'business net worth.html', base: 'modules' },
+      businesspayroll: { file: 'business payroll register.html', base: 'modules' },
+      businesspersonnel: { file: 'business personnel registry.html', base: 'modules' },
+      businesstimekeeping: { file: 'business timesheet.html', base: 'modules' },
+      contributordashboard: { file: 'contributor-dashboard.html', base: 'modules' },
+      personalassets: { file: 'personal assets.html', base: 'modules' },
+      personalbalsheet: { file: 'personal balance sheet.html', base: 'modules' },
+      personalcashflow: { file: 'personal cash flow.html', base: 'modules' },
+      personalincomeexpense: { file: 'personal income and expense.html', base: 'modules' },
+      personalnetworth: { file: 'personal net worth.html', base: 'modules' },
+      personaljournal: { file: 'personal accounting journal.html', base: 'modules' },
+      personalprofile: { file: 'personal dashboard.html', base: 'modules' },
+
+      // Dashboard
+      readme: { file: 'README.me', base: 'dashboard' }
     };
 
     function loadTab(event, tabName) {
-      const url = baseURL + tabs[tabName];
+      const tab = tabs[tabName];
+      if (!tab) {
+        document.getElementById('content').innerHTML = `<p>Tab "${tabName}" not found.</p>`;
+        return;
+      }
 
-      // Optional: highlight active tab if using .tab class
+      const url = sources[tab.base] + tab.file;
+
+      // Optional: highlight active tab
       document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
       if (event?.target?.classList.contains('tab')) {
         event.target.classList.add('active');
       }
 
       fetch(url)
-        .then(response => response.text())
+        .then(response => {
+          if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+          return response.text();
+        })
         .then(html => {
           document.getElementById('content').innerHTML = html;
         })
@@ -131,7 +153,7 @@
     }
 
     // Load default tab on page load
-    window.onload = () => loadTab(null, 'home');
+    window.onload = () => loadTab(null, 'welcome');
   </script>
 </body>
 </html>
