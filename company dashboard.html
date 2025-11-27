@@ -88,6 +88,96 @@
         </p>
       </div>
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Company Manager Dashboard</title>
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    .form-group input, .form-group select { display: block; margin: 5px 0; padding: 5px; width: 100%; max-width: 400px; }
+    .company-list div, .carousel-card { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+    button { margin: 5px; padding: 5px 10px; }
+  </style>
+</head>
+<body>
+  <section class="filter-export">
+    <label for="ownerFilter">Filter by Owner:</label>
+    <select id="ownerFilter"><option value="">All Owners</option></select>
+    <button id="exportBtn">Export Companies</button>
+    <button id="clearBtn">Clear All</button>
+    <button id="syncToGitHubBtn">Sync to GitHub</button>
+    <button id="loadFromGitHubBtn">Load from GitHub</button>
+  </section>
+
+  <section class="carousel-viewer">
+    <h3>Company Carousel Viewer</h3>
+    <div id="carouselDisplay" class="carousel-card" aria-live="polite"></div>
+    <div>
+      <button id="prevBtn">Previous</button>
+      <button id="nextBtn">Next</button>
+    </div>
+  </section>
+
+<section class="company-manager">
+  <h3>Manage Companies</h3>
+  <form id="companyForm">
+    <div class="form-group">
+      <input type="text" id="companyName" placeholder="Company name" required />
+      <input type="text" id="streetAddress" placeholder="Street Address" />
+      <input type="text" id="city" placeholder="City" />
+      <input type="text" id="state" placeholder="State" />
+      <input type="text" id="zipCode" placeholder="ZIP Code" />
+      <input type="text" id="companyEIN" placeholder="SSN# or EIN#" />
+      <input type="text" id="companySEIN" placeholder="State EIN #" />
+      
+      <fieldset>
+      <legend>Address</legend>
+      <input type="text" id="streetAddress" placeholder="Street Address" />
+      <input type="text" id="city" placeholder="City" />
+      <input type="text" id="state" placeholder="State" />
+      <input type="number" id="zipCode" placeholder="ZIP Code" />
+    </fieldset>
+
+    <fieldset id="ownersSection">
+      <legend>Owner(s)</legend>
+      <div id="ownersContainer"></div>
+      <input type="text" id="ownerName" placeholder="Owner name" />
+      <button type="button" id="addOwnerBtn">Add Owner</button>
+    </fieldset>
+    
+    <fieldset id="partnerSection" style="display:none;">
+      <legend>Partners</legend>
+      <div id="partnersContainer"></div>
+      <input type="text" id="partnerName" placeholder="Partner name" />
+      <input type="number" id="partnerShare" placeholder="Partner share %" min="0" max="100" />
+      <button type="button" id="addPartnerBtn">Add Partner</button>
+      <p id="ownershipWarning" style="color:red; display:none;">
+        Total partner ownership must equal 100%.
+      </p>
+    </fieldset>
+
+      <!-- OWNER SECTION -->
+      <div id="ownersSection">
+        <h4>Owner(s)</h4>
+        <div id="ownersContainer"></div>
+        <input type="text" id="ownerName" placeholder="Owner name" />
+        <button type="button" id="addOwnerBtn">Add Owner</button>
+      </div>
+
+      <!-- PARTNER SECTION (ONLY FOR PARTNERSHIP) -->
+      <div id="partnerSection" style="display:none;">
+        <h4>Partners</h4>
+        <div id="partnersContainer"></div>
+        <input type="text" id="partnerName" placeholder="Partner name" />
+        <input type="text" id="partnerShare" placeholder="Partner share %" />
+        <button type="button" id="addPartnerBtn">Add Partner</button>
+        <p id="ownershipWarning" style="color:red; display:none;">
+          Total partner ownership must equal 100%.
+        </p>
+      </div>
+
       <!-- Role & Type selectors -->
       <select id="companyRole">
         <option value="RoleType">-Role Type-</option>
@@ -109,6 +199,10 @@
   </form>
   <div class="company-list" id="companyList"></div>
 </section>
+
+<script src="https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/main/js/company-dashboard.js"></script>
+</body>
+</html>
 
 <script src="https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/main/js/company-dashboard.js"></script>
 </body>
