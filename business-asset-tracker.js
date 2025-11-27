@@ -1,3 +1,5 @@
+console.log("✅ Business Asset Tracker JS loaded successfully");
+
 function addAsset() {
   const business = document.getElementById("businessSelect").value;
   const tag = document.getElementById("assetTag").value;
