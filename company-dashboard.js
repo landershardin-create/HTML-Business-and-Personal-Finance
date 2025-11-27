@@ -15,20 +15,38 @@ document.getElementById("addOwnerBtn").addEventListener("click", () => {
   if (ownerName.trim()) {
     const container = document.getElementById("ownersContainer");
     const div = document.createElement("div");
-    div.textContent = ownerName;
 
-    // Add remove button
+    const span = document.createElement("span");
+    span.textContent = ownerName;
+
+    // Edit button
+    const editBtn = document.createElement("button");
+    editBtn.textContent = "Edit";
+    editBtn.type = "button";
+    editBtn.addEventListener("click", () => {
+      const newName = prompt("Edit owner name:", span.textContent);
+      if (newName !== null && newName.trim()) {
+        span.textContent = newName.trim();
+        updateOwnerFilter();
+      }
+    });
+
+    // Remove button
     const removeBtn = document.createElement("button");
     removeBtn.textContent = "Remove";
     removeBtn.type = "button";
     removeBtn.addEventListener("click", () => {
       container.removeChild(div);
-      updateOwnerFilter(); // keep filter list in sync
+      updateOwnerFilter();
     });
 
+    div.appendChild(span);
+    div.appendChild(editBtn);
     div.appendChild(removeBtn);
     container.appendChild(div);
+
     document.getElementById("ownerName").value = "";
+    updateOwnerFilter();
   }
 });
 
@@ -39,19 +57,37 @@ document.getElementById("addPartnerBtn").addEventListener("click", () => {
   if (partnerName.trim() && partnerShare.trim()) {
     const container = document.getElementById("partnersContainer");
     const div = document.createElement("div");
-    div.textContent = `${partnerName} - ${partnerShare}%`;
 
-    // Add remove button
+    const span = document.createElement("span");
+    span.textContent = `${partnerName} - ${partnerShare}%`;
+
+    // Edit button
+    const editBtn = document.createElement("button");
+    editBtn.textContent = "Edit";
+    editBtn.type = "button";
+    editBtn.addEventListener("click", () => {
+      const newName = prompt("Edit partner name:", partnerName);
+      const newShare = prompt("Edit partner share %:", partnerShare);
+      if (newName !== null && newName.trim() && newShare !== null && newShare.trim()) {
+        span.textContent = `${newName.trim()} - ${newShare.trim()}%`;
+        validateOwnership();
+      }
+    });
+
+    // Remove button
     const removeBtn = document.createElement("button");
     removeBtn.textContent = "Remove";
     removeBtn.type = "button";
     removeBtn.addEventListener("click", () => {
       container.removeChild(div);
-      validateOwnership(); // re-check ownership sum
+      validateOwnership();
     });
 
+    div.appendChild(span);
+    div.appendChild(editBtn);
     div.appendChild(removeBtn);
     container.appendChild(div);
+
     document.getElementById("partnerName").value = "";
     document.getElementById("partnerShare").value = "";
     validateOwnership();
