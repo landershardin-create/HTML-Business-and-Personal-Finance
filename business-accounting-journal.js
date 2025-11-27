@@ -51,6 +51,31 @@ function addAccountOption(company, value, text) {
   option.value = value;
   option.textContent = text;
   optGroup.appendChild(option);
+  
+const companyHeaderSelect = document.getElementById('companyHeaderSelect');
+const journalCompany = document.getElementById('journalCompany');
+const entryCompany = document.getElementById('entryCompany');
+const accountCompany = document.getElementById('accountCompany');
+
+// Sync header selection to forms
+companyHeaderSelect.addEventListener('change', () => {
+  const selectedCompany = companyHeaderSelect.value;
+
+  if (selectedCompany) {
+    journalCompany.value = selectedCompany;
+    entryCompany.value = selectedCompany;
+    accountCompany.value = selectedCompany;
+  }
+});
+
+// Optional: when forms change company, update header too
+[journalCompany, entryCompany, accountCompany].forEach(select => {
+  select.addEventListener('change', () => {
+    if (select.value) {
+      companyHeaderSelect.value = select.value;
+    }
+  });
+});
 
   // List item with delete button
   const li = document.createElement('li');
