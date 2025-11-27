@@ -268,4 +268,27 @@ document.getElementById('accountForm').addEventListener('submit', e => {
 
   populateLinkedAccounts(company);
   e.target.reset();
+function populateCompanyDropdowns() {
+  const companies = JSON.parse(localStorage.getItem('companies')) || [];
+
+  const dropdownIds = ["companyHeaderSelect", "journalCompany", "entryCompany", "accountCompany"];
+  dropdownIds.forEach(id => {
+    const select = document.getElementById(id);
+    if (!select) return;
+
+    // Clear existing options
+    select.innerHTML = '<option value="">-- Select Company --</option>';
+
+    // Populate from localStorage
+    companies.forEach(c => {
+      const option = document.createElement('option');
+      option.value = c.id;
+      option.textContent = c.name;
+      select.appendChild(option);
+    });
+  });
+}
+
+// Run on page load
+window.addEventListener('DOMContentLoaded', populateCompanyDropdowns);
 });
