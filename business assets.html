@@ -28,6 +28,16 @@
     <label>Years in Service: <input type="number" id="assetYears"></label><br><br>
     <button onclick="addAsset()">Add Asset</button>
   </div>
+ <!-- Business Filter -->
+  <div class="section">
+    <h3>Filter by Business</h3>
+    <select id="businessFilter" onchange="filterAssets()">
+      <option value="">All Businesses</option>
+      <option value="BusinessA">Business A</option>
+      <option value="BusinessB">Business B</option>
+      <option value="BusinessC">Business C</option>
+    </select>
+  </div>
   
   <!-- Search/Filter Bar -->
   <div class="section">
