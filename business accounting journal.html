@@ -28,6 +28,7 @@
           <option value="">-- Select Company --</option>
           <option value="acme">Acme Corp</option>
           <option value="globex">Globex Inc</option>
+          <option value="initech">Initech LLC</option>
         </select>
       </div>
 
@@ -54,6 +55,7 @@
             <option value="">-- Select Company --</option>
             <option value="acme">Acme Corp</option>
             <option value="globex">Globex Inc</option>
+            <option value="initech">Initech LLC</option>
           </select>
         </div>
 
@@ -77,6 +79,10 @@
 
         <button type="submit">Add Entry</button>
       </form>
+
+      <!-- Entries list and totals -->
+      <ul id="journalEntriesList"></ul>
+      <div id="companyTotals"></div>
     </div>
   </div>
 
@@ -90,6 +96,7 @@
           <option value="">-- Select Company --</option>
           <option value="acme">Acme Corp</option>
           <option value="globex">Globex Inc</option>
+          <option value="initech">Initech LLC</option>
         </select>
       </div>
 
@@ -106,99 +113,137 @@
       <button type="submit">Create Account</button>
     </form>
   </div>
-<!-- Add this in your HTML body where you want the chart -->
-<canvas id="accountTypeChart" width="400" height="400"></canvas>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-  let accountTypeChart;
+  <!-- 📊 Charts -->
+  <h3>Financial Visualizations</h3>
+  <canvas id="accountTypeChart" width="400" height="400"></canvas>
+  <canvas id="monthlyTotalsChart" width="400" height="400"></canvas>
 
-  function renderEntries(entries) {
-    journalEntriesList.innerHTML = "";
-    totalsDisplay.innerHTML = "";
-    const activeCompany = document.getElementById('companyHeaderSelect').value;
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    let accountTypeChart;
+    let monthlyTotalsChart;
 
-    const filtered = entries.filter(entry => !activeCompany || entry.company === activeCompany);
+    function renderEntries(entries) {
+      const journalEntriesList = document.getElementById('journalEntriesList');
+      const totalsDisplay = document.getElementById('companyTotals');
+      journalEntriesList.innerHTML = "";
+      totalsDisplay.innerHTML = "";
 
-    let grandTotal = 0;
-    const typeTotals = {};
+      const activeCompany = document.getElementById('companyHeaderSelect').value;
+      const filtered = entries.filter(entry => !activeCompany || entry.company === activeCompany);
 
-    filtered.forEach(entry => {
-      grandTotal += entry.amount;
-      typeTotals[entry.accountType] = (typeTotals[entry.accountType] || 0) + entry.amount;
+      let grandTotal = 0;
+      const typeTotals = {};
+      const monthlyTotals = {};
 
-      const li = document.createElement('li');
-      li.textContent = `${entry.label} - $${entry.amount} (${entry.company}, ${entry.accountType}) [${entry.timestamp}]`;
+      filtered.forEach(entry => {
+        grandTotal += entry.amount;
+        typeTotals[entry.accountType] = (typeTotals[entry.accountType] || 0) + entry.amount;
 
-      const deleteBtn = document.createElement('button');
-      deleteBtn.textContent = "❌";
-      deleteBtn.type = "button";
-      deleteBtn.addEventListener('click', () => {
-        const confirmDelete = confirm(`Remove entry "${entry.label}" from ${entry.company}?`);
-        if (confirmDelete) {
-          let savedEntries = JSON.parse(localStorage.getItem('entries')) || [];
-          savedEntries = savedEntries.filter(e => e.id !== entry.id);
-          localStorage.setItem('entries', JSON.stringify(savedEntries));
-          renderEntries(savedEntries);
+        const monthKey = new Date(entry.timestamp).toLocaleString('default', { month: 'short', year: 'numeric' });
+        monthlyTotals[monthKey] = (monthlyTotals[monthKey] || 0) + entry.amount;
+
+        const li = document.createElement('li');
+        li.textContent = `${entry.label} - $${entry.amount} (${entry.company}, ${entry.accountType}) [${entry.timestamp}]`;
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = "❌";
+        deleteBtn.type = "button";
+        deleteBtn.addEventListener('click', () => {
+          const confirmDelete = confirm(`Remove entry "${entry.label}" from ${entry.company}?`);
+          if (confirmDelete) {
+            let savedEntries = JSON.parse(localStorage.getItem('entries')) || [];
+            savedEntries = savedEntries.filter(e => e.id !== entry.id);
+            localStorage.setItem('entries', JSON.stringify(savedEntries));
+            renderEntries(savedEntries);
+          }
+        });
+
+        li.appendChild(deleteBtn);
+        journalEntriesList.appendChild(li);
+      });
+
+      // Display totals
+      if (activeCompany) {
+        totalsDisplay.innerHTML = `<strong>Total for ${activeCompany}:
+
+{grandTotal.toFixed(2)}</strong><br>`;
+      } else {
+        totalsDisplay.innerHTML = `<strong>All Companies Total: 
+
+{grandTotal.toFixed(2)}</strong><br>`;
+      }
+
+      for (const [type, total] of Object.entries(typeTotals)) {
+        const p = document.createElement('p');
+        p.textContent = `${type}: $${total.toFixed(2)}`;
+        totalsDisplay.appendChild(p);
+      }
+
+      // Render pie chart (account type breakdown)
+      const ctxPie = document.getElementById('accountTypeChart').getContext('2d');
+      if (accountTypeChart) accountTypeChart.destroy();
+      accountTypeChart = new Chart(ctxPie, {
+        type: 'pie',
+        data: {
+          labels: Object.keys(typeTotals),
+          datasets: [{
+            data: Object.values(typeTotals),
+            backgroundColor: ['#4CAF50','#FF9800','#2196F3','#9C27B0','#F44336']
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'bottom' },
+            title: {
+              display: true,
+              text: activeCompany ? `Breakdown for ${activeCompany}` : 'Breakdown for All Companies'
+            }
+          }
         }
       });
 
-      li.appendChild(deleteBtn);
-      journalEntriesList.appendChild(li);
-    });
-
-    // Display totals
-    if (activeCompany) {
-      totalsDisplay.innerHTML = `<strong>Total for ${activeCompany}:
-
-{grandTotal.toFixed(2)}</strong><br>`;
-    } else {
-      totalsDisplay.innerHTML = `<strong>All Companies Total: 
-
-{grandTotal.toFixed(2)}</strong><br>`;
-    }
-
-    for (const [type, total] of Object.entries(typeTotals)) {
-      const p = document.createElement('p');
-      p.textContent = `${type}: $${total.toFixed(2)}`;
-      totalsDisplay.appendChild(p);
-    }
-
-    // Render chart
-    const ctx = document.getElementById('accountTypeChart').getContext('2d');
-    const labels = Object.keys(typeTotals);
-    const data = Object.values(typeTotals);
-
-    if (accountTypeChart) {
-      accountTypeChart.destroy(); // Clear old chart
-    }
-
-    accountTypeChart = new Chart(ctx, {
-      type: 'pie',
-      data: {
-        labels: labels,
-        datasets: [{
-          data: data,
-          backgroundColor: [
-            '#4CAF50', '#FF9800', '#2196F3', '#9C27B0', '#F44336'
-          ]
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            position: 'bottom'
+      // Render bar chart (monthly totals)
+      const ctxBar = document.getElementById('monthlyTotalsChart').getContext('2d');
+      if (monthlyTotalsChart) monthlyTotalsChart.destroy();
+      monthlyTotalsChart = new Chart(ctxBar, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(monthlyTotals),
+          datasets: [{
+            label: 'Monthly Totals',
+            data: Object.values(monthlyTotals),
+            backgroundColor: '#2196F3'
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            title: {
+              display: true,
+              text: activeCompany ? `Monthly Totals for ${activeCompany}` : 'Monthly Totals for All Companies'
+            }
           },
-          title: {
-            display: true,
-            text: activeCompany ? `Breakdown for ${activeCompany}` : 'Breakdown for All Companies'
+          scales: {
+            y: { beginAtZero: true }
           }
         }
-      }
+      });
+    }
+// Re-render entries when active company changes
+    document.getElementById('companyHeaderSelect').addEventListener('change', () => {
+      const savedEntries = JSON.parse(localStorage.getItem('entries')) || [];
+      renderEntries(savedEntries);
     });
-  }
-</script>
-  <script src="https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/js/business-accounting-journal-tracker.js"></script>
+
+    // Initial render on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedEntries = JSON.parse(localStorage.getItem('entries')) || [];
+      renderEntries(savedEntries);
+    });
+  </script>
 </body>
 </html>
