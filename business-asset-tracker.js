@@ -110,5 +110,23 @@ function filterAssets() {
     const matchesBusiness = !businessFilter || business === businessFilter.toLowerCase();
 
     row.style.display = (matchesText && matchesBusiness) ? "" : "none";
+window.onload = function() {
+  const savedAssets = JSON.parse(localStorage.getItem("assets")) || [];
+  savedAssets.forEach(asset => {
+    const { business, tag, name, category, value, depRate, years } = asset;
+    const annualDep = value * depRate;
+    const accumulatedDep = annualDep * years;
+    const netBookValue = value - accumulatedDep;
+
+    const table = document.getElementById("assetTable").querySelector("tbody");
+    const row = table.insertRow();
+    row.innerHTML = `
+      <td>${business}</td>
+      <td>${tag}</td>
+      <td>${name}</td>
+      <td>${category}</td>
+      <td>$${value.toFixed(2)}</td>
+      <td>${(depRate*100).toFixed(2)}%</td>
+      <td>
   });
 }
