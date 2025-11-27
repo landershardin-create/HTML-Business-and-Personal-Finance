@@ -42,49 +42,26 @@
         <input type="text" id="companyEIN" placeholder="SSN# or EIN#" />
         <input type="text" id="companySEIN" placeholder="State EIN #" />
 
-        <!-- OWNER SECTION -->
-        <div id="ownersSection">
-          <h4>Owner</h4>
-          <div id="ownersContainer"></div>
-          <input type="text" id="Owner" placeholder="Owner name" />
-          <button type="button" id="addOwnerBtn">Add Owner</button>
-          
-          <h5>Partners *use only for company type partnership*</h5>
-          <input type="text" id="Partner" placeholder="Partner name" />
-          <input type="text" id="PartnerShare" placeholder="Partner share %" />
-          <button type="button" id="addPartnerBtn">Add Partner</button>
-        </div>
-        
-        <select id="companyRole">
-          <option value="RoleType">-Role Type-</option>
-          <option value="Viewer">Viewer</option>
-          <option value="Editor">Editor</option>
-          <option value="Owner">Owner</option>
-        </select>
-
-        <select id="companyType">
-          <option value="">-Company type-</option>
-          <option value="Sole Proprietor">Sole Proprietor</option>
-          <option value="Partnership">Partnership</option>
-          <option value="LLC">LLC</option>
-          <option value="Corporation">Corporation</option>
-          <option value="Nonprofit">Nonprofit</option>
-        </select>
-
-        <!-- PARTNER SECTION (ONLY FOR PARTNERSHIP) -->
-        <div id="partnerSection" style="display:none;">
-          <h4>Partners</h4>
-          <div id="partnersContainer"></div>
-          <p id="ownershipWarning" style="color:red; display:none;">Total partner ownership must equal 100%.</p>
-        </div>
-
-        <button type="submit">Add</button>
-      </div>
-    </form>
-
-    <div class="company-list" id="companyList"></div>
-  </section>
-
+    <!-- OWNER SECTION -->
+    <div id="ownersSection">
+      <h4>Owner(s)</h4>
+      <div id="ownersContainer"></div>
+      <input type="text" id="ownerName" placeholder="Owner name" />
+      <button type="button" id="addOwnerBtn">Add Owner</button>
+    </div>
+    
+    <!-- PARTNER SECTION (ONLY FOR PARTNERSHIP) -->
+    <div id="partnerSection" style="display:none;">
+      <h4>Partners</h4>
+      <div id="partnersContainer"></div>
+      <input type="text" id="partnerName" placeholder="Partner name" />
+      <input type="text" id="partnerShare" placeholder="Partner share %" />
+      <button type="button" id="addPartnerBtn">Add Partner</button>
+      <p id="ownershipWarning" style="color:red; display:none;">
+        Total partner ownership must equal 100%.
+      </p>
+    </div>
+    
   <script src="https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/js/company-dashboard.js"></script>
 </body>
 </html>
