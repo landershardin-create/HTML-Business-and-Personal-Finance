@@ -66,6 +66,38 @@
   </form>
   <div class="company-list" id="companyList"></div>
 </section>
+<!-- inside companyForm -->
+<div class="form-group">
+  <!-- address inputs ... -->
+
+  <!-- OWNER SECTION -->
+  <div id="ownersSection">
+    <h4>Owner(s)</h4>
+    <div id="ownersContainer"></div>
+    <input type="text" id="ownerName" placeholder="Owner name" />
+    <button type="button" id="addOwnerBtn">Add Owner</button>
+  </div>
+
+  <!-- PARTNER SECTION -->
+  <div id="partnerSection" style="display:none;">
+    <h4>Partners</h4>
+    <div id="partnersContainer"></div>
+    <input type="text" id="partnerName" placeholder="Partner name" />
+    <input type="text" id="partnerShare" placeholder="Partner share %" />
+    <button type="button" id="addPartnerBtn">Add Partner</button>
+    <p id="ownershipWarning" style="color:red; display:none;">
+      Total partner ownership must equal 100%.
+    </p>
+  </div>
+
+  <!-- Role & Type selectors -->
+  <select id="companyRole">…</select>
+  <select id="companyType">…</select>
+</div>
+<button type="submit">Add</button>
+</form>
+<div class="company-list" id="companyList"></div>
+</section>
 
 <script src="https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/js/company-dashboard.js"></script>
 </body>
