@@ -87,3 +87,19 @@ function updateTotals() {
   }
   document.getElementById("totals").innerHTML = html;
 }
+function filterAssets() {
+  const input = document.getElementById("searchInput").value.toLowerCase();
+  const rows = document.querySelectorAll("#assetTable tbody tr");
+
+  rows.forEach(row => {
+    const tag = row.cells[1].innerText.toLowerCase();
+    const name = row.cells[2].innerText.toLowerCase();
+    const category = row.cells[3].innerText.toLowerCase();
+
+    if (tag.includes(input) || name.includes(input) || category.includes(input)) {
+      row.style.display = "";
+    } else {
+      row.style.display = "none";
+    }
+  });
+}
