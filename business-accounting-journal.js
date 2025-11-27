@@ -3,6 +3,11 @@ const journalEntriesList = document.createElement('ul');
 journalEntriesList.id = "journalEntriesList";
 document.getElementById('journalEntries').appendChild(journalEntriesList);
 
+const totalsDisplay = document.createElement('div');
+totalsDisplay.id = "companyTotals";
+totalsDisplay.style.marginTop = "10px";
+document.getElementById('journalEntries').appendChild(totalsDisplay);
+
 // --- Load saved entries on page load ---
 window.addEventListener('DOMContentLoaded', () => {
   const savedEntries = JSON.parse(localStorage.getItem('entries')) || [];
@@ -14,11 +19,11 @@ entryForm.addEventListener('submit', e => {
   e.preventDefault();
 
   const entryLabel = document.getElementById('entryLabel').value.trim();
-  const amount = document.getElementById('amount').value;
+  const amount = parseFloat(document.getElementById('amount').value);
   const company = document.getElementById('entryCompany').value;
   const accountId = document.getElementById('linkedAccount').value;
 
-  if (entryLabel && amount && company) {
+  if (entryLabel && !isNaN(amount) && company) {
     const entry = {
       id: Date.now(),
       company,
@@ -42,35 +47,36 @@ entryForm.addEventListener('submit', e => {
 // --- Render entries filtered by active company ---
 function renderEntries(entries) {
   journalEntriesList.innerHTML = "";
+  totalsDisplay.innerHTML = "";
   const activeCompany = document.getElementById('companyHeaderSelect').value;
 
-  entries
-    .filter(entry => !activeCompany || entry.company === activeCompany)
-    .forEach(entry => {
-      const li = document.createElement('li');
-      li.textContent = `${entry.label} - $${entry.amount} (${entry.company}) [${entry.timestamp}]`;
+  const filtered = entries.filter(entry => !activeCompany || entry.company === activeCompany);
 
-      // Delete button
-      const deleteBtn = document.createElement('button');
-      deleteBtn.textContent = "❌";
-      deleteBtn.type = "button";
-      deleteBtn.addEventListener('click', () => {
-        const confirmDelete = confirm(`Remove entry "${entry.label}" from ${entry.company}?`);
-        if (confirmDelete) {
-          let savedEntries = JSON.parse(localStorage.getItem('entries')) || [];
-          savedEntries = savedEntries.filter(e => e.id !== entry.id);
-          localStorage.setItem('entries', JSON.stringify(savedEntries));
-          renderEntries(savedEntries);
-        }
-      });
+  let total = 0;
+  filtered.forEach(entry => {
+    total += entry.amount;
 
-      li.appendChild(deleteBtn);
-      journalEntriesList.appendChild(li);
+    const li = document.createElement('li');
+    li.textContent = `${entry.label} - $${entry.amount} (${entry.company}) [${entry.timestamp}]`;
+
+    // Delete button
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = "❌";
+    deleteBtn.type = "button";
+    deleteBtn.addEventListener('click', () => {
+      const confirmDelete = confirm(`Remove entry "${entry.label}" from ${entry.company}?`);
+      if (confirmDelete) {
+        let savedEntries = JSON.parse(localStorage.getItem('entries')) || [];
+        savedEntries = savedEntries.filter(e => e.id !== entry.id);
+        localStorage.setItem('entries', JSON.stringify(savedEntries));
+        renderEntries(savedEntries);
+      }
     });
-}
 
-// --- Re-render entries when active company changes ---
-document.getElementById('companyHeaderSelect').addEventListener('change', () => {
-  const savedEntries = JSON.parse(localStorage.getItem('entries')) || [];
-  renderEntries(savedEntries);
-});
+    li.appendChild(deleteBtn);
+    journalEntriesList.appendChild(li);
+  });
+
+  // Display total
+  if (activeCompany) {
+    totals
