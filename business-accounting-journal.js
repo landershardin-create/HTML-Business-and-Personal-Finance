@@ -1,5 +1,12 @@
 const accountForm = document.getElementById('accountForm');
 const linkedAccountSelect = document.getElementById('linkedAccount');
+const resetButton = document.createElement('button');
+
+// Create a reset button dynamically
+resetButton.textContent = "Clear All Accounts";
+resetButton.type = "button";
+resetButton.style.marginTop = "10px";
+accountForm.appendChild(resetButton);
 
 // Load saved accounts on page load
 window.addEventListener('DOMContentLoaded', () => {
@@ -35,4 +42,16 @@ accountForm.addEventListener('submit', e => {
   }
 
   accountForm.reset();
+});
+
+// Reset button logic with confirmation
+resetButton.addEventListener('click', () => {
+  const confirmClear = confirm("⚠️ Are you sure you want to clear all accounts? This cannot be undone.");
+  if (confirmClear) {
+    // Clear dropdown
+    linkedAccountSelect.innerHTML = '<option value="">-- Select Account --</option>';
+    // Clear localStorage
+    localStorage.removeItem('accounts');
+    alert("All accounts have been cleared.");
+  }
 });
