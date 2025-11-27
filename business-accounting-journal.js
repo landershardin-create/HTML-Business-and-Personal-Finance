@@ -4,10 +4,21 @@ const accountList = document.createElement('ul');
 accountList.id = "accountList";
 accountForm.appendChild(accountList);
 
+// Helper: ensure optgroup exists for a company
+function getOrCreateOptGroup(company) {
+  let optGroup = linkedAccountSelect.querySelector(`optgroup[label="${company}"]`);
+  if (!optGroup) {
+    optGroup = document.createElement('optgroup');
+    optGroup.label = company;
+    linkedAccountSelect.appendChild(optGroup);
+  }
+  return optGroup;
+}
+
 // Load saved accounts on page load
 window.addEventListener('DOMContentLoaded', () => {
   const savedAccounts = JSON.parse(localStorage.getItem('accounts')) || [];
-  savedAccounts.forEach(acc => addAccountOption(acc.value, acc.text));
+  savedAccounts.forEach(acc => addAccountOption(acc.company, acc.value, acc.text));
 });
 
 accountForm.addEventListener('submit', e => {
@@ -18,13 +29,13 @@ accountForm.addEventListener('submit', e => {
 
   if (accountName && company) {
     const optionValue = `${company}-${accountName.toLowerCase().replace(/\s+/g, '-')}`;
-    const optionText = `${accountName} (${company})`;
+    const optionText = `${accountName}`;
 
-    addAccountOption(optionValue, optionText);
+    addAccountOption(company, optionValue, optionText);
 
     // Save to localStorage
     const savedAccounts = JSON.parse(localStorage.getItem('accounts')) || [];
-    savedAccounts.push({ value: optionValue, text: optionText });
+    savedAccounts.push({ company, value: optionValue, text: optionText });
     localStorage.setItem('accounts', JSON.stringify(savedAccounts));
   }
 
@@ -32,24 +43,26 @@ accountForm.addEventListener('submit', e => {
 });
 
 // Helper: add account to dropdown + list with delete button
-function addAccountOption(value, text) {
+function addAccountOption(company, value, text) {
+  const optGroup = getOrCreateOptGroup(company);
+
   // Dropdown option
   const option = document.createElement('option');
   option.value = value;
   option.textContent = text;
-  linkedAccountSelect.appendChild(option);
+  optGroup.appendChild(option);
 
   // List item with delete button
   const li = document.createElement('li');
-  li.textContent = text + " ";
+  li.textContent = `${text} (${company}) `;
   const deleteBtn = document.createElement('button');
   deleteBtn.textContent = "❌";
   deleteBtn.type = "button";
   deleteBtn.addEventListener('click', () => {
-    const confirmDelete = confirm(`Remove account "${text}"?`);
+    const confirmDelete = confirm(`Remove account "${text}" from ${company}?`);
     if (confirmDelete) {
       // Remove from dropdown
-      [...linkedAccountSelect.options].forEach(opt => {
+      [...optGroup.querySelectorAll('option')].forEach(opt => {
         if (opt.value === value) opt.remove();
       });
       // Remove from localStorage
