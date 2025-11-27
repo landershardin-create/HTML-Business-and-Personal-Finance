@@ -147,6 +147,14 @@ function renderEntries(entries) {
         title: {
           display: true,
           text: activeCompany ? `Breakdown for ${activeCompany}` : 'Breakdown for All Companies'
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const value = context.raw;
+              return `$${value.toLocaleString(undefined, {minimumFractionDigits:2})}`;
+            }
+          }
         }
       }
     }
@@ -172,10 +180,29 @@ function renderEntries(entries) {
         title: {
           display: true,
           text: activeCompany ? `Monthly Totals for ${activeCompany}` : 'Monthly Totals for All Companies'
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const value = context.raw;
+              return `
+
+{value.toLocaleString(undefined, {minimumFractionDigits:2})}`;
+            }
+          }
         }
       },
       scales: {
-        y: { beginAtZero: true }
+        y: {
+          beginAtZero: true,
+          ticks: {
+            callback: function(value) {
+              return `
+
+{value.toLocaleString(undefined, {minimumFractionDigits:2})}`;
+            }
+          }
+        }
       }
     }
   });
