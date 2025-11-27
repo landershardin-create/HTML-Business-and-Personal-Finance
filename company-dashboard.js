@@ -70,10 +70,21 @@ function validateOwnership() {
 // --- COMPANY TYPE TOGGLE ---
 document.getElementById("companyType").addEventListener("change", e => {
   const type = e.target.value;
-  document.getElementById("partnerSection").style.display = type === "Partnership" ? "block" : "none";
-  document.getElementById("ownersSection").style.display = type === "Partnership" ? "none" : "block";
-});
 
+  if (type === "Partnership") {
+    // Partnerships use partner section only
+    document.getElementById("partnerSection").style.display = "block";
+    document.getElementById("ownersSection").style.display = "none";
+  } else if (["LLC", "Corporation", "Sole Proprietor", "Nonprofit"].includes(type)) {
+    // LLC, Corporation, Sole Proprietor, Nonprofit use owners section
+    document.getElementById("partnerSection").style.display = "none";
+    document.getElementById("ownersSection").style.display = "block";
+  } else {
+    // Default fallback
+    document.getElementById("partnerSection").style.display = "none";
+    document.getElementById("ownersSection").style.display = "block";
+  }
+});
 // --- FORM SUBMISSION ---
 companyForm.addEventListener("submit", e => {
   e.preventDefault();
