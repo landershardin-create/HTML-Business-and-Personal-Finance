@@ -1,5 +1,7 @@
 console.log("✅ Business Asset Tracker JS loaded successfully");
 
+let assetList = [];
+
 function addAsset() {
   const business = document.getElementById("businessSelect").value;
   const tag = document.getElementById("assetTag").value;
@@ -36,6 +38,9 @@ function addAsset() {
     <td><button onclick="deleteAsset(this)">Delete</button></td>
   `;
 
+  assetList.push({ business, tag, name, category, value, depRate, years });
+  localStorage.setItem("assets", JSON.stringify(assetList));
+
   updateTotals();
 }
 
@@ -51,7 +56,7 @@ function editAsset(button) {
     parseFloat(row.cells[7].innerText.replace("$","")) / 
     parseFloat(row.cells[6].innerText.replace("$",""));
 
-  row.remove(); // remove old row so updated one can be added
+  row.remove();
   updateTotals();
 }
 
@@ -89,6 +94,7 @@ function updateTotals() {
   }
   document.getElementById("totals").innerHTML = html;
 }
+
 function filterAssets() {
   const input = document.getElementById("searchInput").value.toLowerCase();
   const businessFilter = document.getElementById("businessFilter").value.toLowerCase();
@@ -103,16 +109,6 @@ function filterAssets() {
     const matchesText = tag.includes(input) || name.includes(input) || category.includes(input) || business.includes(input);
     const matchesBusiness = !businessFilter || business === businessFilter.toLowerCase();
 
-    if (matchesText && matchesBusiness) {
-      row.style.display = "";
-    } else {
-      row.style.display = "none";
-    }
-
-function calculateDepreciation(value, rate, years) {
-  const annualDep = value * (rate / 100);
-  const accumulatedDep = annualDep * years;
-  const netBookValue = value - accumulatedDep;
-  return { annualDep, accumulatedDep, netBookValue };
- }
+    row.style.display = (matchesText && matchesBusiness) ? "" : "none";
   });
+}
