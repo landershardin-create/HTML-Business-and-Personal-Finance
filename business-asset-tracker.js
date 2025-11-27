@@ -42,6 +42,16 @@ function addAsset() {
   localStorage.setItem("assets", JSON.stringify(assetList));
 
   updateTotals();
+  resetForm(); // clear inputs after adding
+}
+
+function resetForm() {
+  document.getElementById("assetTag").value = "";
+  document.getElementById("assetName").value = "";
+  document.getElementById("assetCategory").value = "";
+  document.getElementById("assetValue").value = "";
+  document.getElementById("assetDep").value = "";
+  document.getElementById("assetYears").value = "";
 }
 
 function editAsset(button) {
