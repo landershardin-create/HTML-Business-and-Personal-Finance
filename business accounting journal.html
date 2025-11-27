@@ -166,14 +166,15 @@
 
       // ✅ Fixed totals display
       if (activeCompany) {
-        totalsDisplay.innerHTML = `<strong>Total for ${activeCompany}:
+  totalsDisplay.innerHTML = `<strong>Total for ${activeCompany}:
 
 {grandTotal.toFixed(2)}</strong><br>`;
-      } else {
-        totalsDisplay.innerHTML = `<strong>All Companies Total: 
+} else {
+  totalsDisplay.innerHTML = `<strong>All Companies Total: 
+  
 
 {grandTotal.toFixed(2)}</strong><br>`;
-      }
+}
 
       for (const [type, total] of Object.entries(typeTotals)) {
         const p = document.createElement('p');
