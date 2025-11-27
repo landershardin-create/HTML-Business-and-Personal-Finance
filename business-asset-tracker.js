@@ -1,85 +1,89 @@
-  // Store assets per business keyed by asset tag/barcode
-  const assetData = {
-    BusinessA: {},
-    BusinessB: {},
-    BusinessC: {}
-  };
+function addAsset() {
+  const business = document.getElementById("businessSelect").value;
+  const tag = document.getElementById("assetTag").value;
+  const name = document.getElementById("assetName").value;
+  const category = document.getElementById("assetCategory").value;
+  const value = parseFloat(document.getElementById("assetValue").value);
+  const depRate = parseFloat(document.getElementById("assetDep").value) / 100;
+  const years = parseInt(document.getElementById("assetYears").value);
 
-  function addAsset() {
-    const business = document.getElementById('businessSelect').value;
-    const tag = document.getElementById('assetTag').value.trim();
-    const name = document.getElementById('assetName').value.trim();
-    const category = document.getElementById('assetCategory').value.trim();
-    const value = parseFloat(document.getElementById('assetValue').value);
-    const depRate = parseFloat(document.getElementById('assetDep').value);
-    const years = parseInt(document.getElementById('assetYears').value);
+  if (isNaN(value) || isNaN(depRate) || isNaN(years)) return;
 
-    if (!tag || !name || !category || isNaN(value) || isNaN(depRate) || isNaN(years)) {
-      alert("Please enter valid asset details.");
-      return;
+  const annualDep = value * depRate;
+  const accumulatedDep = annualDep * years;
+  const netBookValue = value - accumulatedDep;
+
+  const table = document.getElementById("assetTable").querySelector("tbody");
+  const row = table.insertRow();
+
+  row.innerHTML = `
+    <td>${business}</td>
+    <td>${tag}</td>
+    <td>${name}</td>
+    <td>${category}</td>
+    <td>$${value.toFixed(2)}</td>
+    <td>${(depRate*100).toFixed(2)}%</td>
+    <td>
+
+{annualDep.toFixed(2)}</td>
+    <td>
+
+{accumulatedDep.toFixed(2)}</td>
+    <td>$${netBookValue.toFixed(2)}</td>
+    <td><button onclick="editAsset(this)">Edit</button></td>
+    <td><button onclick="deleteAsset(this)">Delete</button></td>
+  `;
+
+  updateTotals();
+}
+
+function editAsset(button) {
+  const row = button.closest("tr");
+  document.getElementById("businessSelect").value = row.cells[0].innerText;
+  document.getElementById("assetTag").value = row.cells[1].innerText;
+  document.getElementById("assetName").value = row.cells[2].innerText;
+  document.getElementById("assetCategory").value = row.cells[3].innerText;
+  document.getElementById("assetValue").value = row.cells[4].innerText.replace("$","");
+  document.getElementById("assetDep").value = row.cells[5].innerText.replace("%","");
+  document.getElementById("assetYears").value = 
+    parseFloat(row.cells[7].innerText.replace("$","")) / 
+    parseFloat(row.cells[6].innerText.replace("$",""));
+
+  row.remove(); // remove old row so updated one can be added
+  updateTotals();
+}
+
+function deleteAsset(button) {
+  const row = button.closest("tr");
+  row.remove();
+  updateTotals();
+}
+
+function updateTotals() {
+  const rows = document.querySelectorAll("#assetTable tbody tr");
+  const totalsByBusiness = {};
+
+  rows.forEach(row => {
+    const business = row.cells[0].innerText;
+    const value = parseFloat(row.cells[4].innerText.replace("$",""));
+    const accumulatedDep = parseFloat(row.cells[7].innerText.replace("$",""));
+    const netBookValue = parseFloat(row.cells[8].innerText.replace("$",""));
+
+    if (!totalsByBusiness[business]) {
+      totalsByBusiness[business] = { value: 0, dep: 0, nbv: 0 };
     }
+    totalsByBusiness[business].value += value;
+    totalsByBusiness[business].dep += accumulatedDep;
+    totalsByBusiness[business].nbv += netBookValue;
+  });
 
-    const annualDep = value * (depRate / 100);
-    const accumulatedDep = annualDep * years;
-    const netBookValue = Math.max(value - accumulatedDep, 0);
+  let html = "<h4>Totals by Business</h4>";
+  for (const [biz, totals] of Object.entries(totalsByBusiness)) {
+    html += `<p>${biz}: Value
 
-    // Save asset keyed by tag
-    assetData[business][tag] = { name, category, value, depRate, annualDep, accumulatedDep, netBookValue };
+{totals.value.toFixed(2)} | Accumulated Dep 
 
-    renderTable();
-    clearInputs();
+{totals.dep.toFixed(2)} | Net Book Value $${totals.nbv.toFixed(2)}</p>`;
   }
-
-  function renderTable() {
-    const tbody = document.querySelector('#assetTable tbody');
-    tbody.innerHTML = '';
-
-    let grandTotal = 0;
-    let businessTotals = {};
-
-    for (const [business, assets] of Object.entries(assetData)) {
-      let subtotal = 0;
-      for (const [tag, record] of Object.entries(assets)) {
-        const row = `<tr>
-          <td>${business}</td>
-          <td>${tag}</td>
-          <td>${record.name}</td>
-          <td>${record.category}</td>
-          <td>$${record.value.toFixed(2)}</td>
-          <td>${record.depRate.toFixed(2)}%</td>
-          <td>
-
-{record.annualDep.toFixed(2)}</td>
-          <td>
-
-{record.accumulatedDep.toFixed(2)}</td>
-          <td>$${record.netBookValue.toFixed(2)}</td>
-        </tr>`;
-        tbody.innerHTML += row;
-        subtotal += record.netBookValue;
-        grandTotal += record.netBookValue;
-      }
-      businessTotals[business] = subtotal;
-    }
-
-    let totalsText = "Business Net Book Values:\n";
-    for (const [business, subtotal] of Object.entries(businessTotals)) {
-      totalsText += `${business}:
-
-{subtotal.toFixed(2)}\n`;
-    }
-    totalsText += `Grand Total Net Book Value: 
-
-{grandTotal.toFixed(2)}`;
-
-    document.getElementById('totals').innerText = totalsText;
-  }
-
-  function clearInputs() {
-    document.getElementById('assetTag').value = '';
-    document.getElementById('assetName').value = '';
-    document.getElementById('assetCategory').value = '';
-    document.getElementById('assetValue').value = '';
-    document.getElementById('assetDep').value = '';
-    document.getElementById('assetYears').value = '';
-  }
+  document.getElementById("totals").innerHTML = html;
+}
