@@ -89,17 +89,24 @@ function updateTotals() {
 }
 function filterAssets() {
   const input = document.getElementById("searchInput").value.toLowerCase();
+  const businessFilter = document.getElementById("businessFilter").value.toLowerCase();
   const rows = document.querySelectorAll("#assetTable tbody tr");
 
   rows.forEach(row => {
+    const business = row.cells[0].innerText.toLowerCase();
     const tag = row.cells[1].innerText.toLowerCase();
     const name = row.cells[2].innerText.toLowerCase();
     const category = row.cells[3].innerText.toLowerCase();
 
-    if (tag.includes(input) || name.includes(input) || category.includes(input)) {
+    const matchesText = tag.includes(input) || name.includes(input) || category.includes(input) || business.includes(input);
+    const matchesBusiness = !businessFilter || business === businessFilter.toLowerCase();
+
+    if (matchesText && matchesBusiness) {
       row.style.display = "";
     } else {
       row.style.display = "none";
     }
+  });
+}
   });
 }
