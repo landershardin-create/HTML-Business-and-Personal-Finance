@@ -72,8 +72,17 @@ function editAsset(button) {
 
 function deleteAsset(button) {
   const row = button.closest("tr");
-  row.remove();
-  updateTotals();
+  const assetName = row.cells[2].innerText; // show the asset name in the prompt
+  const confirmDelete = confirm(`Are you sure you want to delete asset "${assetName}"?`);
+
+  if (confirmDelete) {
+    row.remove();
+    updateTotals();
+
+    // also update localStorage so the deletion persists
+    assetList = assetList.filter(asset => asset.name !== assetName);
+    localStorage.setItem("assets", JSON.stringify(assetList));
+  }
 }
 
 function updateTotals() {
@@ -122,23 +131,26 @@ function filterAssets() {
     row.style.display = (matchesText && matchesBusiness) ? "" : "none";
   });
 }
-function deleteAsset(button) {
-  const row = button.closest("tr");
-  const assetName = row.cells[2].innerText; // show the asset name in the prompt
-  const confirmDelete = confirm(`Are you sure you want to delete asset "${assetName}"?`);
+function clearAllAssets() {
+  const confirmClear = confirm("Are you sure you want to clear ALL assets? This action cannot be undone.");
 
-  if (confirmDelete) {
-    row.remove();
-    updateTotals();
+  if (confirmClear) {
+    // Clear table
+    const tableBody = document.getElementById("assetTable").querySelector("tbody");
+    tableBody.innerHTML = "";
 
-    // also update localStorage so the deletion persists
-    assetList = assetList.filter(asset => asset.name !== assetName);
-    localStorage.setItem("assets", JSON.stringify(assetList));
+    // Clear totals
+    document.getElementById("totals").innerHTML = "";
+
+    // Reset asset list and localStorage
+    assetList = [];
+    localStorage.removeItem("assets");
   }
 }
 
 window.onload = function() {
   const savedAssets = JSON.parse(localStorage.getItem("assets")) || [];
+  assetList = savedAssets; // restore into memory
   savedAssets.forEach(asset => {
     const { business, tag, name, category, value, depRate, years } = asset;
     const annualDep = value * depRate;
