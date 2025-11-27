@@ -108,7 +108,11 @@ function filterAssets() {
     } else {
       row.style.display = "none";
     }
+
+function calculateDepreciation(value, rate, years) {
+  const annualDep = value * (rate / 100);
+  const accumulatedDep = annualDep * years;
+  const netBookValue = value - accumulatedDep;
+  return { annualDep, accumulatedDep, netBookValue };
+ }
   });
-}
-  });
-}
