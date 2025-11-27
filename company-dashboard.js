@@ -11,27 +11,49 @@ const carouselDisplay = document.getElementById("carouselDisplay");
 
 // --- OWNER MANAGEMENT ---
 document.getElementById("addOwnerBtn").addEventListener("click", () => {
-  const ownerName = document.getElementById("ownerName")?.value || document.getElementById("Owner").value;
+  const ownerName = document.getElementById("ownerName").value;
   if (ownerName.trim()) {
     const container = document.getElementById("ownersContainer");
     const div = document.createElement("div");
     div.textContent = ownerName;
+
+    // Add remove button
+    const removeBtn = document.createElement("button");
+    removeBtn.textContent = "Remove";
+    removeBtn.type = "button";
+    removeBtn.addEventListener("click", () => {
+      container.removeChild(div);
+      updateOwnerFilter(); // keep filter list in sync
+    });
+
+    div.appendChild(removeBtn);
     container.appendChild(div);
-    document.getElementById("Owner").value = "";
+    document.getElementById("ownerName").value = "";
   }
 });
 
 // --- PARTNER MANAGEMENT ---
 document.getElementById("addPartnerBtn").addEventListener("click", () => {
-  const partnerName = document.getElementById("partnerName")?.value || document.getElementById("Partner").value;
-  const partnerShare = document.getElementById("partnerShare")?.value || document.getElementById("PartnerShare").value;
+  const partnerName = document.getElementById("partnerName").value;
+  const partnerShare = document.getElementById("partnerShare").value;
   if (partnerName.trim() && partnerShare.trim()) {
     const container = document.getElementById("partnersContainer");
     const div = document.createElement("div");
     div.textContent = `${partnerName} - ${partnerShare}%`;
+
+    // Add remove button
+    const removeBtn = document.createElement("button");
+    removeBtn.textContent = "Remove";
+    removeBtn.type = "button";
+    removeBtn.addEventListener("click", () => {
+      container.removeChild(div);
+      validateOwnership(); // re-check ownership sum
+    });
+
+    div.appendChild(removeBtn);
     container.appendChild(div);
-    document.getElementById("Partner").value = "";
-    document.getElementById("PartnerShare").value = "";
+    document.getElementById("partnerName").value = "";
+    document.getElementById("partnerShare").value = "";
     validateOwnership();
   }
 });
@@ -181,6 +203,52 @@ document.getElementById("syncToGitHubBtn").addEventListener("click", () => {
 document.getElementById("loadFromGitHubBtn").addEventListener("click", () => {
   alert("Load from GitHub not yet implemented.");
 });
+
+let deletedCompanies = [];
+
+// --- FORM SUBMISSION ---
+companyForm.addEventListener("submit", e => {
+  e.preventDefault();
+  const company = {
+    name: document.getElementById("companyName").value,
+    city: document.getElementById("city").value,
+    state: document.getElementById("state").value,
+    role: document.getElementById("companyRole").value,
+    type: document.getElementById("companyType").value,
+    owners: Array.from(document.querySelectorAll("#ownersContainer div")).map(d => d.firstChild.textContent),
+    partners: Array.from(document.querySelectorAll("#partnersContainer div")).map(d => d.firstChild.textContent)
+  };
+  companies.push(company);
+  renderCompanyList();
+  updateOwnerFilter();
+  companyForm.reset();
+  document.getElementById("ownersContainer").innerHTML = "";
+  document.getElementById("partnersContainer").innerHTML = "";
+});
+
+// --- CLEAR ALL ---
+document.getElementById("clearBtn").addEventListener("click", () => {
+  deletedCompanies = [...companies]; // save snapshot
+  companies.length = 0;
+  companyList.innerHTML = "";
+  carouselDisplay.textContent = "";
+  ownerFilter.innerHTML = '<option value="">All Owners</option>';
+});
+
+// --- UNDO ---
+const undoBtn = document.createElement("button");
+undoBtn.textContent = "Undo Last Clear";
+undoBtn.type = "button";
+undoBtn.addEventListener("click", () => {
+  if (deletedCompanies.length > 0) {
+    companies.push(...deletedCompanies);
+    deletedCompanies = [];
+    renderCompanyList();
+    updateOwnerFilter();
+    renderCarousel();
+  }
+});
+document.querySelector(".filter-export").appendChild(undoBtn);
 
 // Initial render
 renderCarousel();
