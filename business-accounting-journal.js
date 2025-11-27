@@ -1,103 +1,76 @@
-const accountForm = document.getElementById('accountForm');
-const linkedAccountSelect = document.getElementById('linkedAccount');
-const accountList = document.createElement('ul');
-accountList.id = "accountList";
-accountForm.appendChild(accountList);
+const entryForm = document.getElementById('entryForm');
+const journalEntriesList = document.createElement('ul');
+journalEntriesList.id = "journalEntriesList";
+document.getElementById('journalEntries').appendChild(journalEntriesList);
 
-const companyHeaderSelect = document.getElementById('companyHeaderSelect');
-const journalCompany = document.getElementById('journalCompany');
-const entryCompany = document.getElementById('entryCompany');
-const accountCompany = document.getElementById('accountCompany');
-
-// --- Helper: ensure optgroup exists for a company ---
-function getOrCreateOptGroup(company) {
-  let optGroup = linkedAccountSelect.querySelector(`optgroup[label="${company}"]`);
-  if (!optGroup) {
-    optGroup = document.createElement('optgroup');
-    optGroup.label = company;
-    linkedAccountSelect.appendChild(optGroup);
-  }
-  return optGroup;
-}
-
-// --- Load saved accounts on page load ---
+// --- Load saved entries on page load ---
 window.addEventListener('DOMContentLoaded', () => {
-  const savedAccounts = JSON.parse(localStorage.getItem('accounts')) || [];
-  savedAccounts.forEach(acc => addAccountOption(acc.company, acc.value, acc.text));
+  const savedEntries = JSON.parse(localStorage.getItem('entries')) || [];
+  renderEntries(savedEntries);
 });
 
-// --- Handle account creation ---
-accountForm.addEventListener('submit', e => {
+// --- Handle new entry creation ---
+entryForm.addEventListener('submit', e => {
   e.preventDefault();
 
-  const accountName = document.getElementById('accountName').value.trim();
-  const company = document.getElementById('accountCompany').value;
+  const entryLabel = document.getElementById('entryLabel').value.trim();
+  const amount = document.getElementById('amount').value;
+  const company = document.getElementById('entryCompany').value;
+  const accountId = document.getElementById('linkedAccount').value;
 
-  if (accountName && company) {
-    const optionValue = `${company}-${accountName.toLowerCase().replace(/\s+/g, '-')}`;
-    const optionText = accountName;
-
-    addAccountOption(company, optionValue, optionText);
+  if (entryLabel && amount && company) {
+    const entry = {
+      id: Date.now(),
+      company,
+      label: entryLabel,
+      amount,
+      accountId,
+      timestamp: new Date().toLocaleString()
+    };
 
     // Save to localStorage
-    const savedAccounts = JSON.parse(localStorage.getItem('accounts')) || [];
-    savedAccounts.push({ company, value: optionValue, text: optionText });
-    localStorage.setItem('accounts', JSON.stringify(savedAccounts));
+    const savedEntries = JSON.parse(localStorage.getItem('entries')) || [];
+    savedEntries.push(entry);
+    localStorage.setItem('entries', JSON.stringify(savedEntries));
+
+    renderEntries(savedEntries);
   }
 
-  accountForm.reset();
+  entryForm.reset();
 });
 
-// --- Helper: add account to dropdown + list with delete button ---
-function addAccountOption(company, value, text) {
-  const optGroup = getOrCreateOptGroup(company);
+// --- Render entries filtered by active company ---
+function renderEntries(entries) {
+  journalEntriesList.innerHTML = "";
+  const activeCompany = document.getElementById('companyHeaderSelect').value;
 
-  // Dropdown option
-  const option = document.createElement('option');
-  option.value = value;
-  option.textContent = text;
-  optGroup.appendChild(option);
+  entries
+    .filter(entry => !activeCompany || entry.company === activeCompany)
+    .forEach(entry => {
+      const li = document.createElement('li');
+      li.textContent = `${entry.label} - $${entry.amount} (${entry.company}) [${entry.timestamp}]`;
 
-  // List item with delete button
-  const li = document.createElement('li');
-  li.textContent = `${text} (${company}) `;
-  const deleteBtn = document.createElement('button');
-  deleteBtn.textContent = "❌";
-  deleteBtn.type = "button";
-  deleteBtn.addEventListener('click', () => {
-    const confirmDelete = confirm(`Remove account "${text}" from ${company}?`);
-    if (confirmDelete) {
-      // Remove from dropdown
-      [...optGroup.querySelectorAll('option')].forEach(opt => {
-        if (opt.value === value) opt.remove();
+      // Delete button
+      const deleteBtn = document.createElement('button');
+      deleteBtn.textContent = "❌";
+      deleteBtn.type = "button";
+      deleteBtn.addEventListener('click', () => {
+        const confirmDelete = confirm(`Remove entry "${entry.label}" from ${entry.company}?`);
+        if (confirmDelete) {
+          let savedEntries = JSON.parse(localStorage.getItem('entries')) || [];
+          savedEntries = savedEntries.filter(e => e.id !== entry.id);
+          localStorage.setItem('entries', JSON.stringify(savedEntries));
+          renderEntries(savedEntries);
+        }
       });
-      // Remove from localStorage
-      let savedAccounts = JSON.parse(localStorage.getItem('accounts')) || [];
-      savedAccounts = savedAccounts.filter(acc => acc.value !== value);
-      localStorage.setItem('accounts', JSON.stringify(savedAccounts));
-      // Remove from list
-      li.remove();
-    }
-  });
-  li.appendChild(deleteBtn);
-  accountList.appendChild(li);
+
+      li.appendChild(deleteBtn);
+      journalEntriesList.appendChild(li);
+    });
 }
 
-// --- Sync header selection to forms ---
-companyHeaderSelect.addEventListener('change', () => {
-  const selectedCompany = companyHeaderSelect.value;
-  if (selectedCompany) {
-    journalCompany.value = selectedCompany;
-    entryCompany.value = selectedCompany;
-    accountCompany.value = selectedCompany;
-  }
-});
-
-// --- Sync forms back to header ---
-[journalCompany, entryCompany, accountCompany].forEach(select => {
-  select.addEventListener('change', () => {
-    if (select.value) {
-      companyHeaderSelect.value = select.value;
-    }
-  });
+// --- Re-render entries when active company changes ---
+document.getElementById('companyHeaderSelect').addEventListener('change', () => {
+  const savedEntries = JSON.parse(localStorage.getItem('entries')) || [];
+  renderEntries(savedEntries);
 });
