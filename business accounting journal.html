@@ -7,14 +7,21 @@
 </head>
 <body>
 
+  <!-- 🔗 Navigation -->
+  <nav class="dashboard-nav">
+    <ul>
+      <li><a href="company-dashboard.html">🏢 Company Manager Dashboard</a></li>
+      <li><a href="business-account.html">🧮 Business Account Manager</a></li>
+      <li><a href="business-journal.html">📘 Journal Manager</a></li>
+    </ul>
+  </nav>
+
   <!-- 🏢 Company Header -->
   <div class="company-header">
     <label for="companyHeaderSelect">Active Company:</label>
     <select id="companyHeaderSelect" name="activeCompany">
       <option value="">-- Select Company --</option>
-      <option value="acme">Acme Corp</option>
-      <option value="globex">Globex Inc</option>
-      <option value="initech">Initech LLC</option>
+      <!-- Companies will be populated dynamically -->
     </select>
   </div>
 
@@ -26,9 +33,7 @@
         <label for="journalCompany">Company:</label>
         <select id="journalCompany" name="companyId" required>
           <option value="">-- Select Company --</option>
-          <option value="acme">Acme Corp</option>
-          <option value="globex">Globex Inc</option>
-          <option value="initech">Initech LLC</option>
+          <!-- Companies populated dynamically -->
         </select>
       </div>
 
@@ -53,9 +58,7 @@
           <label for="entryCompany">Company:</label>
           <select id="entryCompany" name="companyId" required>
             <option value="">-- Select Company --</option>
-            <option value="acme">Acme Corp</option>
-            <option value="globex">Globex Inc</option>
-            <option value="initech">Initech LLC</option>
+            <!-- Companies populated dynamically -->
           </select>
         </div>
 
@@ -94,9 +97,7 @@
         <label for="accountCompany">Company:</label>
         <select id="accountCompany" name="companyId" required>
           <option value="">-- Select Company --</option>
-          <option value="acme">Acme Corp</option>
-          <option value="globex">Globex Inc</option>
-          <option value="initech">Initech LLC</option>
+          <!-- Companies populated dynamically -->
         </select>
       </div>
 
@@ -120,127 +121,6 @@
   <canvas id="monthlyTotalsChart" width="400" height="400"></canvas>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-    let accountTypeChart;
-    let monthlyTotalsChart;
-
-    function renderEntries(entries) {
-      const journalEntriesList = document.getElementById('journalEntriesList');
-      const totalsDisplay = document.getElementById('companyTotals');
-      journalEntriesList.innerHTML = "";
-      totalsDisplay.innerHTML = "";
-
-      const activeCompany = document.getElementById('companyHeaderSelect').value;
-      const filtered = entries.filter(entry => !activeCompany || entry.company === activeCompany);
-
-      let grandTotal = 0;
-      const typeTotals = {};
-      const monthlyTotals = {};
-
-      filtered.forEach(entry => {
-        grandTotal += entry.amount;
-        typeTotals[entry.accountType] = (typeTotals[entry.accountType] || 0) + entry.amount;
-
-        const monthKey = new Date(entry.timestamp).toLocaleString('default', { month: 'short', year: 'numeric' });
-        monthlyTotals[monthKey] = (monthlyTotals[monthKey] || 0) + entry.amount;
-
-        const li = document.createElement('li');
-        li.textContent = `${entry.label} - $${entry.amount} (${entry.company}, ${entry.accountType}) [${entry.timestamp}]`;
-
-        const deleteBtn = document.createElement('button');
-        deleteBtn.textContent = "❌";
-        deleteBtn.type = "button";
-        deleteBtn.addEventListener('click', () => {
-          const confirmDelete = confirm(`Remove entry "${entry.label}" from ${entry.company}?`);
-          if (confirmDelete) {
-            let savedEntries = JSON.parse(localStorage.getItem('entries')) || [];
-            savedEntries = savedEntries.filter(e => e.id !== entry.id);
-            localStorage.setItem('entries', JSON.stringify(savedEntries));
-            renderEntries(savedEntries);
-          }
-        });
-
-        li.appendChild(deleteBtn);
-        journalEntriesList.appendChild(li);
-      });
-
-      // ✅ Fixed totals display
-        if (activeCompany) {
-          totalsDisplay.innerHTML = `<strong>Total for ${activeCompany}:
-        
-        {grandTotal.toFixed(2)}</strong><br>`;
-        } else {
-          totalsDisplay.innerHTML = `<strong>All Companies Total: 
-          
-        
-        {grandTotal.toFixed(2)}</strong><br>`;
-        }
-
-      for (const [type, total] of Object.entries(typeTotals)) {
-        const p = document.createElement('p');
-        p.textContent = `${type}: $${total.toFixed(2)}`;
-        totalsDisplay.appendChild(p);
-      }
-
-      // Render pie chart (account type breakdown)
-      const ctxPie = document.getElementById('accountTypeChart').getContext('2d');
-      if (accountTypeChart) accountTypeChart.destroy();
-      accountTypeChart = new Chart(ctxPie, {
-        type: 'pie',
-        data: {
-          labels: Object.keys(typeTotals),
-          datasets: [{
-            data: Object.values(typeTotals),
-            backgroundColor: ['#4CAF50','#FF9800','#2196F3','#9C27B0','#F44336']
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { position: 'bottom' },
-            title: {
-              display: true,
-              text: activeCompany ? `Breakdown for ${activeCompany}` : 'Breakdown for All Companies'
-            }
-          }
-        }
-      });
-
-      // Render bar chart (monthly totals)
-      const ctxBar = document.getElementById('monthlyTotalsChart').getContext('2d');
-      if (monthlyTotalsChart) monthlyTotalsChart.destroy();
-      monthlyTotalsChart = new Chart(ctxBar, {
-        type: 'bar',
-        data: {
-          labels: Object.keys(monthlyTotals),
-          datasets: [{
-            label: 'Monthly Totals',
-            data: Object.values(monthlyTotals),
-            backgroundColor: '#2196F3'
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { display: false },
-            title: {
-              display: true,
-              text: activeCompany ? `Monthly Totals for ${activeCompany}` : 'Monthly Totals for All Companies'
-            }
-          },
-          scales: {
-            y: { beginAtZero: true }
-          }
-        }
-      });
-    }
-
-    // Re-render entries when active company changes
-    document.getElementById('companyHeaderSelect').addEventListener('change', () => {
-      const savedEntries = JSON.parse(localStorage.getItem('entries')) || [];
-      renderEntries(savedEntries);
-    });
-    </script>
-  </body>
+  <script src="business-journal.js"></script>
+</body>
 </html>
-  
