@@ -1,1 +1,6 @@
-
+    body { font-family: sans-serif; margin: 20px; }
+    .section { margin-bottom: 40px; }
+    .form-group { margin-bottom: 10px; }
+    label { display: block; margin-bottom: 4px; }
+    select, input, textarea { width: 100%; padding: 8px; }
+    .company-header { font-size: 1.2em; font-weight: bold; margin-bottom: 10px; }
