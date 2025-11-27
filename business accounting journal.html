@@ -106,6 +106,99 @@
       <button type="submit">Create Account</button>
     </form>
   </div>
+<!-- Add this in your HTML body where you want the chart -->
+<canvas id="accountTypeChart" width="400" height="400"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  let accountTypeChart;
+
+  function renderEntries(entries) {
+    journalEntriesList.innerHTML = "";
+    totalsDisplay.innerHTML = "";
+    const activeCompany = document.getElementById('companyHeaderSelect').value;
+
+    const filtered = entries.filter(entry => !activeCompany || entry.company === activeCompany);
+
+    let grandTotal = 0;
+    const typeTotals = {};
+
+    filtered.forEach(entry => {
+      grandTotal += entry.amount;
+      typeTotals[entry.accountType] = (typeTotals[entry.accountType] || 0) + entry.amount;
+
+      const li = document.createElement('li');
+      li.textContent = `${entry.label} - $${entry.amount} (${entry.company}, ${entry.accountType}) [${entry.timestamp}]`;
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.textContent = "❌";
+      deleteBtn.type = "button";
+      deleteBtn.addEventListener('click', () => {
+        const confirmDelete = confirm(`Remove entry "${entry.label}" from ${entry.company}?`);
+        if (confirmDelete) {
+          let savedEntries = JSON.parse(localStorage.getItem('entries')) || [];
+          savedEntries = savedEntries.filter(e => e.id !== entry.id);
+          localStorage.setItem('entries', JSON.stringify(savedEntries));
+          renderEntries(savedEntries);
+        }
+      });
+
+      li.appendChild(deleteBtn);
+      journalEntriesList.appendChild(li);
+    });
+
+    // Display totals
+    if (activeCompany) {
+      totalsDisplay.innerHTML = `<strong>Total for ${activeCompany}:
+
+{grandTotal.toFixed(2)}</strong><br>`;
+    } else {
+      totalsDisplay.innerHTML = `<strong>All Companies Total: 
+
+{grandTotal.toFixed(2)}</strong><br>`;
+    }
+
+    for (const [type, total] of Object.entries(typeTotals)) {
+      const p = document.createElement('p');
+      p.textContent = `${type}: $${total.toFixed(2)}`;
+      totalsDisplay.appendChild(p);
+    }
+
+    // Render chart
+    const ctx = document.getElementById('accountTypeChart').getContext('2d');
+    const labels = Object.keys(typeTotals);
+    const data = Object.values(typeTotals);
+
+    if (accountTypeChart) {
+      accountTypeChart.destroy(); // Clear old chart
+    }
+
+    accountTypeChart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: data,
+          backgroundColor: [
+            '#4CAF50', '#FF9800', '#2196F3', '#9C27B0', '#F44336'
+          ]
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'bottom'
+          },
+          title: {
+            display: true,
+            text: activeCompany ? `Breakdown for ${activeCompany}` : 'Breakdown for All Companies'
+          }
+        }
+      }
+    });
+  }
+</script>
   <script src="https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/js/business-accounting-journal-tracker.js"></script>
 </body>
 </html>
