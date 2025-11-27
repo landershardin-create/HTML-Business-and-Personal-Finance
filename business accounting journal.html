@@ -164,7 +164,7 @@
         journalEntriesList.appendChild(li);
       });
 
-      // Display totals
+      // ✅ Fixed totals display
       if (activeCompany) {
         totalsDisplay.innerHTML = `<strong>Total for ${activeCompany}:
 
@@ -233,17 +233,7 @@
         }
       });
     }
-// Re-render entries when active company changes
+
+    // Re-render entries when active company changes
     document.getElementById('companyHeaderSelect').addEventListener('change', () => {
       const savedEntries = JSON.parse(localStorage.getItem('entries')) || [];
-      renderEntries(savedEntries);
-    });
-
-    // Initial render on page load
-    window.addEventListener('DOMContentLoaded', () => {
-      const savedEntries = JSON.parse(localStorage.getItem('entries')) || [];
-      renderEntries(savedEntries);
-    });
-  </script>
-</body>
-</html>
