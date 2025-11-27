@@ -36,6 +36,27 @@ document.getElementById("addPartnerBtn").addEventListener("click", () => {
   }
 });
 
+// --- COMPANY TYPE TOGGLE ---
+document.getElementById("companyType").addEventListener("change", e => {
+  const type = e.target.value;
+
+  // Partnership shows partner section only
+  if (type === "Partnership") {
+    document.getElementById("partnerSection").style.display = "block";
+    document.getElementById("ownersSection").style.display = "none";
+  } 
+  // LLC and Corporation should show owners section (like Sole Proprietor)
+  else if (type === "LLC" || type === "Corporation" || type === "Sole Proprietor" || type === "Nonprofit") {
+    document.getElementById("partnerSection").style.display = "none";
+    document.getElementById("ownersSection").style.display = "block";
+  } 
+  // Default case
+  else {
+    document.getElementById("partnerSection").style.display = "none";
+    document.getElementById("ownersSection").style.display = "block";
+  }
+});
+
 function validateOwnership() {
   const partners = document.querySelectorAll("#partnersContainer div");
   let total = 0;
