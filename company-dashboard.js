@@ -288,3 +288,10 @@
     updateCompanyList();
     updateOwnerFilter();
     updateCarousel();
+    
+// Example: saving companies from dashboard
+function saveCompany(name, id) {
+  let companies = JSON.parse(localStorage.getItem('companies')) || [];
+  companies.push({ id, name });
+  localStorage.setItem('companies', JSON.stringify(companies));
+}
