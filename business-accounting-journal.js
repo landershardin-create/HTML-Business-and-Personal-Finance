@@ -23,6 +23,11 @@ entryForm.addEventListener('submit', e => {
   const company = document.getElementById('entryCompany').value;
   const accountId = document.getElementById('linkedAccount').value;
 
+  // Look up account type from account list (stored in localStorage)
+  const savedAccounts = JSON.parse(localStorage.getItem('accounts')) || [];
+  const account = savedAccounts.find(acc => acc.value === accountId);
+  const accountType = account ? acc.accountType || "Uncategorized" : "Uncategorized";
+
   if (entryLabel && !isNaN(amount) && company) {
     const entry = {
       id: Date.now(),
@@ -30,6 +35,7 @@ entryForm.addEventListener('submit', e => {
       label: entryLabel,
       amount,
       accountId,
+      accountType,
       timestamp: new Date().toLocaleString()
     };
 
@@ -52,12 +58,15 @@ function renderEntries(entries) {
 
   const filtered = entries.filter(entry => !activeCompany || entry.company === activeCompany);
 
-  let total = 0;
+  let grandTotal = 0;
+  const typeTotals = {};
+
   filtered.forEach(entry => {
-    total += entry.amount;
+    grandTotal += entry.amount;
+    typeTotals[entry.accountType] = (typeTotals[entry.accountType] || 0) + entry.amount;
 
     const li = document.createElement('li');
-    li.textContent = `${entry.label} - $${entry.amount} (${entry.company}) [${entry.timestamp}]`;
+    li.textContent = `${entry.label} - $${entry.amount} (${entry.company}, ${entry.accountType}) [${entry.timestamp}]`;
 
     // Delete button
     const deleteBtn = document.createElement('button');
@@ -77,6 +86,27 @@ function renderEntries(entries) {
     journalEntriesList.appendChild(li);
   });
 
-  // Display total
+  // Display totals
   if (activeCompany) {
-    totals
+    totalsDisplay.innerHTML = `<strong>Total for ${activeCompany}:
+
+{grandTotal.toFixed(2)}</strong><br>`;
+  } else {
+    totalsDisplay.innerHTML = `<strong>All Companies Total: 
+
+{grandTotal.toFixed(2)}</strong><br>`;
+  }
+
+  // Breakdown by account type
+  for (const [type, total] of Object.entries(typeTotals)) {
+    const p = document.createElement('p');
+    p.textContent = `${type}: $${total.toFixed(2)}`;
+    totalsDisplay.appendChild(p);
+  }
+}
+
+// --- Re-render entries when active company changes ---
+document.getElementById('companyHeaderSelect').addEventListener('change', () => {
+  const savedEntries = JSON.parse(localStorage.getItem('entries')) || [];
+  renderEntries(savedEntries);
+});
