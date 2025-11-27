@@ -4,7 +4,12 @@ const accountList = document.createElement('ul');
 accountList.id = "accountList";
 accountForm.appendChild(accountList);
 
-// Helper: ensure optgroup exists for a company
+const companyHeaderSelect = document.getElementById('companyHeaderSelect');
+const journalCompany = document.getElementById('journalCompany');
+const entryCompany = document.getElementById('entryCompany');
+const accountCompany = document.getElementById('accountCompany');
+
+// --- Helper: ensure optgroup exists for a company ---
 function getOrCreateOptGroup(company) {
   let optGroup = linkedAccountSelect.querySelector(`optgroup[label="${company}"]`);
   if (!optGroup) {
@@ -15,12 +20,13 @@ function getOrCreateOptGroup(company) {
   return optGroup;
 }
 
-// Load saved accounts on page load
+// --- Load saved accounts on page load ---
 window.addEventListener('DOMContentLoaded', () => {
   const savedAccounts = JSON.parse(localStorage.getItem('accounts')) || [];
   savedAccounts.forEach(acc => addAccountOption(acc.company, acc.value, acc.text));
 });
 
+// --- Handle account creation ---
 accountForm.addEventListener('submit', e => {
   e.preventDefault();
 
@@ -29,7 +35,7 @@ accountForm.addEventListener('submit', e => {
 
   if (accountName && company) {
     const optionValue = `${company}-${accountName.toLowerCase().replace(/\s+/g, '-')}`;
-    const optionText = `${accountName}`;
+    const optionText = accountName;
 
     addAccountOption(company, optionValue, optionText);
 
@@ -42,7 +48,7 @@ accountForm.addEventListener('submit', e => {
   accountForm.reset();
 });
 
-// Helper: add account to dropdown + list with delete button
+// --- Helper: add account to dropdown + list with delete button ---
 function addAccountOption(company, value, text) {
   const optGroup = getOrCreateOptGroup(company);
 
@@ -51,31 +57,6 @@ function addAccountOption(company, value, text) {
   option.value = value;
   option.textContent = text;
   optGroup.appendChild(option);
-  
-const companyHeaderSelect = document.getElementById('companyHeaderSelect');
-const journalCompany = document.getElementById('journalCompany');
-const entryCompany = document.getElementById('entryCompany');
-const accountCompany = document.getElementById('accountCompany');
-
-// Sync header selection to forms
-companyHeaderSelect.addEventListener('change', () => {
-  const selectedCompany = companyHeaderSelect.value;
-
-  if (selectedCompany) {
-    journalCompany.value = selectedCompany;
-    entryCompany.value = selectedCompany;
-    accountCompany.value = selectedCompany;
-  }
-});
-
-// Optional: when forms change company, update header too
-[journalCompany, entryCompany, accountCompany].forEach(select => {
-  select.addEventListener('change', () => {
-    if (select.value) {
-      companyHeaderSelect.value = select.value;
-    }
-  });
-});
 
   // List item with delete button
   const li = document.createElement('li');
@@ -101,3 +82,22 @@ companyHeaderSelect.addEventListener('change', () => {
   li.appendChild(deleteBtn);
   accountList.appendChild(li);
 }
+
+// --- Sync header selection to forms ---
+companyHeaderSelect.addEventListener('change', () => {
+  const selectedCompany = companyHeaderSelect.value;
+  if (selectedCompany) {
+    journalCompany.value = selectedCompany;
+    entryCompany.value = selectedCompany;
+    accountCompany.value = selectedCompany;
+  }
+});
+
+// --- Sync forms back to header ---
+[journalCompany, entryCompany, accountCompany].forEach(select => {
+  select.addEventListener('change', () => {
+    if (select.value) {
+      companyHeaderSelect.value = select.value;
+    }
+  });
+});
