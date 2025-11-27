@@ -41,6 +41,32 @@
       <input type="text" id="zipCode" placeholder="ZIP Code" />
       <input type="text" id="companyEIN" placeholder="SSN# or EIN#" />
       <input type="text" id="companySEIN" placeholder="State EIN #" />
+      
+      <fieldset>
+      <legend>Address</legend>
+      <input type="text" id="streetAddress" placeholder="Street Address" />
+      <input type="text" id="city" placeholder="City" />
+      <input type="text" id="state" placeholder="State" />
+      <input type="number" id="zipCode" placeholder="ZIP Code" />
+    </fieldset>
+
+    <fieldset id="ownersSection">
+      <legend>Owner(s)</legend>
+      <div id="ownersContainer"></div>
+      <input type="text" id="ownerName" placeholder="Owner name" />
+      <button type="button" id="addOwnerBtn">Add Owner</button>
+    </fieldset>
+    
+    <fieldset id="partnerSection" style="display:none;">
+      <legend>Partners</legend>
+      <div id="partnersContainer"></div>
+      <input type="text" id="partnerName" placeholder="Partner name" />
+      <input type="number" id="partnerShare" placeholder="Partner share %" min="0" max="100" />
+      <button type="button" id="addPartnerBtn">Add Partner</button>
+      <p id="ownershipWarning" style="color:red; display:none;">
+        Total partner ownership must equal 100%.
+      </p>
+    </fieldset>
 
       <!-- OWNER SECTION -->
       <div id="ownersSection">
