@@ -94,3 +94,18 @@ button:hover {
   overflow-x: auto;
   white-space: nowrap;
 }
+/* Clear All Assets button styling */
+button.clear-all {
+  background: #d9534f;   /* Bootstrap-style red */
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  margin: 5px 0;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+button.clear-all:hover {
+  background: #c9302c;   /* darker red on hover */
+}
