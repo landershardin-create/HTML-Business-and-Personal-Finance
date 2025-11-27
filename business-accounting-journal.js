@@ -89,12 +89,13 @@ function renderEntries(entries) {
   // Display totals
   if (activeCompany) {
     totalsDisplay.innerHTML = `<strong>Total for ${activeCompany}:
-
-{grandTotal.toFixed(2)}</strong><br>`;
+  
+  {grandTotal.toFixed(2)}</strong><br>`;
   } else {
     totalsDisplay.innerHTML = `<strong>All Companies Total: 
-
-{grandTotal.toFixed(2)}</strong><br>`;
+    
+  
+  {grandTotal.toFixed(2)}</strong><br>`;
   }
 
   // Breakdown by account type
