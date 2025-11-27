@@ -104,6 +104,38 @@ function renderEntries(entries) {
     totalsDisplay.appendChild(p);
   }
 }
+function populateLinkedAccounts(company) {
+  const linkedAccountSelect = document.getElementById('linkedAccount');
+  linkedAccountSelect.innerHTML = '<option value="">-- Select Account --</option>';
+
+  const accounts = JSON.parse(localStorage.getItem('accounts')) || [];
+  const filtered = accounts.filter(acc => acc.company === company);
+
+  if (filtered.length > 0) {
+    const optgroup = document.createElement('optgroup');
+    optgroup.label = company;
+
+    filtered.forEach(acc => {
+      const option = document.createElement('option');
+      option.value = acc.id;
+      option.textContent = `${acc.name} (${acc.type})`;
+      optgroup.appendChild(option);
+    });
+
+    linkedAccountSelect.appendChild(optgroup);
+  }
+}
+document.getElementById('entryCompany').addEventListener('change', e => {
+  populateLinkedAccounts(e.target.value);
+});
+
+document.getElementById('companyHeaderSelect').addEventListener('change', e => {
+  const company = e.target.value;
+  document.getElementById('journalCompany').value = company;
+  document.getElementById('entryCompany').value = company;
+  document.getElementById('accountCompany').value = company;
+  populateLinkedAccounts(company);
+});
 
 // --- Re-render entries when active company changes ---
 document.getElementById('companyHeaderSelect').addEventListener('change', () => {
