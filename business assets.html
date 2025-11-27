@@ -28,6 +28,12 @@
     <label>Years in Service: <input type="number" id="assetYears"></label><br><br>
     <button onclick="addAsset()">Add Asset</button>
   </div>
+  
+  <!-- Search/Filter Bar -->
+  <div class="section">
+    <h3>Search Assets</h3>
+    <input type="text" id="searchInput" placeholder="Search by tag, name, or category..." onkeyup="filterAssets()">
+  </div>
 
   <!-- Asset Table -->
   <div class="section">
