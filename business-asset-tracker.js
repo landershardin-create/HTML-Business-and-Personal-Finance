@@ -110,6 +110,9 @@ function filterAssets() {
     const matchesBusiness = !businessFilter || business === businessFilter.toLowerCase();
 
     row.style.display = (matchesText && matchesBusiness) ? "" : "none";
+  });
+}
+
 window.onload = function() {
   const savedAssets = JSON.parse(localStorage.getItem("assets")) || [];
   savedAssets.forEach(asset => {
@@ -128,5 +131,15 @@ window.onload = function() {
       <td>$${value.toFixed(2)}</td>
       <td>${(depRate*100).toFixed(2)}%</td>
       <td>
+
+{annualDep.toFixed(2)}</td>
+      <td>
+
+{accumulatedDep.toFixed(2)}</td>
+      <td>$${netBookValue.toFixed(2)}</td>
+      <td><button onclick="editAsset(this)">Edit</button></td>
+      <td><button onclick="deleteAsset(this)">Delete</button></td>
+    `;
   });
-}
+  updateTotals();
+};
