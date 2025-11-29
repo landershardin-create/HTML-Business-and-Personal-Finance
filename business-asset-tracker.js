@@ -2,6 +2,7 @@ console.log("✅ Business Asset Tracker JS loaded successfully");
 
 let assetList = [];
 
+// -------------------- Asset Management --------------------
 function addAsset() {
   const business = document.getElementById("businessSelect").value;
   const tag = document.getElementById("assetTag").value;
@@ -42,16 +43,12 @@ function addAsset() {
   localStorage.setItem("assets", JSON.stringify(assetList));
 
   updateTotals();
-  resetForm(); // clear inputs after adding
+  resetForm();
 }
 
 function resetForm() {
-  document.getElementById("assetTag").value = "";
-  document.getElementById("assetName").value = "";
-  document.getElementById("assetCategory").value = "";
-  document.getElementById("assetValue").value = "";
-  document.getElementById("assetDep").value = "";
-  document.getElementById("assetYears").value = "";
+  ["assetTag","assetName","assetCategory","assetValue","assetDep","assetYears"]
+    .forEach(id => document.getElementById(id).value = "");
 }
 
 function editAsset(button) {
@@ -72,14 +69,12 @@ function editAsset(button) {
 
 function deleteAsset(button) {
   const row = button.closest("tr");
-  const assetName = row.cells[2].innerText; // show the asset name in the prompt
+  const assetName = row.cells[2].innerText;
   const confirmDelete = confirm(`Are you sure you want to delete asset "${assetName}"?`);
 
   if (confirmDelete) {
     row.remove();
     updateTotals();
-
-    // also update localStorage so the deletion persists
     assetList = assetList.filter(asset => asset.name !== assetName);
     localStorage.setItem("assets", JSON.stringify(assetList));
   }
@@ -107,9 +102,11 @@ function updateTotals() {
   for (const [biz, totals] of Object.entries(totalsByBusiness)) {
     html += `<p>${biz}: Value
 
-{totals.value.toFixed(2)} | Accumulated Dep 
+{totals.value.toFixed(2)} | 
+    Accumulated Dep 
 
-{totals.dep.toFixed(2)} | Net Book Value $${totals.nbv.toFixed(2)}</p>`;
+{totals.dep.toFixed(2)} | 
+    Net Book Value $${totals.nbv.toFixed(2)}</p>`;
   }
   document.getElementById("totals").innerHTML = html;
 }
@@ -131,38 +128,30 @@ function filterAssets() {
     row.style.display = (matchesText && matchesBusiness) ? "" : "none";
   });
 }
+
 function clearAllAssets() {
   const confirmClear = confirm("Are you sure you want to clear ALL assets? This action cannot be undone.");
-
   if (confirmClear) {
-    // Clear table
-    const tableBody = document.getElementById("assetTable").querySelector("tbody");
-    tableBody.innerHTML = "";
-
-    // Clear totals
+    document.getElementById("assetTable").querySelector("tbody").innerHTML = "";
     document.getElementById("totals").innerHTML = "";
-
-    // Reset asset list and localStorage
     assetList = [];
     localStorage.removeItem("assets");
   }
 }
-// Example: Company Manager Dashboard data
+
+// -------------------- Company Manager --------------------
 const companyManager = {
   companies: [
     { id: "BusinessA", name: "Business A" },
     { id: "BusinessB", name: "Business B" },
     { id: "BusinessC", name: "Business C" }
-    // Later: dynamically loaded from DB or API
   ]
 };
 
-// Populate dropdowns from Company Manager
 function populateBusinessDropdowns() {
   const businessSelect = document.getElementById("businessSelect");
   const businessFilter = document.getElementById("businessFilter");
 
-  // Clear existing options
   businessSelect.innerHTML = "";
   businessFilter.innerHTML = '<option value="">All Businesses</option>';
 
@@ -178,56 +167,50 @@ function populateBusinessDropdowns() {
     businessFilter.appendChild(opt2);
   });
 }
-// Assume your dashboard hub has a function to load/sync a company view
+
+// -------------------- Dashboard Sync --------------------
 function loadCompanyDashboard(companyId) {
   console.log(`📊 Switching dashboard to: ${companyId}`);
-  // Example: update navigation, charts, tables, etc.
-  // Replace with your actual dashboard hub logic
   const dashboardTitle = document.getElementById("dashboardTitle");
   if (dashboardTitle) {
-    dashboardTitle.textContent = `Dashboard: ${companyId}`;
+    dashboardTitle.textContent = companyId ? `Dashboard: ${companyId}` : "Dashboard: All Businesses";
   }
-  // TODO: trigger data refresh for selected company
+
+  // Sync filter + refresh
+  document.getElementById("businessFilter").value = companyId || "";
+  filterAssets();
+  updateTotals();
 }
 
-// Attach event listeners to dropdowns
 function attachBusinessSync() {
   const businessSelect = document.getElementById("businessSelect");
   const businessFilter = document.getElementById("businessFilter");
 
   businessSelect.addEventListener("change", (e) => {
-    const selectedCompany = e.target.value;
-    loadCompanyDashboard(selectedCompany);
+    loadCompanyDashboard(e.target.value);
   });
 
   businessFilter.addEventListener("change", (e) => {
-    const selectedCompany = e.target.value;
-    filterAssets(selectedCompany); // already exists
-    if (selectedCompany) {
-      loadCompanyDashboard(selectedCompany);
-    }
+    filterAssets();
+    if (e.target.value) loadCompanyDashboard(e.target.value);
   });
 }
 
-// Run after dropdowns are populated
+// -------------------- Initialization --------------------
 document.addEventListener("DOMContentLoaded", () => {
   populateBusinessDropdowns();
   attachBusinessSync();
-});
 
-// Run on page load
-document.addEventListener("DOMContentLoaded", populateBusinessDropdowns);
-
-window.onload = function() {
   const savedAssets = JSON.parse(localStorage.getItem("assets")) || [];
-  assetList = savedAssets; // restore into memory
+  assetList = savedAssets;
+  const table = document.getElementById("assetTable").querySelector("tbody");
+
   savedAssets.forEach(asset => {
     const { business, tag, name, category, value, depRate, years } = asset;
     const annualDep = value * depRate;
     const accumulatedDep = annualDep * years;
     const netBookValue = value - accumulatedDep;
 
-    const table = document.getElementById("assetTable").querySelector("tbody");
     const row = table.insertRow();
     row.innerHTML = `
       <td>${business}</td>
@@ -248,4 +231,5 @@ window.onload = function() {
     `;
   });
   updateTotals();
-};
+});
+``
