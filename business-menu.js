@@ -1,3 +1,5 @@
+// --- business-inventory.js---
+
 const baseURL = 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/modules/';
   const tabs = {
     businessjournal: 'business accounting journal.html',
