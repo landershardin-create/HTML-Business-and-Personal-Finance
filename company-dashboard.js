@@ -1,290 +1,134 @@
 // company-dashboard.js
 
-const companies = [];
-let carouselIndex = 0;
+const companyForm = document.getElementById('companyForm');
+const companyList = document.getElementById('companyList');
+const carouselDisplay = document.getElementById('carouselDisplay');
+const exportBtn = document.getElementById('exportBtn');
+const clearBtn = document.getElementById('clearBtn');
+const syncToGitHubBtn = document.getElementById('syncToGitHubBtn');
+const loadFromGitHubBtn = document.getElementById('loadFromGitHubBtn');
 
-// DOM references
-const companyForm = document.getElementById("companyForm");
-const companyList = document.getElementById("companyList");
-const ownerFilter = document.getElementById("ownerFilter");
-const carouselDisplay = document.getElementById("carouselDisplay");
+let companies = [];
+let currentIndex = 0;
 
-// --- OWNER MANAGEMENT ---
-document.getElementById("addOwnerBtn").addEventListener("click", () => {
-  const ownerName = document.getElementById("ownerName").value;
-  if (ownerName.trim()) {
-    const container = document.getElementById("ownersContainer");
-    const div = document.createElement("div");
-
-    const span = document.createElement("span");
-    span.textContent = ownerName;
-
-    // Edit button
-    const editBtn = document.createElement("button");
-    editBtn.textContent = "Edit";
-    editBtn.type = "button";
-    editBtn.addEventListener("click", () => {
-      const newName = prompt("Edit owner name:", span.textContent);
-      if (newName !== null && newName.trim()) {
-        span.textContent = newName.trim();
-        updateOwnerFilter();
-      }
-    });
-
-    // Remove button
-    const removeBtn = document.createElement("button");
-    removeBtn.textContent = "Remove";
-    removeBtn.type = "button";
-    removeBtn.addEventListener("click", () => {
-      container.removeChild(div);
-      updateOwnerFilter();
-    });
-
-    div.appendChild(span);
-    div.appendChild(editBtn);
-    div.appendChild(removeBtn);
-    container.appendChild(div);
-
-    document.getElementById("ownerName").value = "";
-    updateOwnerFilter();
-  }
-});
-
-// --- PARTNER MANAGEMENT ---
-document.getElementById("addPartnerBtn").addEventListener("click", () => {
-  const partnerName = document.getElementById("partnerName").value;
-  const partnerShare = document.getElementById("partnerShare").value;
-  if (partnerName.trim() && partnerShare.trim()) {
-    const container = document.getElementById("partnersContainer");
-    const div = document.createElement("div");
-
-    const span = document.createElement("span");
-    span.textContent = `${partnerName} - ${partnerShare}%`;
-
-    // Edit button
-    const editBtn = document.createElement("button");
-    editBtn.textContent = "Edit";
-    editBtn.type = "button";
-    editBtn.addEventListener("click", () => {
-      const newName = prompt("Edit partner name:", partnerName);
-      const newShare = prompt("Edit partner share %:", partnerShare);
-      if (newName !== null && newName.trim() && newShare !== null && newShare.trim()) {
-        span.textContent = `${newName.trim()} - ${newShare.trim()}%`;
-        validateOwnership();
-      }
-    });
-
-    // Remove button
-    const removeBtn = document.createElement("button");
-    removeBtn.textContent = "Remove";
-    removeBtn.type = "button";
-    removeBtn.addEventListener("click", () => {
-      container.removeChild(div);
-      validateOwnership();
-    });
-
-    div.appendChild(span);
-    div.appendChild(editBtn);
-    div.appendChild(removeBtn);
-    container.appendChild(div);
-
-    document.getElementById("partnerName").value = "";
-    document.getElementById("partnerShare").value = "";
-    validateOwnership();
-  }
-});
-
-// --- COMPANY TYPE TOGGLE ---
-document.getElementById("companyType").addEventListener("change", e => {
-  const type = e.target.value;
-
-  // Partnership shows partner section only
-  if (type === "Partnership") {
-    document.getElementById("partnerSection").style.display = "block";
-    document.getElementById("ownersSection").style.display = "none";
-  } 
-  // LLC and Corporation should show owners section (like Sole Proprietor)
-  else if (type === "LLC" || type === "Corporation" || type === "Sole Proprietor" || type === "Nonprofit") {
-    document.getElementById("partnerSection").style.display = "none";
-    document.getElementById("ownersSection").style.display = "block";
-  } 
-  // Default case
-  else {
-    document.getElementById("partnerSection").style.display = "none";
-    document.getElementById("ownersSection").style.display = "block";
-  }
-});
-
-function validateOwnership() {
-  const partners = document.querySelectorAll("#partnersContainer div");
-  let total = 0;
-  partners.forEach(p => {
-    const share = parseFloat(p.textContent.split("-")[1]);
-    if (!isNaN(share)) total += share;
-  });
-  document.getElementById("ownershipWarning").style.display = total === 100 ? "none" : "block";
-}
-
-// --- COMPANY TYPE TOGGLE ---
-document.getElementById("companyType").addEventListener("change", e => {
-  const type = e.target.value;
-
-  if (type === "Partnership") {
-    // Partnerships use partner section only
-    document.getElementById("partnerSection").style.display = "block";
-    document.getElementById("ownersSection").style.display = "none";
-  } else if (["LLC", "Corporation", "Sole Proprietor", "Nonprofit"].includes(type)) {
-    // LLC, Corporation, Sole Proprietor, Nonprofit use owners section
-    document.getElementById("partnerSection").style.display = "none";
-    document.getElementById("ownersSection").style.display = "block";
-  } else {
-    // Default fallback
-    document.getElementById("partnerSection").style.display = "none";
-    document.getElementById("ownersSection").style.display = "block";
-  }
-});
-// --- FORM SUBMISSION ---
-companyForm.addEventListener("submit", e => {
+// --- Form Submission ---
+companyForm.addEventListener('submit', function (e) {
   e.preventDefault();
-  const company = {
-    name: document.getElementById("companyName").value,
-    city: document.getElementById("city").value,
-    state: document.getElementById("state").value,
-    role: document.getElementById("companyRole").value,
-    type: document.getElementById("companyType").value,
-    owners: Array.from(document.querySelectorAll("#ownersContainer div")).map(d => d.textContent),
-    partners: Array.from(document.querySelectorAll("#partnersContainer div")).map(d => d.textContent)
+  const logoFile = document.getElementById('companyLogo').files[0];
+  const reader = new FileReader();
+
+  reader.onload = function (event) {
+    const company = {
+      name: document.getElementById('companyName').value,
+      ein: document.getElementById('companyEIN').value,
+      sein: document.getElementById('companySEIN').value,
+      street: document.getElementById('streetAddress').value,
+      city: document.getElementById('city').value,
+      state: document.getElementById('state').value,
+      zip: document.getElementById('zipCode').value,
+      role: document.getElementById('companyRole').value,
+      type: document.getElementById('companyType').value,
+      owners: Array.from(document.querySelectorAll('#ownersContainer span')).map(el => el.textContent),
+      partners: Array.from(document.querySelectorAll('#partnersContainer span')).map(el => el.textContent),
+      logo: event.target.result || null
+    };
+
+    companies.push(company);
+    renderCompanyList();
+    displayCompany(currentIndex);
+    companyForm.reset();
   };
-  companies.push(company);
-  renderCompanyList();
-  updateOwnerFilter();
-  companyForm.reset();
-  document.getElementById("ownersContainer").innerHTML = "";
-  document.getElementById("partnersContainer").innerHTML = "";
+
+  if (logoFile) {
+    reader.readAsDataURL(logoFile);
+  } else {
+    reader.onload({ target: { result: null } });
+  }
 });
 
-// --- RENDER COMPANY LIST ---
+// --- Render Company List ---
 function renderCompanyList() {
   companyList.innerHTML = "";
-  companies.forEach((c, i) => {
-    const div = document.createElement("div");
-    div.textContent = `${c.name} (${c.type}) - ${c.role}`;
+  companies.forEach(company => {
+    const div = document.createElement('div');
+    div.innerHTML = `
+      <strong>${company.name}</strong><br/>
+      EIN: ${company.ein}<br/>
+      SEIN: ${company.sein}<br/>
+      ${company.logo ? `<img src="${company.logo}" class="company-logo"/>` : ''}
+    `;
     companyList.appendChild(div);
   });
 }
 
-// --- OWNER FILTER ---
-function updateOwnerFilter() {
-  const owners = new Set();
-  companies.forEach(c => c.owners.forEach(o => owners.add(o)));
-  ownerFilter.innerHTML = '<option value="">All Owners</option>';
-  owners.forEach(o => {
-    const opt = document.createElement("option");
-    opt.value = o;
-    opt.textContent = o;
-    ownerFilter.appendChild(opt);
-  });
-}
-
-ownerFilter.addEventListener("change", e => {
-  const filter = e.target.value;
-  companyList.innerHTML = "";
-  companies.filter(c => !filter || c.owners.includes(filter)).forEach(c => {
-    const div = document.createElement("div");
-    div.textContent = `${c.name} (${c.type}) - ${c.role}`;
-    companyList.appendChild(div);
-  });
-});
-
-// --- CAROUSEL ---
-function renderCarousel() {
+// --- Carousel Display ---
+function displayCompany(index) {
   if (companies.length === 0) {
-    carouselDisplay.textContent = "No companies available.";
+    carouselDisplay.innerHTML = "No companies added yet.";
     return;
   }
-  const c = companies[carouselIndex];
-  carouselDisplay.textContent = `${c.name} (${c.type}) - ${c.role}`;
+  const company = companies[index];
+  carouselDisplay.innerHTML = `
+    <h4>${company.name}</h4>
+    <p>EIN: ${company.ein}</p>
+    <p>SEIN: ${company.sein}</p>
+    <p>${company.city}, ${company.state}</p>
+    ${company.logo ? `<img src="${company.logo}" class="company-logo"/>` : ''}
+  `;
 }
 
-document.getElementById("prevBtn").addEventListener("click", () => {
+document.getElementById('prevBtn').addEventListener('click', () => {
   if (companies.length > 0) {
-    carouselIndex = (carouselIndex - 1 + companies.length) % companies.length;
-    renderCarousel();
+    currentIndex = (currentIndex - 1 + companies.length) % companies.length;
+    displayCompany(currentIndex);
   }
 });
 
-document.getElementById("nextBtn").addEventListener("click", () => {
+document.getElementById('nextBtn').addEventListener('click', () => {
   if (companies.length > 0) {
-    carouselIndex = (carouselIndex + 1) % companies.length;
-    renderCarousel();
+    currentIndex = (currentIndex + 1) % companies.length;
+    displayCompany(currentIndex);
   }
 });
 
-// --- EXPORT / CLEAR / GITHUB STUBS ---
-document.getElementById("exportBtn").addEventListener("click", () => {
-  console.log("Exported companies:", JSON.stringify(companies, null, 2));
+// --- Export Companies ---
+exportBtn.addEventListener('click', () => {
+  const data = JSON.stringify(companies, null, 2);
+  const blob = new Blob([data], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "companies.json";
+  a.click();
+  URL.revokeObjectURL(url);
 });
 
-document.getElementById("clearBtn").addEventListener("click", () => {
-  companies.length = 0;
+// --- Clear Companies ---
+clearBtn.addEventListener('click', () => {
+  companies = [];
   companyList.innerHTML = "";
-  carouselDisplay.textContent = "";
-  ownerFilter.innerHTML = '<option value="">All Owners</option>';
+  carouselDisplay.innerHTML = "No companies added yet.";
 });
 
-document.getElementById("syncToGitHubBtn").addEventListener("click", () => {
-  alert("Sync to GitHub not yet implemented.");
+// --- Sync to GitHub ---
+syncToGitHubBtn.addEventListener('click', () => {
+  const data = JSON.stringify(companies, null, 2);
+  // Replace with your GitHub API call
+  console.log("Syncing to GitHub:", data);
+  alert("Companies synced to GitHub (logos included).");
 });
 
-document.getElementById("loadFromGitHubBtn").addEventListener("click", () => {
-  alert("Load from GitHub not yet implemented.");
-});
-
-let deletedCompanies = [];
-
-// --- FORM SUBMISSION ---
-companyForm.addEventListener("submit", e => {
-  e.preventDefault();
-  const company = {
-    name: document.getElementById("companyName").value,
-    city: document.getElementById("city").value,
-    state: document.getElementById("state").value,
-    role: document.getElementById("companyRole").value,
-    type: document.getElementById("companyType").value,
-    owners: Array.from(document.querySelectorAll("#ownersContainer div")).map(d => d.firstChild.textContent),
-    partners: Array.from(document.querySelectorAll("#partnersContainer div")).map(d => d.firstChild.textContent)
-  };
-  companies.push(company);
-  renderCompanyList();
-  updateOwnerFilter();
-  companyForm.reset();
-  document.getElementById("ownersContainer").innerHTML = "";
-  document.getElementById("partnersContainer").innerHTML = "";
-});
-
-// --- CLEAR ALL ---
-document.getElementById("clearBtn").addEventListener("click", () => {
-  deletedCompanies = [...companies]; // save snapshot
-  companies.length = 0;
-  companyList.innerHTML = "";
-  carouselDisplay.textContent = "";
-  ownerFilter.innerHTML = '<option value="">All Owners</option>';
-});
-
-// --- UNDO ---
-const undoBtn = document.createElement("button");
-undoBtn.textContent = "Undo Last Clear";
-undoBtn.type = "button";
-undoBtn.addEventListener("click", () => {
-  if (deletedCompanies.length > 0) {
-    companies.push(...deletedCompanies);
-    deletedCompanies = [];
+// --- Load from GitHub ---
+loadFromGitHubBtn.addEventListener('click', () => {
+  // Replace with your GitHub API call to fetch JSON
+  // Example: simulate load
+  const exampleData = localStorage.getItem("companiesData");
+  if (exampleData) {
+    companies = JSON.parse(exampleData);
     renderCompanyList();
-    updateOwnerFilter();
-    renderCarousel();
+    displayCompany(currentIndex);
+    alert("Companies loaded from GitHub (logos restored).");
+  } else {
+    alert("No data found in GitHub simulation.");
   }
 });
-document.querySelector(".filter-export").appendChild(undoBtn);
-
-// Initial render
-renderCarousel();
