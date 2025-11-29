@@ -34,7 +34,8 @@
   </style>
 </head>
 <body>
-  <h1>Business Balance Sheet Report</h1>
+  <!-- Dynamic header -->
+  <h1 id="reportHeader">Business Balance Sheet Report</h1>
 
   <!-- Company selector starts empty; populated dynamically -->
   <div class="company-selector">
@@ -61,7 +62,7 @@
   <!-- JavaScript file handles dynamic company loading and rendering -->
   <script src="https://landershardin-create.github.io/HTML-Business-and-Personal-Finance/js/business-balance-sheet.js"></script>
 
-  <!-- Inline bootstrap to load company-manager.json -->
+  <!-- Inline bootstrap to load company-manager.json and update header -->
   <script>
     async function loadCompanyManager() {
       try {
@@ -71,6 +72,25 @@
         companySelect.innerHTML = companyManager.companies
           .map(c => `<option value="${c.key}">${c.name}</option>`)
           .join("");
+
+        // Update header whenever selections change
+        function updateHeader() {
+          const selectedCompanies = Array.from(companySelect.selectedOptions).map(opt => opt.text);
+          const period = document.getElementById("periodSelect").value;
+          const subPeriod = document.getElementById("subPeriodSelect").value;
+          const header = document.getElementById("reportHeader");
+
+          let companyText = selectedCompanies.length > 0 ? selectedCompanies.join(", ") : "Business";
+          let periodText = period ? period.charAt(0).toUpperCase() + period.slice(1) : "";
+          let subPeriodText = subPeriod ? subPeriod : "";
+
+          header.textContent = `Balance Sheet Report: ${companyText} — ${periodText} ${subPeriodText}`;
+        }
+
+        companySelect.addEventListener("change", updateHeader);
+        document.getElementById("periodSelect").addEventListener("change", updateHeader);
+        document.getElementById("subPeriodSelect").addEventListener("change", updateHeader);
+
       } catch (err) {
         console.error("Failed to load company manager:", err);
       }
