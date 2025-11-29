@@ -9,6 +9,30 @@ const balanceSheets = {
         liabilities: { Loans: 40000 },
         equity: { "Retained Earnings": 90000 }
       }
+    },
+    quarterly: {
+      "Q1-2025": {
+        assets: { Cash: 20000, Inventory: 10000, Equipment: 25000 },
+        liabilities: { Loans: 10000 },
+        equity: { "Retained Earnings": 45000 }
+      },
+      "Q2-2025": {
+        assets: { Cash: 15000, Inventory: 8000, Equipment: 20000 },
+        liabilities: { Loans: 8000 },
+        equity: { "Retained Earnings": 35000 }
+      }
+    },
+    monthly: {
+      "Jan-2025": {
+        assets: { Cash: 7000, Inventory: 4000, Equipment: 8000 },
+        liabilities: { Loans: 3000 },
+        equity: { "Retained Earnings": 16000 }
+      },
+      "Feb-2025": {
+        assets: { Cash: 6000, Inventory: 3500, Equipment: 7500 },
+        liabilities: { Loans: 2500 },
+        equity: { "Retained Earnings": 14500 }
+      }
     }
   },
   companyB: {
@@ -18,6 +42,30 @@ const balanceSheets = {
         liabilities: { Loans: 60000 },
         equity: { "Retained Earnings": 160000 }
       }
+    },
+    quarterly: {
+      "Q1-2025": {
+        assets: { Cash: 30000, Inventory: 15000, Equipment: 40000 },
+        liabilities: { Loans: 20000 },
+        equity: { "Retained Earnings": 65000 }
+      },
+      "Q2-2025": {
+        assets: { Cash: 25000, Inventory: 12000, Equipment: 35000 },
+        liabilities: { Loans: 18000 },
+        equity: { "Retained Earnings": 57000 }
+      }
+    },
+    monthly: {
+      "Jan-2025": {
+        assets: { Cash: 10000, Inventory: 6000, Equipment: 12000 },
+        liabilities: { Loans: 5000 },
+        equity: { "Retained Earnings": 23000 }
+      },
+      "Feb-2025": {
+        assets: { Cash: 9000, Inventory: 5500, Equipment: 11000 },
+        liabilities: { Loans: 4500 },
+        equity: { "Retained Earnings": 21000 }
+      }
     }
   },
   companyC: {
@@ -26,6 +74,30 @@ const balanceSheets = {
         assets: { Cash: 30000, Inventory: 20000, Equipment: 40000 },
         liabilities: { Loans: 25000 },
         equity: { "Retained Earnings": 50000 }
+      }
+    },
+    quarterly: {
+      "Q1-2025": {
+        assets: { Cash: 12000, Inventory: 7000, Equipment: 15000 },
+        liabilities: { Loans: 8000 },
+        equity: { "Retained Earnings": 26000 }
+      },
+      "Q2-2025": {
+        assets: { Cash: 10000, Inventory: 6000, Equipment: 14000 },
+        liabilities: { Loans: 7000 },
+        equity: { "Retained Earnings": 23000 }
+      }
+    },
+    monthly: {
+      "Jan-2025": {
+        assets: { Cash: 4000, Inventory: 2500, Equipment: 5000 },
+        liabilities: { Loans: 2000 },
+        equity: { "Retained Earnings": 9500 }
+      },
+      "Feb-2025": {
+        assets: { Cash: 3500, Inventory: 2200, Equipment: 4800 },
+        liabilities: { Loans: 1800 },
+        equity: { "Retained Earnings": 8700 }
       }
     }
   }
