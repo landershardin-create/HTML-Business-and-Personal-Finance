@@ -28,8 +28,8 @@ function addAsset() {
     <td>${tag}</td>
     <td>${name}</td>
     <td>${category}</td>
-    <td>${type}</td> <!-- NEW -->
-    <td>${date}</td> <!-- NEW -->
+    <td>${type}</td>
+    <td>${date}</td>
     <td>$${value.toFixed(2)}</td>
     <td>${depRate}%</td>
     <td>
@@ -42,6 +42,11 @@ function addAsset() {
     <td><button onclick="editAsset(this)">Edit</button></td>
     <td><button onclick="deleteAsset(this)">Delete</button></td>
   `;
+
+  // Save asset to list + localStorage
+  const asset = { business, tag, name, category, type, date, value, depRate, years };
+  assetList.push(asset);
+  localStorage.setItem("assets", JSON.stringify(assetList));
 
   // Clear form after adding
   document.getElementById("assetTag").value = "";
@@ -70,14 +75,20 @@ function editAsset(button) {
   document.getElementById("assetTag").value = cells[1].innerText;
   document.getElementById("assetName").value = cells[2].innerText;
   document.getElementById("assetCategory").value = cells[3].innerText;
-  document.getElementById("assetType").value = cells[4].innerText; // NEW
-  document.getElementById("assetDate").value = cells[5].innerText; // NEW
+  document.getElementById("assetType").value = cells[4].innerText;
+  document.getElementById("assetDate").value = cells[5].innerText;
   document.getElementById("assetValue").value = parseFloat(cells[6].innerText.replace("$",""));
   document.getElementById("assetDep").value = parseFloat(cells[7].innerText.replace("%",""));
   document.getElementById("assetYears").value = (parseFloat(cells[9].innerText.replace("$","")) / parseFloat(cells[8].innerText.replace("$",""))) || 0;
 
   // Remove the row being edited so it can be re-added after changes
   row.remove();
+
+  // Remove from assetList
+  assetList = assetList.filter(asset => asset.tag !== cells[1].innerText);
+  localStorage.setItem("assets", JSON.stringify(assetList));
+
+  updateTotals();
 }
 
 function deleteAsset(button) {
@@ -86,9 +97,10 @@ function deleteAsset(button) {
   const confirmDelete = confirm(`Are you sure you want to delete asset "${assetName}"?`);
 
   if (confirmDelete) {
+    const tag = row.cells[1].innerText;
     row.remove();
     updateTotals();
-    assetList = assetList.filter(asset => asset.name !== assetName);
+    assetList = assetList.filter(asset => asset.tag !== tag);
     localStorage.setItem("assets", JSON.stringify(assetList));
   }
 }
@@ -99,9 +111,9 @@ function updateTotals() {
 
   rows.forEach(row => {
     const business = row.cells[0].innerText;
-    const value = parseFloat(row.cells[4].innerText.replace("$",""));
-    const accumulatedDep = parseFloat(row.cells[7].innerText.replace("$",""));
-    const netBookValue = parseFloat(row.cells[8].innerText.replace("$",""));
+    const value = parseFloat(row.cells[6].innerText.replace("$",""));
+    const accumulatedDep = parseFloat(row.cells[9].innerText.replace("$",""));
+    const netBookValue = parseFloat(row.cells[10].innerText.replace("$",""));
 
     if (!totalsByBusiness[business]) {
       totalsByBusiness[business] = { value: 0, dep: 0, nbv: 0 };
@@ -116,10 +128,10 @@ function updateTotals() {
     html += `<p>${biz}: Value
 
 {totals.value.toFixed(2)} | 
-    Accumulated Dep 
+             Accumulated Dep 
 
 {totals.dep.toFixed(2)} | 
-    Net Book Value $${totals.nbv.toFixed(2)}</p>`;
+             Net Book Value $${totals.nbv.toFixed(2)}</p>`;
   }
   document.getElementById("totals").innerHTML = html;
 }
@@ -196,53 +208,4 @@ function loadCompanyDashboard(companyId) {
 }
 
 function attachBusinessSync() {
-  const businessSelect = document.getElementById("businessSelect");
-  const businessFilter = document.getElementById("businessFilter");
-
-  businessSelect.addEventListener("change", (e) => {
-    loadCompanyDashboard(e.target.value);
-  });
-
-  businessFilter.addEventListener("change", (e) => {
-    filterAssets();
-    if (e.target.value) loadCompanyDashboard(e.target.value);
-  });
-}
-
-// -------------------- Initialization --------------------
-document.addEventListener("DOMContentLoaded", () => {
-  populateBusinessDropdowns();
-  attachBusinessSync();
-
-  const savedAssets = JSON.parse(localStorage.getItem("assets")) || [];
-  assetList = savedAssets;
-  const table = document.getElementById("assetTable").querySelector("tbody");
-
-  savedAssets.forEach(asset => {
-    const { business, tag, name, category, value, depRate, years } = asset;
-    const annualDep = value * depRate;
-    const accumulatedDep = annualDep * years;
-    const netBookValue = value - accumulatedDep;
-
-    const row = table.insertRow();
-    row.innerHTML = `
-      <td>${business}</td>
-      <td>${tag}</td>
-      <td>${name}</td>
-      <td>${category}</td>
-      <td>$${value.toFixed(2)}</td>
-      <td>${(depRate*100).toFixed(2)}%</td>
-      <td>
-
-{annualDep.toFixed(2)}</td>
-      <td>
-
-{accumulatedDep.toFixed(2)}</td>
-      <td>$${netBookValue.toFixed(2)}</td>
-      <td><button onclick="editAsset(this)">Edit</button></td>
-      <td><button onclick="deleteAsset(this)">Delete</button></td>
-    `;
-  });
-  updateTotals();
-});
-``
+  const businessSelect = document.getElementById("
