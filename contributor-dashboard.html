@@ -4,7 +4,80 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Contributor Dashboard</title>
-  <link rel="stylesheet" href="styles/contributor.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2em;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 2em;
+    }
+    header h1 {
+      margin: 0;
+    }
+    main {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2em;
+    }
+    @media (min-width: 768px) {
+      main {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    section {
+      background: #fff;
+      padding: 1em;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+    }
+    h2 {
+      margin-top: 0;
+    }
+    .contributor-card {
+      background: #f4f4f4;
+      padding: 1em;
+      border-radius: 6px;
+      margin-bottom: 1em;
+    }
+    #log-entries {
+      background: #f4f4f4;
+      padding: 1em;
+      border-radius: 6px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1em;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.5em;
+      text-align: left;
+    }
+    form input, form textarea, form button {
+      display: block;
+      width: 100%;
+      margin-bottom: 1em;
+      padding: 0.5em;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    form button {
+      background: #0078d7;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+    form button:hover {
+      background: #005a9e;
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -15,22 +88,56 @@
   <main>
     <section id="contributor-list">
       <h2>👥 Contributor List</h2>
-      <div id="contributors"></div>
+      <div class="contributor-card">
+        <h3>Alice Johnson</h3>
+        <p><strong>Role:</strong> Admin</p>
+        <p>Oversees project governance.</p>
+      </div>
+      <div class="contributor-card">
+        <h3>Bob Smith</h3>
+        <p><strong>Role:</strong> Contributor</p>
+        <p>Focuses on financial reporting.</p>
+      </div>
+      <div class="contributor-card">
+        <h3>Charlie Lee</h3>
+        <p><strong>Role:</strong> Viewer</p>
+        <p>Monitors dashboards for insights.</p>
+      </div>
     </section>
 
-    <section id="role-manager" style="display:none;">
+    <section id="role-manager">
       <h2>🔐 Role Manager</h2>
-      <div id="role-controls"></div>
+      <div>
+        <label>Alice Johnson</label>
+        <p>Role: Admin</p>
+      </div>
+      <div>
+        <label>Bob Smith</label>
+        <p>Role: Contributor</p>
+      </div>
+      <div>
+        <label>Charlie Lee</label>
+        <p>Role: Viewer</p>
+      </div>
     </section>
 
     <section id="onboarding-tracker">
       <h2>🚀 Onboarding Tracker</h2>
-      <ul id="onboarding-checklist"></ul>
+      <ul id="onboarding-checklist">
+        <li>✅ Profile Completed</li>
+        <li>✅ Role Assigned</li>
+        <li>✅ First Contribution</li>
+      </ul>
     </section>
 
     <section id="permissions-matrix">
       <h2>📊 Permissions Matrix</h2>
-      <table id="matrix-table"></table>
+      <table id="matrix-table">
+        <tr><th>Role</th><th>Permissions</th></tr>
+        <tr><td>Admin</td><td>Edit, Delete, Assign Roles</td></tr>
+        <tr><td>Contributor</td><td>Submit, Edit Own</td></tr>
+        <tr><td>Viewer</td><td>View Only</td></tr>
+      </table>
     </section>
 
     <section id="profile-editor">
@@ -45,7 +152,11 @@
 
     <section id="activity-log">
       <h2>📜 Activity Log</h2>
-      <div id="log-entries"></div>
+      <div id="log-entries">
+        <p>11/29/2025, 4:48 PM: Dashboard initialized</p>
+        <p>11/29/2025, 4:49 PM: Alice Johnson role updated to Admin</p>
+        <p>11/29/2025, 4:50 PM: Bob Smith profile created</p>
+      </div>
     </section>
   </main>
   <script src="https://landershardin-create.github.io/HTML-Business-and-Personal-Finance/js/contributor-dashboard.js"></script>
