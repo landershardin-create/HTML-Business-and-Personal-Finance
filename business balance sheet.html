@@ -36,13 +36,10 @@
 <body>
   <h1>Business Balance Sheet Report</h1>
 
+  <!-- Company selector starts empty; populated dynamically -->
   <div class="company-selector">
     <label for="companySelect">Select Companies:</label>
-    <select id="companySelect" multiple size="3">
-      <option value="companyA">Company A</option>
-      <option value="companyB">Company B</option>
-      <option value="companyC">Company C</option>
-    </select>
+    <select id="companySelect" multiple size="3"></select>
   </div>
 
   <div class="period-selector">
@@ -61,6 +58,7 @@
 
   <div id="balanceSheetContainer"></div>
 
-<script src="https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/js/business-balance-sheet.js"></script>
+  <!-- JavaScript file handles dynamic company loading and rendering -->
+  <script src="https://landershardin-create.github.io/HTML-Business-and-Personal-Finance/js/business-balance-sheet.js"></script>
 </body>
 </html>
