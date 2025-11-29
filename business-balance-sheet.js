@@ -166,6 +166,13 @@ function updateHeader() {
   }
 }
 
+/* Balance sheet grid */
+#balanceSheetContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5em;
+}
+
 // --- Event Wiring ---
 function triggerRender() {
   let selectedCompanies = Array.from(document.getElementById("companySelect").selectedOptions).map(opt => opt.value);
