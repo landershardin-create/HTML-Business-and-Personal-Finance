@@ -1,16 +1,3 @@
-// --- Load Company Manager Dashboard ---
-async function loadCompanyManager() {
-  try {
-    // Example: JSON file hosted in your repo or API endpoint
-    const response = await fetch("company-manager.json"); 
-    const companyManager = await response.json();
-
-    populateCompanyOptions(companyManager.companies);
-  } catch (error) {
-    console.error("Error loading company manager:", error);
-  }
-}
-
 // --- Populate Company Selector ---
 function populateCompanyOptions(companies) {
   const companySelect = document.getElementById("companySelect");
@@ -39,22 +26,29 @@ function populateSubPeriodOptions(periodType) {
 }
 
 // --- Rendering Helpers ---
-function renderCategoryRows(categoryName, categoryData) {
-  return Object.entries(categoryData)
-    .map(([item, amount]) =>
-      `<tr><td>${categoryName}</td><td>${item}</td><td>$${amount.toLocaleString()}</td></tr>`
-    ).join("");
-}
-
 function renderCompanyTable(companyKey, subPeriod, data) {
+  const assetsHTML = Object.entries(data.assets)
+    .map(([item, amount]) => `${item}: $${amount.toLocaleString()}`)
+    .join("<br>");
+  const liabilitiesHTML = Object.entries(data.liabilities)
+    .map(([item, amount]) => `${item}: $${amount.toLocaleString()}`)
+    .join("<br>");
+  const equityHTML = Object.entries(data.equity)
+    .map(([item, amount]) => `${item}: $${amount.toLocaleString()}`)
+    .join("<br>");
+
   return `
     <h2>Balance Sheet - ${companyKey} (${subPeriod})</h2>
     <table>
-      <thead><tr><th>Category</th><th>Item</th><th>Amount</th></tr></thead>
+      <thead><tr><th>Assets</th><th>Liabilities</th></tr></thead>
       <tbody>
-        ${renderCategoryRows("Assets", data.assets)}
-        ${renderCategoryRows("Liabilities", data.liabilities)}
-        ${renderCategoryRows("Equity", data.equity)}
+        <tr>
+          <td>${assetsHTML}</td>
+          <td>${liabilitiesHTML}</td>
+        </tr>
+        <tr>
+          <td colspan="2"><strong>${equityHTML}</strong></td>
+        </tr>
       </tbody>
     </table>
   `;
@@ -64,15 +58,19 @@ function renderSummary(subPeriod, totals) {
   return `
     <h2>Combined Summary (${subPeriod})</h2>
     <table>
-      <thead><tr><th>Category</th><th>Total Amount</th></tr></thead>
+      <thead><tr><th>Total Assets</th><th>Total Liabilities</th></tr></thead>
       <tbody>
-        <tr class="summary"><td>Assets</td><td>
+        <tr>
+          <td>
 
-{totals.assets.toLocaleString()}</td></tr>
-        <tr class="summary"><td>Liabilities</td><td>
+{totals.assets.toLocaleString()}</td>
+          <td>
 
-{totals.liabilities.toLocaleString()}</td></tr>
-        <tr class="summary"><td>Equity</td><td>$${totals.equity.toLocaleString()}</td></tr>
+{totals.liabilities.toLocaleString()}</td>
+        </tr>
+        <tr>
+          <td colspan="2"><strong>Equity: $${totals.equity.toLocaleString()}</strong></td>
+        </tr>
       </tbody>
     </table>
   `;
@@ -99,113 +97,60 @@ function renderBalanceSheets(companyKeys, periodType, subPeriod) {
   }
 }
 
+// --- Header Update ---
+function updateHeader(companyManager) {
+  const selectedCompanies = Array.from(document.getElementById("companySelect").selectedOptions).map(opt => opt.value);
+  const period = document.getElementById("periodSelect").value;
+  const subPeriod = document.getElementById("subPeriodSelect").value;
+  const header = document.getElementById("reportHeader");
+
+  let companyText = selectedCompanies.length > 0 ? selectedCompanies.join(", ") : "Business";
+  let periodText = period ? period.charAt(0).toUpperCase() + period.slice(1) : "";
+  let subPeriodText = subPeriod ? subPeriod : "";
+
+  header.textContent = `Balance Sheet Report: ${companyText} — ${periodText} ${subPeriodText}`;
+
+  if (selectedCompanies.length > 0) {
+    const firstCompany = companyManager.companies.find(c => c.key === selectedCompanies[0]);
+    if (firstCompany) {
+      document.getElementById("headerCompanyName").textContent = firstCompany.name;
+      document.getElementById("headerLocation").textContent = `Location: ${firstCompany.location || "(from JSON)"}`;
+      document.getElementById("headerTypeValue").textContent = firstCompany.type || "Type from JSON";
+      document.getElementById("headerRoleValue").textContent = firstCompany.role || "Role from JSON";
+    }
+  }
+}
+
 // --- Event Wiring ---
-function triggerRender() {
+function triggerRender(companyManager) {
   const selectedCompanies = Array.from(document.getElementById("companySelect").selectedOptions).map(opt => opt.value);
   const periodType = document.getElementById("periodSelect").value;
   const subPeriod = document.getElementById("subPeriodSelect").value;
   renderBalanceSheets(selectedCompanies, periodType, subPeriod);
+  updateHeader(companyManager);
 }
 
-document.getElementById("periodSelect").addEventListener("change", (e) => {
-  populateSubPeriodOptions(e.target.value);
-  triggerRender();
-});
-document.getElementById("subPeriodSelect").addEventListener("change", triggerRender);
-document.getElementById("companySelect").addEventListener("change", triggerRender);
-
-// --- Initial Setup ---
-loadCompanyManager().then(() => {
-  populateSubPeriodOptions("annual");
-  renderBalanceSheets(["companyA"], "annual", "2025");
-});
+// --- Load Company Manager ---
 async function loadCompanyManager() {
   try {
     const response = await fetch("https://landershardin-create.github.io/HTML-Business-and-Personal-Finance/data/company-manager.json");
     const companyManager = await response.json();
-    const companySelect = document.getElementById("companySelect");
-    companySelect.innerHTML = companyManager.companies
-      .map(c => `<option value="${c.key}">${c.name}</option>`)
-      .join("");
+    populateCompanyOptions(companyManager.companies);
 
-    function updateHeader() {
-      const selectedCompanies = Array.from(companySelect.selectedOptions).map(opt => opt.text);
-      const period = document.getElementById("periodSelect").value;
-      const subPeriod = document.getElementById("subPeriodSelect").value;
-      const header = document.getElementById("reportHeader");
+    // Wire events
+    document.getElementById("periodSelect").addEventListener("change", (e) => {
+      populateSubPeriodOptions(e.target.value);
+      triggerRender(companyManager);
+    });
+    document.getElementById("subPeriodSelect").addEventListener("change", () => triggerRender(companyManager));
+    document.getElementById("companySelect").addEventListener("change", () => triggerRender(companyManager));
 
-      let companyText = selectedCompanies.length > 0 ? selectedCompanies.join(", ") : "Business";
-      let periodText = period ? period.charAt(0).toUpperCase() + period.slice(1) : "";
-      let subPeriodText = subPeriod ? subPeriod : "";
-
-      header.textContent = `Balance Sheet Report: ${companyText} — ${periodText} ${subPeriodText}`;
-
-      if (selectedCompanies.length > 0) {
-        document.getElementById("headerCompanyName").textContent = selectedCompanies[0];
-        document.getElementById("headerLocation").textContent = "Location: (from JSON)";
-        document.getElementById("headerTypeValue").textContent = "Type from JSON";
-        document.getElementById("headerRoleValue").textContent = "Role from JSON";
-      }
-    }
-
-    function renderBalanceSheet(company) {
-      const container = document.getElementById("balanceSheetContainer");
-      const assetsHTML = company.assets.map(a => `${a.name}: $${a.amount}`).join("<br>");
-      const liabilitiesHTML = company.liabilities.map(l => `${l.name}: $${l.amount}`).join("<br>");
-      const equityHTML = company.equity.map(e => `${e.name}: $${e.amount}`).join("<br>");
-
-      const tableHTML = `
-        <h2>Balance Sheet - ${company.name} (${company.period})</h2>
-        <table>
-          <thead><tr><th>Assets</th><th>Liabilities</th></tr></thead>
-          <tbody>
-            <tr>
-              <td>${assetsHTML}</td>
-              <td>${liabilitiesHTML}</td>
-            </tr>
-            <tr>
-              <td colspan="2"><strong>${equityHTML}</strong></td>
-            </tr>
-          </tbody>
-        </table>
-      `;
-      container.insertAdjacentHTML("beforeend", tableHTML);
-    }
-
-    // Event listeners
-    companySelect.addEventListener("change", updateHeader);
-    document.getElementById("periodSelect").addEventListener("change", updateHeader);
-    document.getElementById("subPeriodSelect").addEventListener("change", updateHeader);
-
-    // Example: render demo companies (replace with dynamic JSON later)
-    const demoCompanies = [
-      {
-        name: "Company A",
-        period: "2025",
-        assets: [{ name: "Cash", amount: 50000 }, { name: "Inventory", amount: 30000 }, { name: "Equipment", amount: 70000 }],
-        liabilities: [{ name: "Loans", amount: 40000 }],
-        equity: [{ name: "Retained Earnings", amount: 90000 }]
-      },
-      {
-        name: "Company B",
-        period: "2025",
-        assets: [{ name: "Cash", amount: 80000 }, { name: "Inventory", amount: 50000 }, { name: "Equipment", amount: 120000 }],
-        liabilities: [{ name: "Loans", amount: 60000 }],
-        equity: [{ name: "Retained Earnings", amount: 160000 }]
-      },
-      {
-        name: "Company C",
-        period: "2025",
-        assets: [{ name: "Cash", amount: 30000 }, { name: "Inventory", amount: 20000 }, { name: "Equipment", amount: 40000 }],
-        liabilities: [{ name: "Loans", amount: 25000 }],
-        equity: [{ name: "Retained Earnings", amount: 50000 }]
-      }
-    ];
-
-    demoCompanies.forEach(renderBalanceSheet);
-
-  } catch (err) {
-    console.error("Failed to load company manager:", err);
+    // Initial setup
+    populateSubPeriodOptions("annual");
+    renderBalanceSheets([companyManager.companies[0].key], "annual", "2025");
+    updateHeader(companyManager);
+  } catch (error) {
+    console.error("Error loading company manager:", error);
   }
 }
 
