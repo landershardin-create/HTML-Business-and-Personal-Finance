@@ -1,111 +1,134 @@
+/* ===========================
+   Multi-Business Asset Tracker Styles
+   =========================== */
+
 /* General Layout */
 body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
-  background-color: #fdfdfd;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9fafc;
+  margin: 0;
+  padding: 0;
   color: #333;
 }
 
 .container {
-  max-width: 1100px;
-  margin: auto;
+  max-width: 1200px;
+  margin: 30px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Section Headings */
+h2, h3 {
+  color: #2c3e50;
+  margin-bottom: 10px;
 }
 
 .section {
-  margin-top: 20px;
+  margin: 20px 0;
   padding: 15px;
-  border: 1px solid #ccc;
+  border: 1px solid #e0e0e0;
   border-radius: 6px;
-  background: #fff;
+  background-color: #fdfdfd;
+}
+
+/* Labels + Inputs */
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select {
+  width: 280px;
+  padding: 8px;
+  margin-top: 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+input:focus, select:focus {
+  border-color: #3498db;
+  outline: none;
+  box-shadow: 0 0 4px rgba(52,152,219,0.4);
+}
+
+/* Buttons */
+button {
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  margin-top: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s ease-in-out;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+button:active {
+  background-color: #1f6391;
 }
 
 /* Table Styling */
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 10px;
-}
-
-th, td {
-  border: 1px solid #ccc;
-  padding: 8px;
-  text-align: left;
-}
-
-th {
-  background: #f4f4f4;
-  font-weight: bold;
-}
-
-tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-tr:hover {
-  background-color: #f1f9ff;
-}
-
-/* Inputs and Selects */
-input, select {
-  padding: 6px;
-  margin-top: 4px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  width: 250px;
+  margin-top: 15px;
   font-size: 14px;
 }
 
-input:focus, select:focus {
-  border-color: #0078d4;
-  outline: none;
-  box-shadow: 0 0 4px rgba(0,120,212,0.4);
-}
-
-/* Buttons */
-button {
-  background: #0078d4;
+table thead {
+  background-color: #3498db;
   color: #fff;
-  border: none;
-  padding: 6px 12px;
-  margin: 2px;
-  cursor: pointer;
-  border-radius: 4px;
-  font-size: 14px;
 }
 
-button:hover {
-  background: #005a9e;
+table th, table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+table tr:nth-child(even) {
+  background-color: #f4f8fb;
+}
+
+table tr:hover {
+  background-color: #eaf2f8;
 }
 
 /* Totals Section */
 .totals {
   margin-top: 15px;
-  font-weight: bold;
-  background: #f9f9f9;
   padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  white-space: pre-line;
+  background: #f4f8fb;
+  border: 1px solid #dce4ec;
+  border-radius: 6px;
+  font-weight: 500;
+  color: #2c3e50;
 }
 
-/* Responsive Table */
-.section table {
-  display: block;
-  overflow-x: auto;
-  white-space: nowrap;
-}
-/* Clear All Assets button styling */
-button.clear-all {
-  background: #d9534f;   /* Bootstrap-style red */
-  color: #fff;
-  border: none;
-  padding: 8px 14px;
-  margin: 5px 0;
-  cursor: pointer;
-  border-radius: 4px;
-  font-size: 14px;
+/* Dashboard Hub */
+#dashboardHub {
+  margin: 20px 0;
+  padding: 15px;
+  background: #ecf0f1;
+  border-radius: 6px;
+  border: 1px solid #d0d7de;
 }
 
-button.clear-all:hover {
-  background: #c9302c;   /* darker red on hover */
+#dashboardTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #34495e;
 }
