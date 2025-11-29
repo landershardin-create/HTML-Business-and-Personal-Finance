@@ -1,4 +1,4 @@
-
+// --- contributor-dashboard.js---
 
 const contributors = [
   { name: "Landers", role: "Admin", joined: "2025-10-01", status: "Active" },
