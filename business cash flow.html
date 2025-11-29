@@ -40,23 +40,9 @@
 <body>
   <h1>Business Cash Flow Report</h1>
 
-async function loadCompanyManager() {
-  try {
-    const response = await fetch("https://landershardin-create.github.io/HTML-Business-and-Personal-Finance/data/company-manager.json");
-    const companyManager = await response.json();
-
-    populateCompanyOptions(companyManager.companies.filter(c => c.active));
-  } catch (error) {
-    console.error("Error loading company manager:", error);
-  }
-}
-
-function populateCompanyOptions(companies) {
-  const companySelect = document.getElementById("companySelect");
-  companySelect.innerHTML = companies
-    .map(c => `<option value="${c.key}">${c.name}</option>`)
-    .join("");
-}
+  <!-- Company Selector -->
+  <label for="companySelect"><strong>Select Company:</strong></label>
+  <select id="companySelect"></select>
 
   <!-- View Selector -->
   <label for="viewSelect"><strong>Select View:</strong></label>
@@ -104,6 +90,101 @@ function populateCompanyOptions(companies) {
     </tbody>
   </table>
 
-<script src="https://landershardin-create.github.io/HTML-Business-and-Personal-Finance/js/business-cash-flow.js"></script>
+  <!-- Extended Script -->
+  <script>
+    let activeCompanies = [];
+
+    async function loadCompanyManager() {
+      try {
+        const response = await fetch("https://landershardin-create.github.io/HTML-Business-and-Personal-Finance/data/company-manager.json");
+        const companyManager = await response.json();
+        activeCompanies = companyManager.companies.filter(c => c.active);
+
+        populateCompanyOptions(activeCompanies);
+
+        const companySelect = document.getElementById("companySelect");
+        const viewSelect = document.getElementById("viewSelect");
+
+        companySelect.addEventListener("change", updateDashboard);
+        viewSelect.addEventListener("change", updateDashboard);
+
+        // Initialize with first company
+        if (activeCompanies.length > 0) {
+          companySelect.value = activeCompanies[0].key;
+          updateDashboard();
+        }
+      } catch (error) {
+        console.error("Error loading company manager:", error);
+      }
+    }
+
+    function populateCompanyOptions(companies) {
+      const companySelect = document.getElementById("companySelect");
+      companySelect.innerHTML = companies
+        .map(c => `<option value="${c.key}">${c.name}</option>`)
+        .join("");
+    }
+
+    function updateCompanyHeader(company) {
+      document.getElementById("headerCompanyName").textContent = company.name;
+      document.getElementById("headerLocation").textContent = `${company.city}, ${company.state}`;
+      document.getElementById("headerTypeValue").textContent = company.type;
+      document.getElementById("headerRoleValue").textContent = company.role;
+    }
+
+    function updateDashboard() {
+      const companyKey = document.getElementById("companySelect").value;
+      const view = document.getElementById("viewSelect").value;
+      const company = activeCompanies.find(c => c.key === companyKey);
+
+      if (!company) return;
+
+      updateCompanyHeader(company);
+
+      // Example: fetch company-specific cash flow data
+      fetch(`https://landershardin-create.github.io/HTML-Business-and-Personal-Finance/data/cash-flow-${companyKey}.json`)
+        .then(res => res.json())
+        .then(data => {
+          renderCashFlow(data, view);
+        })
+        .catch(err => console.error("Error loading cash flow:", err));
+    }
+
+    function renderCashFlow(data, view) {
+      // Clear tables
+      ["operating-table","investing-table","financing-table"].forEach(id => {
+        document.querySelector(`#${id} tbody`).innerHTML = "";
+      });
+
+      let totals = { operating: 0, investing: 0, financing: 0 };
+
+      ["operating","investing","financing"].forEach(section => {
+        const tableBody = document.querySelector(`#${section}-table tbody`);
+        const records = data[section]?.[view] || [];
+
+        records.forEach(r => {
+          const row = `<tr><td>${r.description}</td><td>${r.date}</td><td>${formatCurrency(r.amount)}</td></tr>`;
+          tableBody.insertAdjacentHTML("beforeend", row);
+          totals[section] += r.amount;
+        });
+      });
+
+      // Update summary
+      document.getElementById("total-operating").textContent = formatCurrency(totals.operating);
+      document.getElementById("total-investing").textContent = formatCurrency(totals.investing);
+      document.getElementById("total-financing").textContent = formatCurrency(totals.financing);
+      document.getElementById("net-cash").textContent = formatCurrency(totals.operating + totals.investing + totals.financing);
+    }
+
+    function formatCurrency(amount) {
+      return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount);
+    }
+
+    // Initialize
+    loadCompanyManager();
+  </script>
+
+  <!-- External business logic -->
+  <script src="https://landershardin-create.github.io/HTML-Business-and-Personal-Finance/js/business-cash-flow.js"></script>
 </body>
 </html>
