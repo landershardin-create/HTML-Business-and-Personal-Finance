@@ -8,25 +8,28 @@
 <body>
 <div class="container">
   <h2>Multi-Business Asset Tracker</h2>
-    <div class="section">
+  <div class="section">
     <button onclick="clearAllAssets()">Clear All Assets</button>
   </div>
-<div id="dashboardHub">
-  <h2 id="dashboardTitle">Dashboard: All Businesses</h2>
-  <!-- Charts, tables, KPIs, etc. -->
-</div>
 
-<!-- Business Selector -->
-<label for="businessSelect">Select Business:</label>
-<select id="businessSelect"></select>
+  <!-- Dashboard Hub -->
+  <div id="dashboardHub">
+    <h2 id="dashboardTitle">Dashboard: All Businesses</h2>
+    <!-- Charts, tables, KPIs, etc. -->
+  </div>
 
-<!-- Business Filter -->
-<div class="section">
-  <h3>Filter by Business</h3>
-  <select id="businessFilter" onchange="filterAssets()">
-    <option value="">All Businesses</option>
-  </select>
-</div>
+  <!-- Business Selector -->
+  <label for="businessSelect">Select Business:</label>
+  <select id="businessSelect"></select>
+
+  <!-- Business Filter -->
+  <div class="section">
+    <h3>Filter by Business</h3>
+    <select id="businessFilter" onchange="filterAssets()">
+      <option value="">All Businesses</option>
+      <!-- Options will be populated dynamically -->
+    </select>
+  </div>
 
   <!-- Asset Input Form -->
   <div class="section">
@@ -38,16 +41,6 @@
     <label>Depreciation Rate (% per year): <input type="number" id="assetDep" step="0.01"></label><br><br>
     <label>Years in Service: <input type="number" id="assetYears"></label><br><br>
     <button onclick="addAsset()">Add Asset</button>
-  </div>
- <!-- Business Filter -->
-  <div class="section">
-    <h3>Filter by Business</h3>
-    <select id="businessFilter" onchange="filterAssets()">
-      <option value="">All Businesses</option>
-      <option value="BusinessA">Business A</option>
-      <option value="BusinessB">Business B</option>
-      <option value="BusinessC">Business C</option>
-    </select>
   </div>
   
   <!-- Search/Filter Bar -->
@@ -84,6 +77,6 @@
 <script>
   console.log("✅ Business Asset Tracker JS loaded via HTML successfully");
 </script>
-  <script src="https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/js/business-asset-tracker.js"></script>
+<script src="https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/js/business-asset-tracker.js"></script>
 </body>
 </html>
