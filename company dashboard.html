@@ -9,6 +9,7 @@
     .form-group input, .form-group select { display: block; margin: 5px 0; padding: 5px; width: 100%; max-width: 400px; }
     .company-list div, .carousel-card { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
     button { margin: 5px; padding: 5px 10px; }
+    .company-logo { max-width: 150px; max-height: 150px; display: block; margin: 10px 0; }
   </style>
 </head>
 <body>
@@ -37,6 +38,10 @@
         <input type="text" id="companyName" placeholder="Company name" required />
         <input type="text" id="companyEIN" placeholder="SSN# or EIN#" />
         <input type="text" id="companySEIN" placeholder="State EIN #" />
+
+        <!-- Logo Upload -->
+        <label for="companyLogo">Upload Company Logo:</label>
+        <input type="file" id="companyLogo" accept="image/*" />
 
         <fieldset>
           <legend>Address</legend>
@@ -86,5 +91,70 @@
   </section>
 
   <script src="https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/main/js/company-dashboard.js"></script>
+  <script>
+    // Example: Extend JS to handle logo uploads
+    const companyForm = document.getElementById('companyForm');
+    const companyList = document.getElementById('companyList');
+    const carouselDisplay = document.getElementById('carouselDisplay');
+    let companies = [];
+    let currentIndex = 0;
+
+    companyForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const reader = new FileReader();
+      const logoFile = document.getElementById('companyLogo').files[0];
+
+      reader.onload = function(event) {
+        const company = {
+          name: document.getElementById('companyName').value,
+          ein: document.getElementById('companyEIN').value,
+          sein: document.getElementById('companySEIN').value,
+          logo: event.target.result // base64 image
+        };
+        companies.push(company);
+
+        const div = document.createElement('div');
+        div.innerHTML = `<strong>${company.name}</strong><br/>
+                         EIN: ${company.ein}<br/>
+                         SEIN: ${company.sein}<br/>
+                         ${company.logo ? `<img src="${company.logo}" class="company-logo"/>` : ''}`;
+        companyList.appendChild(div);
+
+        displayCompany(currentIndex);
+      };
+
+      if (logoFile) {
+        reader.readAsDataURL(logoFile);
+      } else {
+        reader.onload({ target: { result: null } }); // fallback if no logo
+      }
+    });
+
+    function displayCompany(index) {
+      if (companies.length === 0) {
+        carouselDisplay.innerHTML = "No companies added yet.";
+        return;
+      }
+      const company = companies[index];
+      carouselDisplay.innerHTML = `<h4>${company.name}</h4>
+                                   <p>EIN: ${company.ein}</p>
+                                   <p>SEIN: ${company.sein}</p>
+                                   ${company.logo ? `<img src="${company.logo}" class="company-logo"/>` : ''}`;
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => {
+      if (companies.length > 0) {
+        currentIndex = (currentIndex - 1 + companies.length) % companies.length;
+        displayCompany(currentIndex);
+      }
+    });
+
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      if (companies.length > 0) {
+        currentIndex = (currentIndex + 1) % companies.length;
+        displayCompany(currentIndex);
+      }
+    });
+  </script>
 </body>
 </html>
