@@ -142,6 +142,72 @@ function updateHeader(companies) {
   }
 }
 
+const companies = [
+  { name: "Alpha Tech", location: "Seattle, WA", type: "LLC", role: "Parent" },
+  { name: "Beta Finance", location: "Austin, TX", type: "Inc.", role: "Subsidiary" },
+  { name: "Gamma Retail", location: "Chicago, IL", type: "Partnership", role: "Affiliate" }
+];
+
+const companySelect = document.getElementById("companySelect");
+companies.forEach((c, i) => {
+  const option = document.createElement("option");
+  option.value = i;
+  option.textContent = c.name;
+  companySelect.appendChild(option);
+});
+
+const subPeriodSelect = document.getElementById("subPeriodSelect");
+const periodSelect = document.getElementById("periodSelect");
+
+periodSelect.addEventListener("change", () => {
+  subPeriodSelect.innerHTML = ""; // reset
+  let options = [];
+  if (periodSelect.value === "monthly") {
+    options = ["Jan", "Feb", "Mar"];
+  } else if (periodSelect.value === "quarterly") {
+    options = ["Q1", "Q2", "Q3", "Q4"];
+  } else {
+    options = ["2023", "2024", "2025"];
+  }
+  options.forEach(o => {
+    const opt = document.createElement("option");
+    opt.value = o;
+    opt.textContent = o;
+    subPeriodSelect.appendChild(opt);
+  });
+});
+function renderBalanceSheet(company, data) {
+  const container = document.getElementById("balanceSheetContainer");
+  container.innerHTML = `
+    <h2>${company.name} Balance Sheet</h2>
+    <table>
+      <tr><th>Category</th><th>Amount</th></tr>
+      <tr><td class="assets">Assets</td><td>
+
+{data.assets}</td></tr>
+      <tr><td class="liabilities">Liabilities</td><td>
+
+{data.liabilities}</td></tr>
+      <tr><td class="equity">Equity</td><td>
+
+{data.equity}</td></tr>
+      <tr class="summary"><td>Total</td><td>
+
+{data.assets - data.liabilities}</td></tr>
+    </table>
+  `;
+}
+const balanceSheets = {
+  "Alpha Tech": { assets: 120000, liabilities: 50000, equity: 70000 },
+  "Beta Finance": { assets: 90000, liabilities: 40000, equity: 50000 },
+  "Gamma Retail": { assets: 150000, liabilities: 80000, equity: 70000 }
+};
+document.getElementById("companySelect").addEventListener("change", () => {
+  const selected = Array.from(companySelect.selectedOptions).map(o => o.textContent);
+  const subPeriod = document.getElementById("subPeriodSelect").value;
+  renderMultiCompany(selected, subPeriod);
+});
+
 // --- Event Wiring ---
 function triggerRender(companies) {
   let selectedCompanies = Array.from(document.getElementById("companySelect").selectedOptions).map(opt => opt.value);
@@ -173,4 +239,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Initial render with "All Companies"
   triggerRender(companies);
+  function renderMultiCompany(selectedCompanies, subPeriod) {
+  const container = document.getElementById("balanceSheetContainer");
+  container.innerHTML = ""; // reset
+
+  const wrapper = document.createElement("div");
+  wrapper.style.display = "flex";
+  wrapper.style.gap = "1em";
+
+  selectedCompanies.forEach(company => {
+    const data = balanceSheets[company];
+    const table = document.createElement("table");
+    table.innerHTML = `
+      <caption><strong>${company} – ${subPeriod}</strong></caption>
+      <tr><th>Category</th><th>Amount</th></tr>
+      <tr><td class="assets">Assets</td><td>
+
+{data.assets}</td></tr>
+      <tr><td class="liabilities">Liabilities</td><td>
+
+{data.liabilities}</td></tr>
+      <tr><td class="equity">Equity</td><td>
+
+{data.equity}</td></tr>
+      <tr class="summary"><td>Total</td><td>
+
+{data.assets - data.liabilities}</td></tr>
+    `;
+    wrapper.appendChild(table);
+  });
+
+  container.appendChild(wrapper);
+}
 });
