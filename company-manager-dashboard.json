@@ -1,1 +1,7 @@
-1
+{
+  "companies": [
+    { "key": "companyA", "name": "Company A", "sector": "Retail", "active": true },
+    { "key": "companyB", "name": "Company B", "sector": "Manufacturing", "active": true },
+    { "key": "companyC", "name": "Company C", "sector": "Services", "active": false }
+  ]
+}
