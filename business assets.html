@@ -37,6 +37,18 @@
     <label>Asset Tag / Barcode: <input type="text" id="assetTag"></label><br><br>
     <label>Asset Name: <input type="text" id="assetName"></label><br><br>
     <label>Category: <input type="text" id="assetCategory"></label><br><br>
+
+    <!-- New Asset Type Selector -->
+    <label>Asset Type: 
+      <select id="assetType">
+        <option value="Tangible">Tangible</option>
+        <option value="Intangible">Intangible</option>
+      </select>
+    </label><br><br>
+
+    <!-- New Date of Purchase -->
+    <label>Date of Purchase: <input type="date" id="assetDate"></label><br><br>
+
     <label>Value ($): <input type="number" id="assetValue" step="0.01"></label><br><br>
     <label>Depreciation Rate (% per year): <input type="number" id="assetDep" step="0.01"></label><br><br>
     <label>Years in Service: <input type="number" id="assetYears"></label><br><br>
@@ -59,6 +71,8 @@
           <th>Asset Tag</th>
           <th>Name</th>
           <th>Category</th>
+          <th>Type</th> <!-- New Column -->
+          <th>Date of Purchase</th> <!-- New Column -->
           <th>Value</th>
           <th>Depreciation Rate</th>
           <th>Annual Depreciation</th>
