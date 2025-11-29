@@ -34,9 +34,10 @@
   </style>
 </head>
 <body>
+  <!-- Dynamic report header -->
   <h1 id="reportHeader">Business Balance Sheet Report</h1>
 
-  <!-- Company selector starts empty; populated dynamically -->
+  <!-- Company selector populated dynamically -->
   <div class="company-selector">
     <label for="companySelect">Select Companies:</label>
     <select id="companySelect" multiple size="3"></select>
@@ -56,7 +57,7 @@
     <select id="subPeriodSelect"></select>
   </div>
 
-  <!-- Company Header -->
+  <!-- Company header details -->
   <div class="company-header" role="region" aria-label="Company Summary">
     <h2 id="headerCompanyName">Company Name</h2>
     <p id="headerLocation">City, State</p>
@@ -64,7 +65,7 @@
     <p id="headerRole">Role: <span id="headerRoleValue"></span></p>
   </div>
 
-  <!-- Balance sheet tables -->
+  <!-- Balance sheet tables (static demo, replaced dynamically by JS) -->
   <div id="balanceSheetContainer">
     <h2>Balance Sheet - Company A (2025)</h2>
     <table>
@@ -113,7 +114,7 @@
     </table>
   </div>
 
-  <!-- JavaScript file handles dynamic company loading and rendering -->
+  <!-- JavaScript file handles dynamic rendering -->
   <script src="https://landershardin-create.github.io/HTML-Business-and-Personal-Finance/js/business-balance-sheet.js"></script>
 
   <!-- Inline bootstrap to load company-manager.json and update header -->
@@ -139,6 +140,14 @@
           let subPeriodText = subPeriod ? subPeriod : "";
 
           header.textContent = `Balance Sheet Report: ${companyText} — ${periodText} ${subPeriodText}`;
+
+          // Update company header details (demo: using first selected company)
+          if (selectedCompanies.length > 0) {
+            document.getElementById("headerCompanyName").textContent = selectedCompanies[0];
+            document.getElementById("headerLocation").textContent = "Location: (from JSON)";
+            document.getElementById("headerTypeValue").textContent = "Type from JSON";
+            document.getElementById("headerRoleValue").textContent = "Role from JSON";
+          }
         }
 
         companySelect.addEventListener("change", updateHeader);
