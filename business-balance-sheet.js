@@ -76,6 +76,11 @@ function renderCompanyTable(companyKey, subPeriod, data) {
     .map(([item, amount]) => `<span class="equity">${item}: $${amount.toLocaleString()}</span>`)
     .join("<br>");
 
+  // Calculate totals for this company
+  const totalAssets = Object.values(data.assets).reduce((a, b) => a + b, 0);
+  const totalLiabilities = Object.values(data.liabilities).reduce((a, b) => a + b, 0);
+  const totalEquity = Object.values(data.equity).reduce((a, b) => a + b, 0);
+
   return `
     <h2>Balance Sheet - ${companyKey} (${subPeriod})</h2>
     <table>
@@ -88,11 +93,21 @@ function renderCompanyTable(companyKey, subPeriod, data) {
         <tr>
           <td colspan="2"><strong>${equityHTML}</strong></td>
         </tr>
+        <tr>
+          <td class="assets"><strong>Total Assets:
+
+{totalAssets.toLocaleString()}</strong></td>
+          <td class="liabilities"><strong>Total Liabilities: 
+
+{totalLiabilities.toLocaleString()}</strong></td>
+        </tr>
+        <tr>
+          <td colspan="2" class="equity"><strong>Total Equity: $${totalEquity.toLocaleString()}</strong></td>
+        </tr>
       </tbody>
     </table>
   `;
 }
-
 function renderSummary(subPeriod, totals) {
   return `
     <h2>Combined Summary (${subPeriod})</h2>
