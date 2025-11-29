@@ -1,4 +1,6 @@
-   const entries = [];
+// --- business-debt-timekeeping.js---
+   
+         const entries = [];
 
     function addEntry() {
       const business = document.getElementById("business").value;
