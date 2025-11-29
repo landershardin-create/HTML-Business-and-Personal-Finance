@@ -1,4 +1,6 @@
-  const companies = {
+// --- business-cash-flow.js---
+  
+      const companies = {
       AlphaCorp: {
         name: "AlphaCorp",
         location: "New York, NY",
