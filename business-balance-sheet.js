@@ -1,3 +1,5 @@
+// --- business-balance-sheet.js---
+
 // --- Sample Data ---
 const balanceSheets = {
   companyA: {
@@ -30,30 +32,16 @@ const balanceSheets = {
 };
 
 // --- Populate Company Selector ---
-function populateCompanyOptions(companies) {
+function populateCompanyOptions() {
   const companySelect = document.getElementById("companySelect");
-  companySelect.innerHTML = companies
-    .map(c => `<option value="${c.key}">${c.name}</option>`)
-    .join("");
-}
+  const companies = [
+    { key: "companyA", name: "Company A", location: "New York, NY", type: "Retail", role: "Parent" },
+    { key: "companyB", name: "Company B", location: "Chicago, IL", type: "Manufacturing", role: "Subsidiary" },
+    { key: "companyC", name: "Company C", location: "Austin, TX", type: "Tech", role: "Subsidiary" }
+  ];
 
-// --- Utility: derive subperiods dynamically ---
-function getSubPeriods(periodType) {
-  const companies = Object.values(balanceSheets);
-  const allPeriods = new Set();
-  companies.forEach(c => {
-    if (c[periodType]) {
-      Object.keys(c[periodType]).forEach(p => allPeriods.add(p));
-    }
-  });
-  return Array.from(allPeriods);
-}
-
-function populateSubPeriodOptions(periodType) {
-  const subSelect = document.getElementById("subPeriodSelect");
-  const periods = getSubPeriods(periodType);
-  subSelect.innerHTML = periods.map(p => `<option value="${p}">${p}</option>`).join("");
-  subSelect.selectedIndex = 0;
+  companySelect.innerHTML = companies.map(c => `<option value="${c.key}">${c.name}</option>`).join("");
+  return companies;
 }
 
 // --- Rendering Helpers ---
@@ -129,7 +117,7 @@ function renderBalanceSheets(companyKeys, periodType, subPeriod) {
 }
 
 // --- Header Update ---
-function updateHeader(companyManager) {
+function updateHeader(companies) {
   const selectedCompanies = Array.from(document.getElementById("companySelect").selectedOptions).map(opt => opt.value);
   const period = document.getElementById("periodSelect").value;
   const subPeriod = document.getElementById("subPeriodSelect").value;
@@ -142,14 +130,40 @@ function updateHeader(companyManager) {
   header.textContent = `Balance Sheet Report: ${companyText} — ${periodText} ${subPeriodText}`;
 
   if (selectedCompanies.length > 0) {
-    const firstCompany = companyManager.companies.find(c => c.key === selectedCompanies[0]);
+    const firstCompany = companies.find(c => c.key === selectedCompanies[0]);
     if (firstCompany) {
       document.getElementById("headerCompanyName").textContent = firstCompany.name;
-      document.getElementById("headerLocation").textContent = `Location: ${firstCompany.location || "(from JSON)"}`;
-      document.getElementById("headerTypeValue").textContent = firstCompany.type || "Type from JSON";
-      document.getElementById("headerRoleValue").textContent = firstCompany.role || "Role from JSON";
+      document.getElementById("headerLocation").textContent = `Location: ${firstCompany.location}`;
+      document.getElementById("headerTypeValue").textContent = firstCompany.type;
+      document.getElementById("headerRoleValue").textContent = firstCompany.role;
     }
   }
 }
 
-// ---
+// --- Event Wiring ---
+function triggerRender(companies) {
+  const selectedCompanies = Array.from(document.getElementById("companySelect").selectedOptions).map(opt => opt.value);
+  const periodType = document.getElementById("periodSelect").value;
+  const subPeriod = document.getElementById("subPeriodSelect").value;
+  renderBalanceSheets(selectedCompanies, periodType, subPeriod);
+  updateHeader(companies);
+}
+
+// --- Initial Setup ---
+document.addEventListener("DOMContentLoaded", () => {
+  const companies = populateCompanyOptions();
+
+  // Populate subperiods (demo: only annual 2025)
+  const subSelect = document.getElementById("subPeriodSelect");
+  subSelect.innerHTML = `<option value="2025">2025</option>`;
+  subSelect.selectedIndex = 0;
+
+  // Wire events
+  document.getElementById("periodSelect").addEventListener("change", () => triggerRender(companies));
+  document.getElementById("subPeriodSelect").addEventListener("change", () => triggerRender(companies));
+  document.getElementById("companySelect").addEventListener("change", () => triggerRender(companies));
+
+  // Initial render
+  renderBalanceSheets(["companyA", "companyB", "companyC"], "annual", "2025");
+  updateHeader(companies);
+});
