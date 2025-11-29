@@ -72,37 +72,36 @@
   <div id="content">Loading...</div>
 
   <!-- Markdown renderer -->
-  <script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script>
     const sources = {
-      modules: 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/modules/',
-      dashboard: 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/main/'
+      modules: 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/Dashboard/modules/',
+      dashboard: 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/Dashboard/'
     };
 
     const tabs = {
-      // Modules
+      // Modules (filenames updated to use hyphens instead of spaces)
       welcome: { file: 'welcome.html', base: 'modules' },
-      businessassets: { file: 'business assets.html', base: 'modules' },
-      businessbalsheet: { file: 'business balance sheet.html', base: 'modules' },
-      businesscashflow: { file: 'business cash flow.html', base: 'modules' },
-      companydashboard: { file: 'company dashboard.html', base: 'modules' },
-      businessdebttoequity: { file: 'business debt-to-equity.html', base: 'modules' },
-      businessincomeexpense: { file: 'business income and expense.html', base: 'modules' },
-      businessinventory: { file: 'business inventory.html', base: 'modules' },
-      businessjournal: { file: 'business accounting journal.html', base: 'modules' },
-      businessnetworth: { file: 'business net worth.html', base: 'modules' },
-      businesspayroll: { file: 'business payroll register.html', base: 'modules' },
-      businesspersonnel: { file: 'business personnel registry.html', base: 'modules' },
-      businesstimekeeping: { file: 'business timesheet.html', base: 'modules' },
+      businessassets: { file: 'business-assets.html', base: 'modules' },
+      businessbalsheet: { file: 'business-balance-sheet.html', base: 'modules' },
+      businesscashflow: { file: 'business-cash-flow.html', base: 'modules' },
+      companydashboard: { file: 'company-dashboard.html', base: 'modules' },
+      businessdebttoequity: { file: 'business-debt-to-equity.html', base: 'modules' },
+      businessincomeexpense: { file: 'business-income-and-expense.html', base: 'modules' },
+      businessinventory: { file: 'business-inventory.html', base: 'modules' },
+      businessjournal: { file: 'business-accounting-journal.html', base: 'modules' },
+      businessnetworth: { file: 'business-net-worth.html', base: 'modules' },
+      businesspayroll: { file: 'business-payroll-register.html', base: 'modules' },
+      businesspersonnel: { file: 'business-personnel-registry.html', base: 'modules' },
+      businesstimekeeping: { file: 'business-timesheet.html', base: 'modules' },
       contributordashboard: { file: 'contributor-dashboard.html', base: 'modules' },
-      personalassets: { file: 'personal assets.html', base: 'modules' },
-      personalbalsheet: { file: 'personal balance sheet.html', base: 'modules' },
-      personalcashflow: { file: 'personal cash flow.html', base: 'modules' },
-      personalincomeexpense: { file: 'personal income and expense.html', base: 'modules' },
-      personalnetworth: { file: 'personal net worth.html', base: 'modules' },
-      personaljournal: { file: 'personal accounting journal.html', base: 'modules' },
-      personalprofile: { file: 'personal dashboard.html', base: 'modules' },
+      personalassets: { file: 'personal-assets.html', base: 'modules' },
+      personalbalsheet: { file: 'personal-balance-sheet.html', base: 'modules' },
+      personalcashflow: { file: 'personal-cash-flow.html', base: 'modules' },
+      personalincomeexpense: { file: 'personal-income-and-expense.html', base: 'modules' },
+      personalnetworth: { file: 'personal-net-worth.html', base: 'modules' },
+      personaljournal: { file: 'personal-accounting-journal.html', base: 'modules' },
+      personalprofile: { file: 'personal-dashboard.html', base: 'modules' },
 
       // Dashboard
       readme: { file: 'README.md', base: 'dashboard' }
@@ -130,7 +129,7 @@
           }
         })
         .catch(err => {
-          document.getElementById('content').innerHTML = `<p>Error loading ${tabName} tab.</p>`;
+          document.getElementById('content').innerHTML = `<p>Error loading ${tabName}: ${err.message}</p>`;
           console.error(err);
         });
     }
