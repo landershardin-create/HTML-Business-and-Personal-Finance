@@ -1,3 +1,5 @@
+// --- business-debt-to-equity.js---
+
 // Helper: format numbers as US currency
 function formatCurrency(value) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
