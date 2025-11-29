@@ -34,7 +34,6 @@
   </style>
 </head>
 <body>
-  <!-- Dynamic header -->
   <h1 id="reportHeader">Business Balance Sheet Report</h1>
 
   <!-- Company selector starts empty; populated dynamically -->
@@ -57,7 +56,54 @@
     <select id="subPeriodSelect"></select>
   </div>
 
-  <div id="balanceSheetContainer"></div>
+  <!-- Balance sheet tables -->
+  <div id="balanceSheetContainer">
+    <h2>Balance Sheet - Company A (2025)</h2>
+    <table>
+      <thead><tr><th>Category</th><th>Item</th><th>Amount</th></tr></thead>
+      <tbody>
+        <tr><td>Assets</td><td>Cash</td><td>$50,000</td></tr>
+        <tr><td>Assets</td><td>Inventory</td><td>$30,000</td></tr>
+        <tr><td>Assets</td><td>Equipment</td><td>$70,000</td></tr>
+        <tr><td>Liabilities</td><td>Loans</td><td>$40,000</td></tr>
+        <tr><td>Equity</td><td>Retained Earnings</td><td>$90,000</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Balance Sheet - Company B (2025)</h2>
+    <table>
+      <thead><tr><th>Category</th><th>Item</th><th>Amount</th></tr></thead>
+      <tbody>
+        <tr><td>Assets</td><td>Cash</td><td>$80,000</td></tr>
+        <tr><td>Assets</td><td>Inventory</td><td>$50,000</td></tr>
+        <tr><td>Assets</td><td>Equipment</td><td>$120,000</td></tr>
+        <tr><td>Liabilities</td><td>Loans</td><td>$60,000</td></tr>
+        <tr><td>Equity</td><td>Retained Earnings</td><td>$160,000</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Balance Sheet - Company C (2025)</h2>
+    <table>
+      <thead><tr><th>Category</th><th>Item</th><th>Amount</th></tr></thead>
+      <tbody>
+        <tr><td>Assets</td><td>Cash</td><td>$30,000</td></tr>
+        <tr><td>Assets</td><td>Inventory</td><td>$20,000</td></tr>
+        <tr><td>Assets</td><td>Equipment</td><td>$40,000</td></tr>
+        <tr><td>Liabilities</td><td>Loans</td><td>$25,000</td></tr>
+        <tr><td>Equity</td><td>Retained Earnings</td><td>$50,000</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Combined Summary (2025)</h2>
+    <table>
+      <thead><tr><th>Category</th><th>Total Amount</th></tr></thead>
+      <tbody>
+        <tr class="summary"><td>Assets</td><td>$440,000</td></tr>
+        <tr class="summary"><td>Liabilities</td><td>$125,000</td></tr>
+        <tr class="summary"><td>Equity</td><td>$300,000</td></tr>
+      </tbody>
+    </table>
+  </div>
 
   <!-- JavaScript file handles dynamic company loading and rendering -->
   <script src="https://landershardin-create.github.io/HTML-Business-and-Personal-Finance/js/business-balance-sheet.js"></script>
