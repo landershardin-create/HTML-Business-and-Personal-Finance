@@ -1,3 +1,34 @@
+// --- Sample Data ---
+const balanceSheets = {
+  companyA: {
+    annual: {
+      "2025": {
+        assets: { Cash: 50000, Inventory: 30000, Equipment: 70000 },
+        liabilities: { Loans: 40000 },
+        equity: { "Retained Earnings": 90000 }
+      }
+    }
+  },
+  companyB: {
+    annual: {
+      "2025": {
+        assets: { Cash: 80000, Inventory: 50000, Equipment: 120000 },
+        liabilities: { Loans: 60000 },
+        equity: { "Retained Earnings": 160000 }
+      }
+    }
+  },
+  companyC: {
+    annual: {
+      "2025": {
+        assets: { Cash: 30000, Inventory: 20000, Equipment: 40000 },
+        liabilities: { Loans: 25000 },
+        equity: { "Retained Earnings": 50000 }
+      }
+    }
+  }
+};
+
 // --- Populate Company Selector ---
 function populateCompanyOptions(companies) {
   const companySelect = document.getElementById("companySelect");
@@ -28,13 +59,13 @@ function populateSubPeriodOptions(periodType) {
 // --- Rendering Helpers ---
 function renderCompanyTable(companyKey, subPeriod, data) {
   const assetsHTML = Object.entries(data.assets)
-    .map(([item, amount]) => `${item}: $${amount.toLocaleString()}`)
+    .map(([item, amount]) => `<span class="assets">${item}: $${amount.toLocaleString()}</span>`)
     .join("<br>");
   const liabilitiesHTML = Object.entries(data.liabilities)
-    .map(([item, amount]) => `${item}: $${amount.toLocaleString()}`)
+    .map(([item, amount]) => `<span class="liabilities">${item}: $${amount.toLocaleString()}</span>`)
     .join("<br>");
   const equityHTML = Object.entries(data.equity)
-    .map(([item, amount]) => `${item}: $${amount.toLocaleString()}`)
+    .map(([item, amount]) => `<span class="equity">${item}: $${amount.toLocaleString()}</span>`)
     .join("<br>");
 
   return `
@@ -61,15 +92,15 @@ function renderSummary(subPeriod, totals) {
       <thead><tr><th>Total Assets</th><th>Total Liabilities</th></tr></thead>
       <tbody>
         <tr>
-          <td>
+          <td class="assets">
 
 {totals.assets.toLocaleString()}</td>
-          <td>
+          <td class="liabilities">
 
 {totals.liabilities.toLocaleString()}</td>
         </tr>
         <tr>
-          <td colspan="2"><strong>Equity: $${totals.equity.toLocaleString()}</strong></td>
+          <td colspan="2" class="equity"><strong>Equity: $${totals.equity.toLocaleString()}</strong></td>
         </tr>
       </tbody>
     </table>
@@ -121,37 +152,4 @@ function updateHeader(companyManager) {
   }
 }
 
-// --- Event Wiring ---
-function triggerRender(companyManager) {
-  const selectedCompanies = Array.from(document.getElementById("companySelect").selectedOptions).map(opt => opt.value);
-  const periodType = document.getElementById("periodSelect").value;
-  const subPeriod = document.getElementById("subPeriodSelect").value;
-  renderBalanceSheets(selectedCompanies, periodType, subPeriod);
-  updateHeader(companyManager);
-}
-
-// --- Load Company Manager ---
-async function loadCompanyManager() {
-  try {
-    const response = await fetch("https://landershardin-create.github.io/HTML-Business-and-Personal-Finance/data/company-manager.json");
-    const companyManager = await response.json();
-    populateCompanyOptions(companyManager.companies);
-
-    // Wire events
-    document.getElementById("periodSelect").addEventListener("change", (e) => {
-      populateSubPeriodOptions(e.target.value);
-      triggerRender(companyManager);
-    });
-    document.getElementById("subPeriodSelect").addEventListener("change", () => triggerRender(companyManager));
-    document.getElementById("companySelect").addEventListener("change", () => triggerRender(companyManager));
-
-    // Initial setup
-    populateSubPeriodOptions("annual");
-    renderBalanceSheets([companyManager.companies[0].key], "annual", "2025");
-    updateHeader(companyManager);
-  } catch (error) {
-    console.error("Error loading company manager:", error);
-  }
-}
-
-loadCompanyManager();
+// ---
