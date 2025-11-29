@@ -1,4 +1,6 @@
-   const companyMeta = {
+// --- business-income-and-expense.js---
+   
+         const companyMeta = {
       acme: { name: "Acme Corp", location: "New York, NY", type: "Manufacturing", role: "Owner" },
       zenith: { name: "Zenith LLC", location: "Austin, TX", type: "Consulting", role: "Partner" },
       nova: { name: "Nova Industries", location: "San Francisco, CA", type: "Tech Startup", role: "Investor" }
