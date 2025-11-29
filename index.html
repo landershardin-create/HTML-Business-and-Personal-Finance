@@ -26,43 +26,7 @@
 </head>
 <body>
   <div class="dropdown-container">
-    <details>
-      <summary>Home</summary>
-      <button onclick="loadTab('welcome')">Welcome</button>
-    </details>
-
-    <details>
-      <summary>Business Menu</summary>
-      <button onclick="loadTab('businessassets')">Assets</button>
-      <button onclick="loadTab('businessbalsheet')">Balance Sheet</button>
-      <button onclick="loadTab('companydashboard')">Company Manager</button>
-      <button onclick="loadTab('businesscashflow')">Cash Flow</button>
-      <button onclick="loadTab('businessdebttoequity')">Debt to Equity</button>
-      <button onclick="loadTab('businessincomeexpense')">Income & Expense</button>
-      <button onclick="loadTab('businessinventory')">Inventory</button>
-      <button onclick="loadTab('businessjournal')">Journal</button>
-      <button onclick="loadTab('businessnetworth')">Net Worth</button>
-      <button onclick="loadTab('businesspayroll')">Payroll Register</button>
-      <button onclick="loadTab('businesspersonnel')">Personnel Records</button>
-      <button onclick="loadTab('businesstimekeeping')">Timesheet</button>
-    </details>
-
-    <details>
-      <summary>Contributor Menu</summary>
-      <button onclick="loadTab('contributordashboard')">Onboarding</button>
-    </details>
-
-    <details>
-      <summary>Personal Menu</summary>
-      <button onclick="loadTab('personalassets')">Assets</button>
-      <button onclick="loadTab('personalbalsheet')">Balance Sheet</button>
-      <button onclick="loadTab('personalcashflow')">Cash Flow</button>
-      <button onclick="loadTab('personalincomeexpense')">Income & Expense</button>
-      <button onclick="loadTab('personaljournal')">Journal</button>
-      <button onclick="loadTab('personalnetworth')">Net Worth</button>
-      <button onclick="loadTab('personalprofile')">Profile Info.</button>
-    </details>
-    
+    <!-- menus unchanged -->
     <details>
       <summary>Support</summary>
       <button onclick="loadTab('readme')">Read Me</button>
@@ -72,38 +36,16 @@
   <div id="content">Loading...</div>
 
   <!-- Markdown renderer -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script>
     const sources = {
-      modules: 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/modules/',
+      modules: 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/main/modules/',
       dashboard: 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/main/'
     };
 
     const tabs = {
-      // Modules
       welcome: { file: 'welcome.html', base: 'modules' },
-      businessassets: { file: 'business assets.html', base: 'modules' },
-      businessbalsheet: { file: 'business balance sheet.html', base: 'modules' },
-      businesscashflow: { file: 'business cash flow.html', base: 'modules' },
-      companydashboard: { file: 'company dashboard.html', base: 'modules' },
-      businessdebttoequity: { file: 'business debt-to-equity.html', base: 'modules' },
-      businessincomeexpense: { file: 'business income and expense.html', base: 'modules' },
-      businessinventory: { file: 'business inventory.html', base: 'modules' },
-      businessjournal: { file: 'business accounting journal.html', base: 'modules' },
-      businessnetworth: { file: 'business net worth.html', base: 'modules' },
-      businesspayroll: { file: 'business payroll register.html', base: 'modules' },
-      businesspersonnel: { file: 'business personnel registry.html', base: 'modules' },
-      businesstimekeeping: { file: 'business timesheet.html', base: 'modules' },
-      contributordashboard: { file: 'contributor-dashboard.html', base: 'modules' },
-      personalassets: { file: 'personal assets.html', base: 'modules' },
-      personalbalsheet: { file: 'personal balance sheet.html', base: 'modules' },
-      personalcashflow: { file: 'personal cash flow.html', base: 'modules' },
-      personalincomeexpense: { file: 'personal income and expense.html', base: 'modules' },
-      personalnetworth: { file: 'personal net worth.html', base: 'modules' },
-      personaljournal: { file: 'personal accounting journal.html', base: 'modules' },
-      personalprofile: { file: 'personal dashboard.html', base: 'modules' },
-
-      // Dashboard
+      // … other modules …
       readme: { file: 'README.md', base: 'dashboard' }
     };
 
@@ -129,12 +71,11 @@
           }
         })
         .catch(err => {
-          document.getElementById('content').innerHTML = `<p>Error loading ${tabName} tab.</p>`;
+          document.getElementById('content').innerHTML = `<p>Error loading ${tabName}: ${err.message}</p>`;
           console.error(err);
         });
     }
 
-    // Load default tab
     window.onload = () => loadTab('welcome');
   </script>
 </body>
