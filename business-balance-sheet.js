@@ -108,6 +108,7 @@ function renderCompanyTable(companyKey, subPeriod, data) {
     </table>
   `;
 }
+
 function renderSummary(subPeriod, totals) {
   return `
     <h2>Combined Summary (${subPeriod})</h2>
