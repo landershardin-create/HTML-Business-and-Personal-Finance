@@ -119,3 +119,94 @@ loadCompanyManager().then(() => {
   populateSubPeriodOptions("annual");
   renderBalanceSheets(["companyA"], "annual", "2025");
 });
+async function loadCompanyManager() {
+  try {
+    const response = await fetch("https://landershardin-create.github.io/HTML-Business-and-Personal-Finance/data/company-manager.json");
+    const companyManager = await response.json();
+    const companySelect = document.getElementById("companySelect");
+    companySelect.innerHTML = companyManager.companies
+      .map(c => `<option value="${c.key}">${c.name}</option>`)
+      .join("");
+
+    function updateHeader() {
+      const selectedCompanies = Array.from(companySelect.selectedOptions).map(opt => opt.text);
+      const period = document.getElementById("periodSelect").value;
+      const subPeriod = document.getElementById("subPeriodSelect").value;
+      const header = document.getElementById("reportHeader");
+
+      let companyText = selectedCompanies.length > 0 ? selectedCompanies.join(", ") : "Business";
+      let periodText = period ? period.charAt(0).toUpperCase() + period.slice(1) : "";
+      let subPeriodText = subPeriod ? subPeriod : "";
+
+      header.textContent = `Balance Sheet Report: ${companyText} — ${periodText} ${subPeriodText}`;
+
+      if (selectedCompanies.length > 0) {
+        document.getElementById("headerCompanyName").textContent = selectedCompanies[0];
+        document.getElementById("headerLocation").textContent = "Location: (from JSON)";
+        document.getElementById("headerTypeValue").textContent = "Type from JSON";
+        document.getElementById("headerRoleValue").textContent = "Role from JSON";
+      }
+    }
+
+    function renderBalanceSheet(company) {
+      const container = document.getElementById("balanceSheetContainer");
+      const assetsHTML = company.assets.map(a => `${a.name}: $${a.amount}`).join("<br>");
+      const liabilitiesHTML = company.liabilities.map(l => `${l.name}: $${l.amount}`).join("<br>");
+      const equityHTML = company.equity.map(e => `${e.name}: $${e.amount}`).join("<br>");
+
+      const tableHTML = `
+        <h2>Balance Sheet - ${company.name} (${company.period})</h2>
+        <table>
+          <thead><tr><th>Assets</th><th>Liabilities</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>${assetsHTML}</td>
+              <td>${liabilitiesHTML}</td>
+            </tr>
+            <tr>
+              <td colspan="2"><strong>${equityHTML}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      `;
+      container.insertAdjacentHTML("beforeend", tableHTML);
+    }
+
+    // Event listeners
+    companySelect.addEventListener("change", updateHeader);
+    document.getElementById("periodSelect").addEventListener("change", updateHeader);
+    document.getElementById("subPeriodSelect").addEventListener("change", updateHeader);
+
+    // Example: render demo companies (replace with dynamic JSON later)
+    const demoCompanies = [
+      {
+        name: "Company A",
+        period: "2025",
+        assets: [{ name: "Cash", amount: 50000 }, { name: "Inventory", amount: 30000 }, { name: "Equipment", amount: 70000 }],
+        liabilities: [{ name: "Loans", amount: 40000 }],
+        equity: [{ name: "Retained Earnings", amount: 90000 }]
+      },
+      {
+        name: "Company B",
+        period: "2025",
+        assets: [{ name: "Cash", amount: 80000 }, { name: "Inventory", amount: 50000 }, { name: "Equipment", amount: 120000 }],
+        liabilities: [{ name: "Loans", amount: 60000 }],
+        equity: [{ name: "Retained Earnings", amount: 160000 }]
+      },
+      {
+        name: "Company C",
+        period: "2025",
+        assets: [{ name: "Cash", amount: 30000 }, { name: "Inventory", amount: 20000 }, { name: "Equipment", amount: 40000 }],
+        liabilities: [{ name: "Loans", amount: 25000 }],
+        equity: [{ name: "Retained Earnings", amount: 50000 }]
+      }
+    ];
+
+    demoCompanies.forEach(renderBalanceSheet);
+
+  } catch (err) {
+    console.error("Failed to load company manager:", err);
+  }
+}
+
+loadCompanyManager();
