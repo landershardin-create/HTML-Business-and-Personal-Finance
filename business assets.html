@@ -12,13 +12,17 @@
     <button onclick="clearAllAssets()">Clear All Assets</button>
   </div>
   
-  <!-- Business Selector -->
-  <label for="businessSelect">Select Business:</label>
-  <select id="businessSelect">
-    <option value="BusinessA">Business A</option>
-    <option value="BusinessB">Business B</option>
-    <option value="BusinessC">Business C</option>
+<!-- Business Selector -->
+<label for="businessSelect">Select Business:</label>
+<select id="businessSelect"></select>
+
+<!-- Business Filter -->
+<div class="section">
+  <h3>Filter by Business</h3>
+  <select id="businessFilter" onchange="filterAssets()">
+    <option value="">All Businesses</option>
   </select>
+</div>
 
   <!-- Asset Input Form -->
   <div class="section">
