@@ -178,6 +178,42 @@ function populateBusinessDropdowns() {
     businessFilter.appendChild(opt2);
   });
 }
+// Assume your dashboard hub has a function to load/sync a company view
+function loadCompanyDashboard(companyId) {
+  console.log(`📊 Switching dashboard to: ${companyId}`);
+  // Example: update navigation, charts, tables, etc.
+  // Replace with your actual dashboard hub logic
+  const dashboardTitle = document.getElementById("dashboardTitle");
+  if (dashboardTitle) {
+    dashboardTitle.textContent = `Dashboard: ${companyId}`;
+  }
+  // TODO: trigger data refresh for selected company
+}
+
+// Attach event listeners to dropdowns
+function attachBusinessSync() {
+  const businessSelect = document.getElementById("businessSelect");
+  const businessFilter = document.getElementById("businessFilter");
+
+  businessSelect.addEventListener("change", (e) => {
+    const selectedCompany = e.target.value;
+    loadCompanyDashboard(selectedCompany);
+  });
+
+  businessFilter.addEventListener("change", (e) => {
+    const selectedCompany = e.target.value;
+    filterAssets(selectedCompany); // already exists
+    if (selectedCompany) {
+      loadCompanyDashboard(selectedCompany);
+    }
+  });
+}
+
+// Run after dropdowns are populated
+document.addEventListener("DOMContentLoaded", () => {
+  populateBusinessDropdowns();
+  attachBusinessSync();
+});
 
 // Run on page load
 document.addEventListener("DOMContentLoaded", populateBusinessDropdowns);
