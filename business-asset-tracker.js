@@ -8,17 +8,19 @@ function addAsset() {
   const tag = document.getElementById("assetTag").value;
   const name = document.getElementById("assetName").value;
   const category = document.getElementById("assetCategory").value;
-  const value = parseFloat(document.getElementById("assetValue").value);
-  const depRate = parseFloat(document.getElementById("assetDep").value) / 100;
-  const years = parseInt(document.getElementById("assetYears").value);
+  const type = document.getElementById("assetType").value; // NEW
+  const date = document.getElementById("assetDate").value; // NEW
+  const value = parseFloat(document.getElementById("assetValue").value) || 0;
+  const depRate = parseFloat(document.getElementById("assetDep").value) || 0;
+  const years = parseInt(document.getElementById("assetYears").value) || 0;
 
-  if (isNaN(value) || isNaN(depRate) || isNaN(years)) return;
-
-  const annualDep = value * depRate;
+  // Calculate depreciation
+  const annualDep = (value * depRate) / 100;
   const accumulatedDep = annualDep * years;
   const netBookValue = value - accumulatedDep;
 
-  const table = document.getElementById("assetTable").querySelector("tbody");
+  // Insert into table
+  const table = document.getElementById("assetTable").getElementsByTagName("tbody")[0];
   const row = table.insertRow();
 
   row.innerHTML = `
@@ -26,8 +28,10 @@ function addAsset() {
     <td>${tag}</td>
     <td>${name}</td>
     <td>${category}</td>
+    <td>${type}</td> <!-- NEW -->
+    <td>${date}</td> <!-- NEW -->
     <td>$${value.toFixed(2)}</td>
-    <td>${(depRate*100).toFixed(2)}%</td>
+    <td>${depRate}%</td>
     <td>
 
 {annualDep.toFixed(2)}</td>
@@ -39,11 +43,17 @@ function addAsset() {
     <td><button onclick="deleteAsset(this)">Delete</button></td>
   `;
 
-  assetList.push({ business, tag, name, category, value, depRate, years });
-  localStorage.setItem("assets", JSON.stringify(assetList));
+  // Clear form after adding
+  document.getElementById("assetTag").value = "";
+  document.getElementById("assetName").value = "";
+  document.getElementById("assetCategory").value = "";
+  document.getElementById("assetType").value = "Tangible"; // reset default
+  document.getElementById("assetDate").value = "";
+  document.getElementById("assetValue").value = "";
+  document.getElementById("assetDep").value = "";
+  document.getElementById("assetYears").value = "";
 
   updateTotals();
-  resetForm();
 }
 
 function resetForm() {
@@ -52,19 +62,22 @@ function resetForm() {
 }
 
 function editAsset(button) {
-  const row = button.closest("tr");
-  document.getElementById("businessSelect").value = row.cells[0].innerText;
-  document.getElementById("assetTag").value = row.cells[1].innerText;
-  document.getElementById("assetName").value = row.cells[2].innerText;
-  document.getElementById("assetCategory").value = row.cells[3].innerText;
-  document.getElementById("assetValue").value = row.cells[4].innerText.replace("$","");
-  document.getElementById("assetDep").value = row.cells[5].innerText.replace("%","");
-  document.getElementById("assetYears").value = 
-    parseFloat(row.cells[7].innerText.replace("$","")) / 
-    parseFloat(row.cells[6].innerText.replace("$",""));
+  const row = button.parentNode.parentNode;
+  const cells = row.getElementsByTagName("td");
 
+  // Populate form fields with existing values
+  document.getElementById("businessSelect").value = cells[0].innerText;
+  document.getElementById("assetTag").value = cells[1].innerText;
+  document.getElementById("assetName").value = cells[2].innerText;
+  document.getElementById("assetCategory").value = cells[3].innerText;
+  document.getElementById("assetType").value = cells[4].innerText; // NEW
+  document.getElementById("assetDate").value = cells[5].innerText; // NEW
+  document.getElementById("assetValue").value = parseFloat(cells[6].innerText.replace("$",""));
+  document.getElementById("assetDep").value = parseFloat(cells[7].innerText.replace("%",""));
+  document.getElementById("assetYears").value = (parseFloat(cells[9].innerText.replace("$","")) / parseFloat(cells[8].innerText.replace("$",""))) || 0;
+
+  // Remove the row being edited so it can be re-added after changes
   row.remove();
-  updateTotals();
 }
 
 function deleteAsset(button) {
