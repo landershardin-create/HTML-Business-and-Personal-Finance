@@ -1,4 +1,6 @@
-   function showCompany() {
+// --- business-debt-payroll.js---
+   
+         function showCompany() {
       const selected = document.getElementById("companySelect").value;
       document.getElementById("acme").style.display = selected === "acme" ? "block" : "none";
       document.getElementById("zenith").style.display = selected === "zenith" ? "block" : "none";
