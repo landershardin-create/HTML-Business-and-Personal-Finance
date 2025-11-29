@@ -1,4 +1,3 @@
-
     const balanceSheets = {
       companyA: {
         monthly: {
