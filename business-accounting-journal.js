@@ -1,4 +1,4 @@
-// business-journal.js
+// --- business-accounting-journal.js---
 
 let accountTypeChart;
 let monthlyTotalsChart;
