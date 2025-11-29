@@ -1,4 +1,4 @@
-// --- business-assets.js---
+// --- business-asset-tracker.js---
 
 console.log("✅ Business Asset Tracker JS loaded successfully");
 
