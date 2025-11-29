@@ -72,11 +72,10 @@
   <div id="content">Loading...</div>
 
   <!-- Markdown renderer -->
-  <script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script>
     const sources = {
-      modules: 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/modules/',
+      modules: 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/main/modules/',
       dashboard: 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/main/'
     };
 
@@ -130,7 +129,7 @@
           }
         })
         .catch(err => {
-          document.getElementById('content').innerHTML = `<p>Error loading ${tabName} tab.</p>`;
+          document.getElementById('content').innerHTML = `<p>Error loading ${tabName}: ${err.message}</p>`;
           console.error(err);
         });
     }
