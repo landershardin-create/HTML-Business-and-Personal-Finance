@@ -19,13 +19,23 @@
 <body>
   <h1>Business Income & Expense Report</h1>
 
-  <!-- Selectors -->
-  <label for="companySelect">Select Company:</label>
-  <select id="companySelect">
-    <option value="acme">Acme Corp</option>
-    <option value="zenith">Zenith LLC</option>
-    <option value="nova">Nova Industries</option>
-  </select>
+async function loadCompanyManager() {
+  try {
+    const response = await fetch("https://landershardin-create.github.io/HTML-Business-and-Personal-Finance/data/company-manager.json");
+    const companyManager = await response.json();
+
+    populateCompanyOptions(companyManager.companies.filter(c => c.active));
+  } catch (error) {
+    console.error("Error loading company manager:", error);
+  }
+}
+
+function populateCompanyOptions(companies) {
+  const companySelect = document.getElementById("companySelect");
+  companySelect.innerHTML = companies
+    .map(c => `<option value="${c.key}">${c.name}</option>`)
+    .join("");
+}
 
   <label for="timeRangeSelect">Select Time Range:</label>
   <select id="timeRangeSelect">
