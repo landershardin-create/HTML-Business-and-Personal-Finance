@@ -1,3 +1,5 @@
+// --- business-inventory.js---
+
  // Store inventory per business keyed by barcode/asset tag
   const inventoryData = {
     BusinessA: {},
