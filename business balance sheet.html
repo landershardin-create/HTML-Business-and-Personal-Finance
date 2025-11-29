@@ -60,6 +60,22 @@
 
   <!-- JavaScript file handles dynamic company loading and rendering -->
   <script src="https://landershardin-create.github.io/HTML-Business-and-Personal-Finance/js/business-balance-sheet.js"></script>
-  https://landershardin-create.github.io/HTML-Business-and-Personal-Finance/data/company-manager.json
+
+  <!-- Inline bootstrap to load company-manager.json -->
+  <script>
+    async function loadCompanyManager() {
+      try {
+        const response = await fetch("https://landershardin-create.github.io/HTML-Business-and-Personal-Finance/data/company-manager.json");
+        const companyManager = await response.json();
+        const companySelect = document.getElementById("companySelect");
+        companySelect.innerHTML = companyManager.companies
+          .map(c => `<option value="${c.key}">${c.name}</option>`)
+          .join("");
+      } catch (err) {
+        console.error("Failed to load company manager:", err);
+      }
+    }
+    loadCompanyManager();
+  </script>
 </body>
 </html>
