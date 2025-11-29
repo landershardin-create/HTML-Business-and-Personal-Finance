@@ -1,24 +1,50 @@
-// --- business-balance-sheet.js---
+// --- business-balance-sheet.js ---
 
 // --- Sample Data ---
 const balanceSheets = {
-  companyA: { /* ... same as before ... */ },
-  companyB: { /* ... same as before ... */ },
-  companyC: { /* ... same as before ... */ }
+  companyA: {
+    annual: {
+      "2023": {
+        assets: { Cash: 50000, Inventory: 70000 },
+        liabilities: { Loans: 30000 },
+        equity: { RetainedEarnings: 90000 }
+      }
+    }
+  },
+  companyB: {
+    annual: {
+      "2023": {
+        assets: { Cash: 40000, Equipment: 50000 },
+        liabilities: { Debt: 20000 },
+        equity: { RetainedEarnings: 70000 }
+      }
+    }
+  },
+  companyC: {
+    annual: {
+      "2023": {
+        assets: { Cash: 60000, IP: 90000 },
+        liabilities: { Debt: 40000 },
+        equity: { RetainedEarnings: 110000 }
+      }
+    }
+  }
 };
+
+// --- Company Metadata ---
+const companies = [
+  { key: "all", name: "All Companies", location: "", type: "", role: "" },
+  { key: "companyA", name: "Company A", location: "New York, NY", type: "Retail", role: "Parent" },
+  { key: "companyB", name: "Company B", location: "Chicago, IL", type: "Manufacturing", role: "Subsidiary" },
+  { key: "companyC", name: "Company C", location: "Austin, TX", type: "Tech", role: "Subsidiary" }
+];
 
 // --- Populate Company Selector ---
 function populateCompanyOptions() {
   const companySelect = document.getElementById("companySelect");
-  const companies = [
-    { key: "all", name: "All Companies", location: "", type: "", role: "" },
-    { key: "companyA", name: "Company A", location: "New York, NY", type: "Retail", role: "Parent" },
-    { key: "companyB", name: "Company B", location: "Chicago, IL", type: "Manufacturing", role: "Subsidiary" },
-    { key: "companyC", name: "Company C", location: "Austin, TX", type: "Tech", role: "Subsidiary" }
-  ];
-
-  companySelect.innerHTML = companies.map(c => `<option value="${c.key}">${c.name}</option>`).join("");
-  return companies;
+  companySelect.innerHTML = companies
+    .map(c => `<option value="${c.key}">${c.name}</option>`)
+    .join("");
 }
 
 // --- Populate Subperiods Dynamically ---
@@ -71,7 +97,7 @@ function renderSummary(subPeriod, totals) {
   return `
     <h2>Combined Summary (${subPeriod})</h2>
     <table>
-      <thead><tr><th>Total Assets</th><th>Total Liabilities</th></tr></thead>
+      <thead><tr><th>Total Assets</th><th>Total Liabilities</th><th>Total Equity</th></tr></thead>
       <tbody>
         <tr>
           <td class="assets">
@@ -80,9 +106,7 @@ function renderSummary(subPeriod, totals) {
           <td class="liabilities">
 
 {totals.liabilities.toLocaleString()}</td>
-        </tr>
-        <tr>
-          <td colspan="2" class="equity"><strong>Equity: $${totals.equity.toLocaleString()}</strong></td>
+          <td class="equity">$${totals.equity.toLocaleString()}</td>
         </tr>
       </tbody>
     </table>
@@ -111,7 +135,7 @@ function renderBalanceSheets(companyKeys, periodType, subPeriod) {
 }
 
 // --- Header Update ---
-function updateHeader(companies) {
+function updateHeader() {
   const selectedCompanies = Array.from(document.getElementById("companySelect").selectedOptions).map(opt => opt.value);
   const period = document.getElementById("periodSelect").value;
   const subPeriod = document.getElementById("subPeriodSelect").value;
@@ -142,74 +166,8 @@ function updateHeader(companies) {
   }
 }
 
-const companies = [
-  { name: "Alpha Tech", location: "Seattle, WA", type: "LLC", role: "Parent" },
-  { name: "Beta Finance", location: "Austin, TX", type: "Inc.", role: "Subsidiary" },
-  { name: "Gamma Retail", location: "Chicago, IL", type: "Partnership", role: "Affiliate" }
-];
-
-const companySelect = document.getElementById("companySelect");
-companies.forEach((c, i) => {
-  const option = document.createElement("option");
-  option.value = i;
-  option.textContent = c.name;
-  companySelect.appendChild(option);
-});
-
-const subPeriodSelect = document.getElementById("subPeriodSelect");
-const periodSelect = document.getElementById("periodSelect");
-
-periodSelect.addEventListener("change", () => {
-  subPeriodSelect.innerHTML = ""; // reset
-  let options = [];
-  if (periodSelect.value === "monthly") {
-    options = ["Jan", "Feb", "Mar"];
-  } else if (periodSelect.value === "quarterly") {
-    options = ["Q1", "Q2", "Q3", "Q4"];
-  } else {
-    options = ["2023", "2024", "2025"];
-  }
-  options.forEach(o => {
-    const opt = document.createElement("option");
-    opt.value = o;
-    opt.textContent = o;
-    subPeriodSelect.appendChild(opt);
-  });
-});
-function renderBalanceSheet(company, data) {
-  const container = document.getElementById("balanceSheetContainer");
-  container.innerHTML = `
-    <h2>${company.name} Balance Sheet</h2>
-    <table>
-      <tr><th>Category</th><th>Amount</th></tr>
-      <tr><td class="assets">Assets</td><td>
-
-{data.assets}</td></tr>
-      <tr><td class="liabilities">Liabilities</td><td>
-
-{data.liabilities}</td></tr>
-      <tr><td class="equity">Equity</td><td>
-
-{data.equity}</td></tr>
-      <tr class="summary"><td>Total</td><td>
-
-{data.assets - data.liabilities}</td></tr>
-    </table>
-  `;
-}
-const balanceSheets = {
-  "Alpha Tech": { assets: 120000, liabilities: 50000, equity: 70000 },
-  "Beta Finance": { assets: 90000, liabilities: 40000, equity: 50000 },
-  "Gamma Retail": { assets: 150000, liabilities: 80000, equity: 70000 }
-};
-document.getElementById("companySelect").addEventListener("change", () => {
-  const selected = Array.from(companySelect.selectedOptions).map(o => o.textContent);
-  const subPeriod = document.getElementById("subPeriodSelect").value;
-  renderMultiCompany(selected, subPeriod);
-});
-
 // --- Event Wiring ---
-function triggerRender(companies) {
+function triggerRender() {
   let selectedCompanies = Array.from(document.getElementById("companySelect").selectedOptions).map(opt => opt.value);
   const periodType = document.getElementById("periodSelect").value;
 
@@ -221,54 +179,22 @@ function triggerRender(companies) {
 
   const subPeriod = document.getElementById("subPeriodSelect").value;
   renderBalanceSheets(selectedCompanies, periodType, subPeriod);
-  updateHeader(companies);
+  updateHeader();
 }
 
 // --- Initial Setup ---
 document.addEventListener("DOMContentLoaded", () => {
-  const companies = populateCompanyOptions();
+  populateCompanyOptions();
 
   // Default to "All Companies"
   const companySelect = document.getElementById("companySelect");
   companySelect.value = "all";
 
   // Wire events
-  document.getElementById("periodSelect").addEventListener("change", () => triggerRender(companies));
-  document.getElementById("companySelect").addEventListener("change", () => triggerRender(companies));
-  document.getElementById("subPeriodSelect").addEventListener("change", () => triggerRender(companies));
+  document.getElementById("periodSelect").addEventListener("change", triggerRender);
+  document.getElementById("companySelect").addEventListener("change", triggerRender);
+  document.getElementById("subPeriodSelect").addEventListener("change", triggerRender);
 
-  // Initial render with "All Companies"
-  triggerRender(companies);
-  function renderMultiCompany(selectedCompanies, subPeriod) {
-  const container = document.getElementById("balanceSheetContainer");
-  container.innerHTML = ""; // reset
-
-  const wrapper = document.createElement("div");
-  wrapper.style.display = "flex";
-  wrapper.style.gap = "1em";
-
-  selectedCompanies.forEach(company => {
-    const data = balanceSheets[company];
-    const table = document.createElement("table");
-    table.innerHTML = `
-      <caption><strong>${company} – ${subPeriod}</strong></caption>
-      <tr><th>Category</th><th>Amount</th></tr>
-      <tr><td class="assets">Assets</td><td>
-
-{data.assets}</td></tr>
-      <tr><td class="liabilities">Liabilities</td><td>
-
-{data.liabilities}</td></tr>
-      <tr><td class="equity">Equity</td><td>
-
-{data.equity}</td></tr>
-      <tr class="summary"><td>Total</td><td>
-
-{data.assets - data.liabilities}</td></tr>
-    `;
-    wrapper.appendChild(table);
-  });
-
-  container.appendChild(wrapper);
-}
+  // Initial render
+  triggerRender();
 });
