@@ -57,35 +57,62 @@ function renderSummary() {
   const infra = parseFloat(document.getElementById('useInfra').value);
   const totalUse = (rd + marketing + infra).toFixed(2);
 
+  // Conditional styling: highlight ratio
+  let ratioClass = "";
+  if (ratio > 1) {
+    ratioClass = "expense"; // red if debt > equity
+  } else {
+    ratioClass = "income";  // green if equity stronger
+  }
+
   document.getElementById('financialSummary').innerHTML = `
-    <p><strong>Debt-to-Equity Ratio:</strong> ${ratio}</p>
-    <p><strong>Loan Distribution:</strong> Ops
+    <table>
+      <tr><th colspan="2">Debt-to-Equity</th></tr>
+      <tr><td>Debt-to-Equity Ratio</td><td class="${ratioClass}">${ratio}</td></tr>
 
-{ops}, Assets 
+      <tr><th colspan="2">Loan Distribution</th></tr>
+      <tr><td>Operations</td><td>
 
-{assets}, Reserves
+{ops}</td></tr>
+      <tr><td>Assets</td><td>
 
-{reserves}</p>
-    <p><strong>Equity Breakdown:</strong> Founder 
+{assets}</td></tr>
+      <tr><td>Reserves</td><td>
 
-{founder}, Investor
+{reserves}</td></tr>
 
-{investor}</p>
-    <p><strong>Use of Proceeds:</strong> R&D 
+      <tr><th colspan="2">Equity Breakdown</th></tr>
+      <tr><td>Founder Equity</td><td class="income">
 
-{rd}, Marketing
+{founder}</td></tr>
+      <tr><td>Investor Equity</td><td class="income">
 
-{marketing}, Infrastructure 
+{investor}</td></tr>
 
-{infra} | Total
+      <tr><th colspan="2">Use of Proceeds</th></tr>
+      <tr><td>R&D</td><td>
 
-{totalUse}</p>
-    <p><strong>Source of Proceeds:</strong> Loan 
+{rd}</td></tr>
+      <tr><td>Marketing</td><td>
 
-{loan}, Equity
+{marketing}</td></tr>
+      <tr><td>Infrastructure</td><td>
 
-{equity} | Total 
+{infra}</td></tr>
+      <tr><td><strong>Total Use</strong></td><td><strong>
 
-{(loan + equity).toFixed(2)}</p>
+{totalUse}</strong></td></tr>
+
+      <tr><th colspan="2">Source of Proceeds</th></tr>
+      <tr><td>Loan</td><td class="expense">
+
+{loan}</td></tr>
+      <tr><td>Equity</td><td class="income">
+
+{equity}</td></tr>
+      <tr><td><strong>Total Source</strong></td><td><strong>
+
+{(loan + equity).toFixed(2)}</strong></td></tr>
+    </table>
   `;
 }
