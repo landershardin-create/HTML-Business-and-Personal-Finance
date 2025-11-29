@@ -1,3 +1,5 @@
+// --- business-assets.js---
+
 console.log("✅ Business Asset Tracker JS loaded successfully");
 
 let assetList = [];
