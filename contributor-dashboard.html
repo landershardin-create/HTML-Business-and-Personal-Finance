@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Contributor Dashboard</title>
-<link rel="stylesheet" href="https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/Dashboard/css/contributor-dashboard-style-sheet.css" />
+  <link rel="stylesheet" href="https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/Dashboard/css/contributor-dashboard-style-sheet.css" />
 </head>
 <body>
   <header>
@@ -13,7 +13,8 @@
   </header>
 
   <main>
-    <section id="contributor-list">
+    <!-- Contributor List -->
+    <section id="contributor-list" role="region" aria-label="Contributor List">
       <h2>👥 Contributor List</h2>
       <div class="contributor-card">
         <h3>Alice Johnson</h3>
@@ -32,7 +33,8 @@
       </div>
     </section>
 
-    <section id="role-manager">
+    <!-- Role Manager -->
+    <section id="role-manager" role="region" aria-label="Role Manager">
       <h2>🔐 Role Manager</h2>
       <div>
         <label>Alice Johnson</label>
@@ -48,7 +50,8 @@
       </div>
     </section>
 
-    <section id="onboarding-tracker">
+    <!-- Onboarding Tracker -->
+    <section id="onboarding-tracker" role="region" aria-label="Onboarding Tracker">
       <h2>🚀 Onboarding Tracker</h2>
       <ul id="onboarding-checklist">
         <li>✅ Profile Completed</li>
@@ -57,7 +60,8 @@
       </ul>
     </section>
 
-    <section id="permissions-matrix">
+    <!-- Permissions Matrix -->
+    <section id="permissions-matrix" role="region" aria-label="Permissions Matrix">
       <h2>📊 Permissions Matrix</h2>
       <table id="matrix-table">
         <tr><th>Role</th><th>Permissions</th></tr>
@@ -67,25 +71,28 @@
       </table>
     </section>
 
-    <section id="profile-editor">
+    <!-- Profile Editor -->
+    <section id="profile-editor" role="region" aria-label="Profile Editor">
       <h2>📝 Profile Editor</h2>
       <form id="profile-form">
-        <input type="text" id="name" placeholder="Name" />
-        <input type="text" id="role" placeholder="Role" />
-        <textarea id="bio" placeholder="Bio"></textarea>
+        <input type="text" id="name" placeholder="Name" required />
+        <input type="text" id="role" placeholder="Role" required />
+        <textarea id="bio" placeholder="Bio" required></textarea>
         <button type="submit">Save Profile</button>
       </form>
     </section>
 
-    <section id="activity-log">
+    <!-- Activity Log -->
+    <section id="activity-log" role="region" aria-label="Activity Log">
       <h2>📜 Activity Log</h2>
-      <div id="log-entries">
-        <p>11/29/2025, 4:48 PM: Dashboard initialized</p>
-        <p>11/29/2025, 4:49 PM: Alice Johnson role updated to Admin</p>
-        <p>11/29/2025, 4:50 PM: Bob Smith profile created</p>
-      </div>
+      <ul id="log-entries">
+        <li>11/29/2025, 4:48 PM: Dashboard initialized</li>
+        <li>11/29/2025, 4:49 PM: Alice Johnson role updated to Admin</li>
+        <li>11/29/2025, 4:50 PM: Bob Smith profile created</li>
+      </ul>
     </section>
   </main>
+
   <script src="https://landershardin-create.github.io/HTML-Business-and-Personal-Finance/js/contributor-dashboard.js"></script>
 </body>
 </html>
