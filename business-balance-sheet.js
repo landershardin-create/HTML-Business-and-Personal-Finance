@@ -126,7 +126,7 @@ function renderBalanceSheets(companyKeys, periodType, subPeriod) {
     totals.liabilities += Object.values(data.liabilities).reduce((a, b) => a + b, 0);
     totals.equity += Object.values(data.equity).reduce((a, b) => a + b, 0);
 
-    return renderCompanyTable(companyKey, subPeriod, data);
+    return `<div>${renderCompanyTable(companyKey, subPeriod, data)}</div>`;
   }).join("");
 
   if (companyKeys.length > 1) {
@@ -164,13 +164,6 @@ function updateHeader() {
     document.getElementById("headerTypeValue").textContent = "";
     document.getElementById("headerRoleValue").textContent = "";
   }
-}
-
-/* Balance sheet grid */
-#balanceSheetContainer {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5em;
 }
 
 // --- Event Wiring ---
