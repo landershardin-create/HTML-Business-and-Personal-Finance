@@ -147,6 +147,40 @@ function clearAllAssets() {
     localStorage.removeItem("assets");
   }
 }
+// Example: Company Manager Dashboard data
+const companyManager = {
+  companies: [
+    { id: "BusinessA", name: "Business A" },
+    { id: "BusinessB", name: "Business B" },
+    { id: "BusinessC", name: "Business C" }
+    // Later: dynamically loaded from DB or API
+  ]
+};
+
+// Populate dropdowns from Company Manager
+function populateBusinessDropdowns() {
+  const businessSelect = document.getElementById("businessSelect");
+  const businessFilter = document.getElementById("businessFilter");
+
+  // Clear existing options
+  businessSelect.innerHTML = "";
+  businessFilter.innerHTML = '<option value="">All Businesses</option>';
+
+  companyManager.companies.forEach(company => {
+    const opt1 = document.createElement("option");
+    opt1.value = company.id;
+    opt1.textContent = company.name;
+    businessSelect.appendChild(opt1);
+
+    const opt2 = document.createElement("option");
+    opt2.value = company.id;
+    opt2.textContent = company.name;
+    businessFilter.appendChild(opt2);
+  });
+}
+
+// Run on page load
+document.addEventListener("DOMContentLoaded", populateBusinessDropdowns);
 
 window.onload = function() {
   const savedAssets = JSON.parse(localStorage.getItem("assets")) || [];
