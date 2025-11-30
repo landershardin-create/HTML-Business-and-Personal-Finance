@@ -1,4 +1,5 @@
-// tab-loader.js
+// --- tab loader.js ---
+
 export const tabs = {
   businessjournal: 'business accounting journal.html',
   businessbalancesheet: 'business balance sheet.html',
