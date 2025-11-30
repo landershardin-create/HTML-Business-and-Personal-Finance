@@ -1,4 +1,4 @@
-# Repository diagram 1.8
+# Repository diagram 1.9
 
 /Dashboard/
 │
@@ -37,11 +37,16 @@
 │   └── contributor-manager-dashboard-style-sheet.css  # NEW
 │
 ├── /js/
-│   ├── dashboard.js
-│   ├── tab-loader.js
-│   ├── local persistent storage.js
-│   ├── business-balance-sheet.js
-│   └── company-dashboard.js
+│   ├── dashboard.js                      # Core dashboard logic
+│   ├── tab-loader.js                     # Handles tab switching
+│   ├── local persistent storage.js       # Local storage utilities (renamed for clarity)
+│   ├── company-dashboard.js              # Company dashboard logic
+│   │
+│   ├── business-accounting-journal.js    # Journal manager logic        # NEW
+│   ├── business-balance-sheet.js         # Balance sheet logic
+│   ├── business-cash-flow.js             # Cash flow logic              # NEW
+│   ├── business-assets.js                # Asset tracker logic          # NEW
+│   └── contributor-manager-dashboard.js  # Contributor dashboard logic  # NEW
 │
 ├── /modules/
 │   ├── business accounting journal.html
