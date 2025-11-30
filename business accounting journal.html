@@ -193,6 +193,39 @@
       const savedEntries = JSON.parse(localStorage.getItem('entries')) || [];
       renderEntries(savedEntries);
     });
+  console.log("✅ Business Asset Tracker HTML loaded");
+
+  // Dynamic JS loader
+  function loadScript(path, callback) {
+    const script = document.createElement("script");
+    script.src = path;
+    script.type = "text/javascript";
+    script.onload = () => {
+      console.log(`✅ Loaded script: ${path}`);
+      if (typeof callback === "function") callback();
+    };
+    script.onerror = () => console.error(`❌ Failed to load script: ${path}`);
+    document.body.appendChild(script);
+  }
+
+  // Attach event listeners after DOM is ready
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("clearAssetsBtn").addEventListener("click", () => {
+      if (typeof clearAllAssets === "function") clearAllAssets();
+    });
+    document.getElementById("addAssetBtn").addEventListener("click", () => {
+      if (typeof addAsset === "function") addAsset();
+    });
+    document.getElementById("businessFilter").addEventListener("change", () => {
+      if (typeof filterAssets === "function") filterAssets();
+    });
+    document.getElementById("searchInput").addEventListener("keyup", () => {
+      if (typeof filterAssets === "function") filterAssets();
+    });
+
+    // Dynamically load your external JS file
+    loadScript("https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/js/business-accounting-journal.js");
+  });
   </script>
 </body>
 </html>
