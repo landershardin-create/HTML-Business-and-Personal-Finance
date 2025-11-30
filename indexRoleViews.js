@@ -1,3 +1,5 @@
+// indexRoleViews.js
+
 export function getIndexView(userRole) {
   switch (userRole) {
     case 'owner':
