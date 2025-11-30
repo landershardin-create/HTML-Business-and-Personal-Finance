@@ -64,6 +64,34 @@ function populateSubPeriods(companyKeys, periodType) {
   if (sortedPeriods.length > 0) subSelect.selectedIndex = 0;
 }
 
+// --- Add Event Listner Sample companies---
+document.addEventListener("DOMContentLoaded", () => {
+  const companySelect = document.getElementById("companySelect");
+  const balanceSheetContainer = document.getElementById("balanceSheetContainer");
+
+  // Updated companies
+  ["Company A", "Company B", "Company C"].forEach(name => {
+    const option = document.createElement("option");
+    option.value = name.toLowerCase().replace(/\s+/g, "-");
+    option.textContent = name;
+    companySelect.appendChild(option);
+  });
+
+  // Sample balance sheet
+  balanceSheetContainer.innerHTML = `
+    <table>
+      <thead>
+        <tr><th>Category</th><th>Amount</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="assets">Assets</td><td>$500,000</td></tr>
+        <tr><td class="liabilities">Liabilities</td><td>$200,000</td></tr>
+        <tr><td class="equity">Equity</td><td>$300,000</td></tr>
+      </tbody>
+    </table>
+  `;
+});
+
 // --- Rendering Helpers ---
 function renderCompanyTable(companyKey, subPeriod, data) {
   const assetsHTML = Object.entries(data.assets)
