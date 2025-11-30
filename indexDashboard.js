@@ -1,3 +1,6 @@
+// indexDashboard.js
+
+
 import { getUserSession } from '../session/sessionContext.js';
 import { getIndexView } from './indexRoleViews.js';
 import { renderSummaryCards } from './indexSummaryCards.js';
