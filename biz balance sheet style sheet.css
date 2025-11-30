@@ -1,58 +1,56 @@
-/*-----biz balance sheet style sheet.css-----*/
+/* --- Balance Sheet Styling --- */
 
-/* General page styling */
-body {
-  font-family: Arial, sans-serif;
-  margin: 2em;
-  background-color: #f9f9f9;
+/* Assets in green */
+.assets {
+  color: #2e8b57; /* sea green */
+  font-weight: 500;
 }
 
-/* Selectors for company, period, subperiod */
-.company-selector,
-.period-selector,
-.subperiod-selector {
-  margin-bottom: 1em;
+/* Liabilities in red */
+.liabilities {
+  color: #b22222; /* firebrick */
+  font-weight: 500;
+}
+
+/* Equity in blue */
+.equity {
+  color: #1e90ff; /* dodger blue */
+  font-weight: 500;
+}
+
+/* Balance status row */
+.status {
+  text-align: center;
+  font-weight: bold;
+  padding-top: 8px;
+  color: #333;
 }
 
 /* Table styling */
 table {
-  width: 100%;
   border-collapse: collapse;
-  background-color: #fff;
-  margin-bottom: 2em;
+  margin: 1em 0;
+  width: 100%;
 }
 
-th,
-td {
-  padding: 0.5em;
+table th, table td {
   border: 1px solid #ccc;
-  text-align: left;
+  padding: 8px;
   vertical-align: top;
+}
+
+table thead {
+  background-color: #f0f0f0;
+}
+
+table tfoot {
+  background-color: #fafafa;
 }
 
 /* Headings */
 h2 {
-  margin-top: 1em;
-}
-
-/* Summary row styling */
-.summary {
-  font-weight: bold;
-  background-color: #eef;
-}
-
-/* Conditional styling for balance sheet categories */
-.assets {
-  color: green;
-  font-weight: bold;
-}
-
-.liabilities {
-  color: red;
-  font-weight: bold;
-}
-
-.equity {
-  color: blue;
-  font-weight: bold;
+  margin-top: 1.5em;
+  font-size: 1.2em;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 4px;
 }
