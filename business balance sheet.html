@@ -11,25 +11,34 @@
   <!-- Dynamic report header -->
   <h1 id="reportHeader">Business Balance Sheet Report</h1>
 
-  <!-- Company selector populated dynamically -->
-  <div class="company-selector">
-    <label for="companySelect">Select Companies:</label>
-    <select id="companySelect" multiple size="3"></select>
-  </div>
+  <!-- Report controls grouped semantically -->
+  <form id="reportControls">
+    <fieldset>
+      <legend>Report Options</legend>
 
-  <div class="period-selector">
-    <label for="periodSelect">Select Period:</label>
-    <select id="periodSelect">
-      <option value="monthly">Monthly</option>
-      <option value="quarterly">Quarterly</option>
-      <option value="annual" selected>Annual</option>
-    </select>
-  </div>
+      <!-- Company selector populated dynamically -->
+      <div class="company-selector">
+        <label for="companySelect">Select Companies:</label>
+        <select id="companySelect" multiple size="3"></select>
+      </div>
 
-  <div class="subperiod-selector">
-    <label for="subPeriodSelect">Select Subperiod:</label>
-    <select id="subPeriodSelect"></select>
-  </div>
+      <!-- Period selector -->
+      <div class="period-selector">
+        <label for="periodSelect">Select Period:</label>
+        <select id="periodSelect">
+          <option value="monthly">Monthly</option>
+          <option value="quarterly">Quarterly</option>
+          <option value="annual" selected>Annual</option>
+        </select>
+      </div>
+
+      <!-- Subperiod selector -->
+      <div class="subperiod-selector">
+        <label for="subPeriodSelect">Select Subperiod:</label>
+        <select id="subPeriodSelect"></select>
+      </div>
+    </fieldset>
+  </form>
 
   <!-- Company header details -->
   <div class="company-header" role="region" aria-label="Company Summary">
@@ -40,7 +49,23 @@
   </div>
 
   <!-- Balance sheet container -->
-  <div id="balanceSheetContainer"></div>
+  <div id="balanceSheetContainer" aria-live="polite">
+    <table class="balance-sheet">
+      <thead>
+        <tr>
+          <th>Assets</th>
+          <th>Liabilities</th>
+          <th>Equity</th>
+        </tr>
+      </thead>
+      <tbody id="balanceSheetData">
+        <!-- Populated dynamically -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Loading indicator -->
+  <div id="loading" hidden>Loading...</div>
 
   <!-- External JavaScript -->
   <script src="js/business-balance-sheet.js"></script>
