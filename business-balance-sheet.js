@@ -64,36 +64,10 @@ function populateSubPeriods(companyKeys, periodType) {
   if (sortedPeriods.length > 0) subSelect.selectedIndex = 0;
 }
 
-// --- Add Event Listner Sample companies---
-document.addEventListener("DOMContentLoaded", () => {
-  const companySelect = document.getElementById("companySelect");
-  const balanceSheetContainer = document.getElementById("balanceSheetContainer");
-
-  // Updated companies
-  ["Company A", "Company B", "Company C"].forEach(name => {
-    const option = document.createElement("option");
-    option.value = name.toLowerCase().replace(/\s+/g, "-");
-    option.textContent = name;
-    companySelect.appendChild(option);
-  });
-
-  // Sample balance sheet
-  balanceSheetContainer.innerHTML = `
-    <table>
-      <thead>
-        <tr><th>Category</th><th>Amount</th></tr>
-      </thead>
-      <tbody>
-        <tr><td class="assets">Assets</td><td>$500,000</td></tr>
-        <tr><td class="liabilities">Liabilities</td><td>$200,000</td></tr>
-        <tr><td class="equity">Equity</td><td>$300,000</td></tr>
-      </tbody>
-    </table>
-  `;
-});
-
 // --- Rendering Helpers ---
 function renderCompanyTable(companyKey, subPeriod, data) {
+  const companyName = companies.find(c => c.key === companyKey)?.name || companyKey;
+
   const assetsHTML = Object.entries(data.assets)
     .map(([item, amount]) => `<span class="assets">${item}: $${amount.toLocaleString()}</span>`)
     .join("<br>");
@@ -104,13 +78,12 @@ function renderCompanyTable(companyKey, subPeriod, data) {
     .map(([item, amount]) => `<span class="equity">${item}: $${amount.toLocaleString()}</span>`)
     .join("<br>");
 
-  // Calculate totals for this company
   const totalAssets = Object.values(data.assets).reduce((a, b) => a + b, 0);
   const totalLiabilities = Object.values(data.liabilities).reduce((a, b) => a + b, 0);
   const totalEquity = Object.values(data.equity).reduce((a, b) => a + b, 0);
 
   return `
-    <h2>Balance Sheet - ${companyKey} (${subPeriod})</h2>
+    <h2>Balance Sheet - ${companyName} (${subPeriod})</h2>
     <table>
       <thead><tr><th>Assets</th><th>Liabilities</th></tr></thead>
       <tbody>
@@ -187,7 +160,9 @@ function updateHeader() {
 
   let companyText = selectedCompanies.includes("all")
     ? "All Companies"
-    : (selectedCompanies.length > 0 ? selectedCompanies.join(", ") : "Business");
+    : (selectedCompanies.length > 0 
+        ? selectedCompanies.map(key => companies.find(c => c.key === key)?.name || key).join(", ") 
+        : "Business");
 
   let periodText = period ? period.charAt(0).toUpperCase() + period.slice(1) : "";
   let subPeriodText = subPeriod ? subPeriod : "";
