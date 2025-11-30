@@ -35,7 +35,8 @@
 │   ├── dashboard.js
 │   ├── tab-loader.js
 │   ├── local-storage.js
-│   └── business-balance-sheet.js
+│   ├── business-balance-sheet.js
+│   └── company-dashboard.js
 │
 ├── /modules/
 │   ├── business accounting journal.html
@@ -49,6 +50,7 @@
 │   ├── business personnel registry.html
 │   ├── business timesheet.html
 │   ├── company dashboard.html
+│   ├── company-manager-dashboard.html
 │   ├── contributor dashboard.html
 │   ├── dashboard original.html
 │   ├── dashboard.html
@@ -64,7 +66,8 @@
 │
 ├── /data/
 │   ├── financial-SQL-schemea.sql
-│   └── financial-SQL-scaffolding.sql
+│   ├── financial-SQL-scaffolding.sql
+│   └── company-manager-dashboard.json   <-- NEW
 │
 └── /docs/
     ├── setup.md
@@ -74,4 +77,4 @@
     ├── onboarding.md
     ├── extensibility.md
     ├── Repository Structure diagram 1.0
-    └── testing.md    └── testing.md                          # QA and validation procedures (not available)
+    └── testing.md    └── testing.md    └── testing.md                          # QA and validation procedures (not available)
