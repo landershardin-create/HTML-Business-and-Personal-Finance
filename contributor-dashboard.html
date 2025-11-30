@@ -55,10 +55,21 @@
         <button type="submit">Save Profile</button>
       </form>
     </section>
+
+    <!-- Activity Log -->
+    <section id="activity-log" role="region" aria-label="Activity Log">
+      <h2>📜 Activity Log</h2>
+      <ul id="log-entries">
+        <li>11/29/2025, 4:48 PM: Dashboard initialized</li>
+        <li>11/29/2025, 4:49 PM: Alice Johnson role updated to Viewer</li>
+        <li>11/29/2025, 4:50 PM: Bob Smith role updated to Viewer</li>
+        <li>11/29/2025, 4:51 PM: Landers Hardin assigned Owner / CEO / Enterprise Admin role</li>
+      </ul>
+    </section>
   </main>
 
   <script>
-    // Grab contributor names from the registry (Contributor List section)
+    // Collect contributor names from the registry (Contributor List section)
     const contributorCards = document.querySelectorAll('#contributor-list .contributor-card h3');
     const select = document.getElementById('personnel-select');
     const nameField = document.getElementById('name');
