@@ -1,43 +1,43 @@
-# Repository diagram 1.0
+# Repository diagram 1.1
 
 /Dashboard/
 │
-├── .github/workflow                        #
-├── .gitignore                              # Git exclusions
-├── index.html                              # Entry point of the dashboard
-├── indexDashboard.js                       # Index dashboard script
-├── indexOnboarding.js                      # Index onboarding script
-├── indexRoleViews.js                       # Index role views script
-├── indexStyles.js                          # Index style script
-├── indexStorage.js                         # Index storage sheet
-├── indexSummaryCards.js                    # Index summary cards
-├── README.md                               # Project overview and contributor guide
-├── SECURITY.md                             #  
-├── LICENSE                                 # Open-source license (MIT, GPL, etc.) (not available)
+├── .github/workflow
+├── .gitignore
+├── index.html
+├── indexDashboard.js
+├── indexOnboarding.js
+├── indexRoleViews.js
+├── indexStyles.js
+├── indexStorage.js
+├── indexSummaryCards.js
+├── README.md
+├── SECURITY.md
+├── LICENSE
 │
-├── /assets/                                # Static assets (images, fonts, icons)
-│   ├── /images/                            # Logos, illustrations, UI icons (not available)
-│   │   ├── dashboard-preview.png           # Welcome page dashboard banner
-│   ├── /fonts/                             # Custom or branded fonts (not available)
-│   └── /branding/                          # Business-specific visual assets (not available)
+├── /assets/
+│   ├── /images/
+│   │   └── dashboard-preview.png
+│   ├── /fonts/
+│   └── /branding/
 │
-├── /C++/                                   # C++ coding modules
-│   ├── basic C++ login-system.cpp          # Basic C++ login system
-│   └── 
+├── /C++/
+│   └── basic C++ login-system.cpp
 │
-├── /css/                                   # Styling and themes
-│   ├── business style sheet.css            # Personal styles
-│   ├── personal style sheet.css            # personal styles
-│   ├── style sheet.css                     # Style sheet
-│   ├── branding.css                        # Business-specific branding (not available)
-│   └── responsive.css                      # Mobile and adaptive layout (not available)
+├── /css/
+│   ├── business style sheet.css
+│   ├── personal style sheet.css
+│   ├── style sheet.css
+│   ├── branding.css
+│   └── responsive.css
 │
-├── /js/                                    # JavaScript modules
-│   ├── dashboard.js                        # Dashboard
-│   ├── tab-loader.js                       # Tab loader 
-│   └── local storage .js                   # Local persistent storage script    
+├── /js/
+│   ├── dashboard.js
+│   ├── tab-loader.js
+│   ├── local-storage.js
+│   └── business-balance-sheet.js
 │
-├── /modules/                               # Dashboard feature modules
+├── /modules/
 │   ├── business accounting journal.html
 │   ├── business balance sheet.html
 │   ├── business cash flow.html
@@ -45,7 +45,7 @@
 │   ├── business income and expense.html
 │   ├── business menu.html
 │   ├── business net worth.html
-│   ├── business payroll registy.html
+│   ├── business payroll registry.html
 │   ├── business personnel registry.html
 │   ├── business timesheet.html
 │   ├── company dashboard.html
@@ -62,17 +62,16 @@
 │   ├── personal menu.html
 │   └── personal net worth.html
 │
-├── /data/                                  # SQL files
+├── /data/
 │   ├── financial-SQL-schemea.sql
-│   ├── financial-SQL-scaffolding.sql
-│   └── 
+│   └── financial-SQL-scaffolding.sql
 │
-└── /docs/                                  # Documentation and guides
-    ├── setup.md                            # Installation and configuration (not available)
-    ├── README.md                           # Project overview and contributor guide
-    ├── styling.md                          # Branding and visual customization (not available)
-    ├── access-control.md                   # Role and permission setup (not available)
-    ├── onboarding.md                       # Contributor onboarding guide (not available)
-    ├── extensibility.md                    # How to add new modules (not available)
-    ├── Repository Structure diagram 1.0    # Repository stucture diagram 1.0
-    └── testing.md                          # QA and validation procedures (not available)
+└── /docs/
+    ├── setup.md
+    ├── README.md
+    ├── styling.md
+    ├── access-control.md
+    ├── onboarding.md
+    ├── extensibility.md
+    ├── Repository Structure diagram 1.0
+    └── testing.md    └── testing.md                          # QA and validation procedures (not available)
