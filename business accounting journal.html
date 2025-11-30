@@ -21,7 +21,6 @@
     <label for="companyHeaderSelect">Active Company:</label>
     <select id="companyHeaderSelect" name="activeCompany">
       <option value="">-- Select Company --</option>
-      <!-- Populated dynamically -->
     </select>
   </div>
 
@@ -33,7 +32,6 @@
         <label for="journalCompany">Company:</label>
         <select id="journalCompany" name="companyId" required>
           <option value="">-- Select Company --</option>
-          <!-- Populated dynamically -->
         </select>
       </div>
 
@@ -58,7 +56,6 @@
           <label for="entryCompany">Company:</label>
           <select id="entryCompany" name="companyId" required>
             <option value="">-- Select Company --</option>
-            <!-- Populated dynamically -->
           </select>
         </div>
 
@@ -66,7 +63,6 @@
           <label for="linkedAccount">Linked Account:</label>
           <select id="linkedAccount" name="accountId">
             <option value="">-- Select Account --</option>
-            <!-- Dynamically populated -->
           </select>
         </div>
 
@@ -83,7 +79,6 @@
         <button type="submit">Add Entry</button>
       </form>
 
-      <!-- Entries list and totals -->
       <ul id="journalEntriesList"></ul>
       <div id="companyTotals"></div>
     </div>
@@ -97,7 +92,6 @@
         <label for="accountCompany">Company:</label>
         <select id="accountCompany" name="companyId" required>
           <option value="">-- Select Company --</option>
-          <!-- Populated dynamically -->
         </select>
       </div>
 
@@ -122,110 +116,52 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    // --- Populate company dropdowns from localStorage ---
-    function populateCompanyDropdowns() {
-      const companies = JSON.parse(localStorage.getItem('companies')) || [];
-      const dropdownIds = ["companyHeaderSelect", "journalCompany", "entryCompany", "accountCompany"];
+    console.log("✅ Business Journal & Account Manager HTML loaded");
 
-      dropdownIds.forEach(id => {
-        const select = document.getElementById(id);
-        if (!select) return;
-
-        select.innerHTML = '<option value="">-- Select Company --</option>';
-        companies.forEach(c => {
-          const option = document.createElement('option');
-          option.value = c.id;
-          option.textContent = c.name;
-          select.appendChild(option);
-        });
-      });
+    // --- Dynamic JS loader ---
+    function loadScript(path, callback) {
+      const script = document.createElement("script");
+      script.src = path;
+      script.type = "text/javascript";
+      script.onload = () => {
+        console.log(`✅ Loaded script: ${path}`);
+        if (typeof callback === "function") callback();
+      };
+      script.onerror = () => console.error(`❌ Failed to load script: ${path}`);
+      document.body.appendChild(script);
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
-      populateCompanyDropdowns();
-
-      // Restore active company selection
-      const activeCompany = localStorage.getItem('activeCompany');
-      if (activeCompany) {
-        document.getElementById('companyHeaderSelect').value = activeCompany;
-        document.getElementById('journalCompany').value = activeCompany;
-        document.getElementById('entryCompany').value = activeCompany;
-        document.getElementById('accountCompany').value = activeCompany;
+    // --- DOM Ready ---
+    document.addEventListener("DOMContentLoaded", () => {
+      // Populate dropdowns
+      if (typeof populateCompanyDropdowns === "function") {
+        populateCompanyDropdowns();
       }
+
+      // Restore active company
+      const activeCompany = localStorage.getItem("activeCompany");
+      if (activeCompany) {
+        ["companyHeaderSelect","journalCompany","entryCompany","accountCompany"].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.value = activeCompany;
+        });
+      }
+
+      // Sync active company selection
+      const headerSelect = document.getElementById("companyHeaderSelect");
+      if (headerSelect) {
+        headerSelect.addEventListener("change", e => {
+          localStorage.setItem("activeCompany", e.target.value);
+          const savedEntries = JSON.parse(localStorage.getItem("entries")) || [];
+          if (typeof renderEntries === "function") {
+            renderEntries(savedEntries);
+          }
+        });
+      }
+
+      // Dynamically load external JS logic
+      loadScript("https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/js/business-accounting-journal.js");
     });
-
-    // --- Example renderEntries function (simplified) ---
-    function renderEntries(entries) {
-      const journalEntriesList = document.getElementById('journalEntriesList');
-      const totalsDisplay = document.getElementById('companyTotals');
-      journalEntriesList.innerHTML = "";
-      totalsDisplay.innerHTML = "";
-
-      const activeCompany = document.getElementById('companyHeaderSelect').value;
-      const filtered = entries.filter(entry => !activeCompany || entry.company === activeCompany);
-
-      let grandTotal = 0;
-      const typeTotals = {};
-      const monthlyTotals = {};
-
-      filtered.forEach(entry => {
-        grandTotal += entry.amount;
-        typeTotals[entry.accountType] = (typeTotals[entry.accountType] || 0) + entry.amount;
-
-        const li = document.createElement('li');
-        li.textContent = `${entry.label} - $${entry.amount.toLocaleString(undefined,{minimumFractionDigits:2})} (${entry.company}, ${entry.accountType}) [${entry.timestamp}]`;
-        journalEntriesList.appendChild(li);
-      });
-
-      const formattedTotal = grandTotal.toLocaleString(undefined,{minimumFractionDigits:2});
-      totalsDisplay.innerHTML = activeCompany
-        ? `<strong>Total for ${activeCompany}:
-
-{formattedTotal}</strong><br>`
-        : `<strong>All Companies Total: 
-
-{formattedTotal}</strong><br>`;
-    }
-
-    // Sync active company selection
-    document.getElementById('companyHeaderSelect').addEventListener('change', e => {
-      localStorage.setItem('activeCompany', e.target.value);
-      const savedEntries = JSON.parse(localStorage.getItem('entries')) || [];
-      renderEntries(savedEntries);
-    });
-  console.log("✅ Business Asset Tracker HTML loaded");
-
-  // Dynamic JS loader
-  function loadScript(path, callback) {
-    const script = document.createElement("script");
-    script.src = path;
-    script.type = "text/javascript";
-    script.onload = () => {
-      console.log(`✅ Loaded script: ${path}`);
-      if (typeof callback === "function") callback();
-    };
-    script.onerror = () => console.error(`❌ Failed to load script: ${path}`);
-    document.body.appendChild(script);
-  }
-
-  // Attach event listeners after DOM is ready
-  document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("clearAssetsBtn").addEventListener("click", () => {
-      if (typeof clearAllAssets === "function") clearAllAssets();
-    });
-    document.getElementById("addAssetBtn").addEventListener("click", () => {
-      if (typeof addAsset === "function") addAsset();
-    });
-    document.getElementById("businessFilter").addEventListener("change", () => {
-      if (typeof filterAssets === "function") filterAssets();
-    });
-    document.getElementById("searchInput").addEventListener("keyup", () => {
-      if (typeof filterAssets === "function") filterAssets();
-    });
-
-    // Dynamically load your external JS file
-    loadScript("https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/js/business-accounting-journal.js");
-  });
   </script>
 </body>
 </html>
