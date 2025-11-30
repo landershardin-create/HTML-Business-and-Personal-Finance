@@ -4,48 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Multi-Business Balance Sheet</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 2em;
-      background-color: #f9f9f9;
-    }
-    .company-selector, .period-selector, .subperiod-selector {
-      margin-bottom: 1em;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background-color: #fff;
-      margin-bottom: 2em;
-    }
-    th, td {
-      padding: 0.5em;
-      border: 1px solid #ccc;
-      text-align: left;
-      vertical-align: top;
-    }
-    h2 {
-      margin-top: 1em;
-    }
-    .summary {
-      font-weight: bold;
-      background-color: #eef;
-    }
-    /* Conditional styling */
-    .assets {
-      color: green;
-      font-weight: bold;
-    }
-    .liabilities {
-      color: red;
-      font-weight: bold;
-    }
-    .equity {
-      color: blue;
-      font-weight: bold;
-    }
-  </style>
+  <!-- External CSS for balance sheet styling -->
+  <link rel="stylesheet" href="css/biz-balance-sheet-style-sheet.css" />
 </head>
 <body>
   <!-- Dynamic report header -->
@@ -79,10 +39,10 @@
     <p id="headerRole">Role: <span id="headerRoleValue"></span></p>
   </div>
 
-<!-- Balance sheet container -->
+  <!-- Balance sheet container -->
   <div id="balanceSheetContainer"></div>
 
   <!-- External JavaScript -->
-  <script src="https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/Dashboard/js/business-balance-sheet.jsjs"></script>
+  <script src="js/business-balance-sheet.js"></script>
 </body>
 </html>
