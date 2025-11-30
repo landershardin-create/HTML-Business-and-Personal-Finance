@@ -1,3 +1,5 @@
+// indexOnboarding.js
+
 export function showOnboarding() {
   return `
     <div class="onboarding-overlay">
