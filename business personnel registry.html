@@ -180,7 +180,40 @@
       <tbody></tbody>
     </table>
   </div>
+<!-- business personnel registry.html -->
+<section id="personnel-registry">
+  <h2>Business Personnel Registry</h2>
+  <form id="personnelForm">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required>
 
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+
+    <!-- New Role Field -->
+    <label for="role">Role:</label>
+    <select id="role" name="role" required>
+      <option value="">Select role</option>
+      <option value="CEO">CEO</option>
+      <option value="Manager">Manager</option>
+      <option value="Developer">Developer</option>
+      <option value="Contributor">Contributor</option>
+    </select>
+
+    <button type="submit">Add Person</button>
+  </form>
+
+  <table id="registryTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Role</th> <!-- New Column -->
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</section>
   <script src="https://landershardin-create.github.io/HTML-Business-and-Personal-Finance/js/business-personnel-register.js"></script>
 </body>
 </html>
