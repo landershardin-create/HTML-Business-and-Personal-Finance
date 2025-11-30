@@ -92,3 +92,15 @@ form button {
 form button:hover {
   background: #005a9e;
 }
+#personnelForm label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+#personnelForm select,
+#personnelForm input {
+  margin-bottom: 10px;
+  padding: 6px;
+  width: 250px;
+}
