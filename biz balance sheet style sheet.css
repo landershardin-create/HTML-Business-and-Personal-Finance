@@ -1,1 +1,58 @@
-/* -----biz balance sheet style sheet.css-----*/
+/* biz-balance-sheet-style-sheet.css */
+
+/* General page styling */
+body {
+  font-family: Arial, sans-serif;
+  margin: 2em;
+  background-color: #f9f9f9;
+}
+
+/* Selectors for company, period, subperiod */
+.company-selector,
+.period-selector,
+.subperiod-selector {
+  margin-bottom: 1em;
+}
+
+/* Table styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  margin-bottom: 2em;
+}
+
+th,
+td {
+  padding: 0.5em;
+  border: 1px solid #ccc;
+  text-align: left;
+  vertical-align: top;
+}
+
+/* Headings */
+h2 {
+  margin-top: 1em;
+}
+
+/* Summary row styling */
+.summary {
+  font-weight: bold;
+  background-color: #eef;
+}
+
+/* Conditional styling for balance sheet categories */
+.assets {
+  color: green;
+  font-weight: bold;
+}
+
+.liabilities {
+  color: red;
+  font-weight: bold;
+}
+
+.equity {
+  color: blue;
+  font-weight: bold;
+}
