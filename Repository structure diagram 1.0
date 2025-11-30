@@ -1,4 +1,4 @@
-# Repository diagram 1.1
+# Repository diagram 1.4
 
 /Dashboard/
 │
@@ -29,7 +29,12 @@
 │   ├── personal style sheet.css
 │   ├── style sheet.css
 │   ├── branding.css
-│   └── responsive.css
+│   ├── responsive.css
+│   ├── biz-accounting-journal-style-sheet.css
+│   ├── biz-balance-sheet-style-sheet.css              <-- NEW
+│   ├── biz-cash-flow-style-sheet.css                  <-- NEW
+│   ├── biz-assets-style-sheet.css                     <-- NEW
+│   └── contributor-manager-dashboard-style-sheet.css  <-- NEW
 │
 ├── /js/
 │   ├── dashboard.js
@@ -49,6 +54,8 @@
 │   ├── business payroll registry.html
 │   ├── business personnel registry.html
 │   ├── business timesheet.html
+│   ├── business-account.html
+│   ├── business-journal.html
 │   ├── company dashboard.html
 │   ├── company-manager-dashboard.html
 │   ├── contributor dashboard.html
@@ -67,7 +74,7 @@
 ├── /data/
 │   ├── financial-SQL-schemea.sql
 │   ├── financial-SQL-scaffolding.sql
-│   └── company-manager-dashboard.json   <-- NEW
+│   └── company-manager-dashboard.json
 │
 └── /docs/
     ├── setup.md
@@ -77,4 +84,4 @@
     ├── onboarding.md
     ├── extensibility.md
     ├── Repository Structure diagram 1.0
-    └── testing.md    └── testing.md    └── testing.md                          # QA and validation procedures (not available)
+    └── testing.md    └── testing.md    └── testing.md    └── testing.md                          # QA and validation procedures (not available)
