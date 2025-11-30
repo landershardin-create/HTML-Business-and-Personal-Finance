@@ -47,7 +47,7 @@ function populateCompanyOptions() {
     .join("");
 }
 
-// --- Populate Subperiods Dynamically ---
+// --- Populate Subperiods ---
 function populateSubPeriods(companyKeys, periodType) {
   const subSelect = document.getElementById("subPeriodSelect");
   let subPeriods = new Set();
