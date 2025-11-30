@@ -1,6 +1,8 @@
 // --- business-balance-sheet.js ---
 
-// --- Sample Data ---
+// ----------------------------------------------------
+// Sample Data
+// ----------------------------------------------------
 const balanceSheets = {
   companyA: {
     annual: {
@@ -31,7 +33,9 @@ const balanceSheets = {
   }
 };
 
-// --- Company Metadata ---
+// ----------------------------------------------------
+// Company Metadata
+// ----------------------------------------------------
 const companies = [
   { key: "all", name: "All Companies", location: "", type: "", role: "" },
   { key: "companyA", name: "Company A", location: "New York, NY", type: "Retail", role: "Parent" },
@@ -39,7 +43,9 @@ const companies = [
   { key: "companyC", name: "Company C", location: "Austin, TX", type: "Tech", role: "Subsidiary" }
 ];
 
-// --- Populate Company Selector ---
+// ----------------------------------------------------
+// Populate Company Dropdown
+// ----------------------------------------------------
 function populateCompanyOptions() {
   const companySelect = document.getElementById("companySelect");
   companySelect.innerHTML = companies
@@ -47,7 +53,9 @@ function populateCompanyOptions() {
     .join("");
 }
 
-// --- Populate Subperiods ---
+// ----------------------------------------------------
+// Populate Subperiods Based on Companies & Period Type
+// ----------------------------------------------------
 function populateSubPeriods(companyKeys, periodType) {
   const subSelect = document.getElementById("subPeriodSelect");
   let subPeriods = new Set();
@@ -59,21 +67,29 @@ function populateSubPeriods(companyKeys, periodType) {
     }
   });
 
-  const sortedPeriods = Array.from(subPeriods).sort();
-  subSelect.innerHTML = sortedPeriods.map(p => `<option value="${p}">${p}</option>`).join("");
-  if (sortedPeriods.length > 0) subSelect.selectedIndex = 0;
+  const sorted = [...subPeriods].sort();
+
+  subSelect.innerHTML = sorted
+    .map(p => `<option value="${p}">${p}</option>`)
+    .join("");
+
+  if (sorted.length > 0) subSelect.selectedIndex = 0;
 }
 
-// --- Rendering Helpers ---
+// ----------------------------------------------------
+// Render Individual Company Table
+// ----------------------------------------------------
 function renderCompanyTable(companyKey, subPeriod, data) {
   const companyName = companies.find(c => c.key === companyKey)?.name || companyKey;
 
   const assetsHTML = Object.entries(data.assets)
     .map(([item, amount]) => `<span class="assets">${item}: $${amount.toLocaleString()}</span>`)
     .join("<br>");
+
   const liabilitiesHTML = Object.entries(data.liabilities)
     .map(([item, amount]) => `<span class="liabilities">${item}: $${amount.toLocaleString()}</span>`)
     .join("<br>");
+
   const equityHTML = Object.entries(data.equity)
     .map(([item, amount]) => `<span class="equity">${item}: $${amount.toLocaleString()}</span>`)
     .join("<br>");
@@ -85,44 +101,52 @@ function renderCompanyTable(companyKey, subPeriod, data) {
   return `
     <h2>Balance Sheet - ${companyName} (${subPeriod})</h2>
     <table>
-      <thead><tr><th>Assets</th><th>Liabilities</th></tr></thead>
+      <thead>
+        <tr><th>Assets</th><th>Liabilities</th></tr>
+      </thead>
       <tbody>
         <tr>
           <td>${assetsHTML}</td>
           <td>${liabilitiesHTML}</td>
         </tr>
+
         <tr>
           <td colspan="2"><strong>${equityHTML}</strong></td>
         </tr>
+
         <tr>
-          <td class="assets"><strong>Total Assets:
-
-{totalAssets.toLocaleString()}</strong></td>
-          <td class="liabilities"><strong>Total Liabilities: 
-
-{totalLiabilities.toLocaleString()}</strong></td>
+          <td class="assets"><strong>Total Assets: $${totalAssets.toLocaleString()}</strong></td>
+          <td class="liabilities"><strong>Total Liabilities: $${totalLiabilities.toLocaleString()}</strong></td>
         </tr>
+
         <tr>
-          <td colspan="2" class="equity"><strong>Total Equity: $${totalEquity.toLocaleString()}</strong></td>
+          <td colspan="2" class="equity">
+            <strong>Total Equity: $${totalEquity.toLocaleString()}</strong>
+          </td>
         </tr>
       </tbody>
     </table>
   `;
 }
 
+// ----------------------------------------------------
+// Combined Summary (All Companies)
+// ----------------------------------------------------
 function renderSummary(subPeriod, totals) {
   return `
     <h2>Combined Summary (${subPeriod})</h2>
     <table>
-      <thead><tr><th>Total Assets</th><th>Total Liabilities</th><th>Total Equity</th></tr></thead>
+      <thead>
+        <tr>
+          <th>Total Assets</th>
+          <th>Total Liabilities</th>
+          <th>Total Equity</th>
+        </tr>
+      </thead>
       <tbody>
         <tr>
-          <td class="assets">
-
-{totals.assets.toLocaleString()}</td>
-          <td class="liabilities">
-
-{totals.liabilities.toLocaleString()}</td>
+          <td class="assets">$${totals.assets.toLocaleString()}</td>
+          <td class="liabilities">$${totals.liabilities.toLocaleString()}</td>
           <td class="equity">$${totals.equity.toLocaleString()}</td>
         </tr>
       </tbody>
@@ -130,7 +154,9 @@ function renderSummary(subPeriod, totals) {
   `;
 }
 
-// --- Main Render Function ---
+// ----------------------------------------------------
+// Main Render Process
+// ----------------------------------------------------
 function renderBalanceSheets(companyKeys, periodType, subPeriod) {
   const container = document.getElementById("balanceSheetContainer");
   let totals = { assets: 0, liabilities: 0, equity: 0 };
@@ -151,32 +177,30 @@ function renderBalanceSheets(companyKeys, periodType, subPeriod) {
   }
 }
 
-// --- Header Update ---
+// ----------------------------------------------------
+// Header Update
+// ----------------------------------------------------
 function updateHeader() {
-  const selectedCompanies = Array.from(document.getElementById("companySelect").selectedOptions).map(opt => opt.value);
+  const selectedCompanies = [...document.getElementById("companySelect").selectedOptions].map(o => o.value);
   const period = document.getElementById("periodSelect").value;
   const subPeriod = document.getElementById("subPeriodSelect").value;
   const header = document.getElementById("reportHeader");
 
   let companyText = selectedCompanies.includes("all")
     ? "All Companies"
-    : (selectedCompanies.length > 0 
-        ? selectedCompanies.map(key => companies.find(c => c.key === key)?.name || key).join(", ") 
-        : "Business");
+    : selectedCompanies.length
+      ? selectedCompanies.map(k => companies.find(c => c.key === k)?.name || k).join(", ")
+      : "Business";
 
-  let periodText = period ? period.charAt(0).toUpperCase() + period.slice(1) : "";
-  let subPeriodText = subPeriod ? subPeriod : "";
+  header.textContent = `Balance Sheet Report: ${companyText} — ${period} ${subPeriod}`;
 
-  header.textContent = `Balance Sheet Report: ${companyText} — ${periodText} ${subPeriodText}`;
-
-  if (!selectedCompanies.includes("all") && selectedCompanies.length > 0) {
-    const firstCompany = companies.find(c => c.key === selectedCompanies[0]);
-    if (firstCompany) {
-      document.getElementById("headerCompanyName").textContent = firstCompany.name;
-      document.getElementById("headerLocation").textContent = `Location: ${firstCompany.location}`;
-      document.getElementById("headerTypeValue").textContent = firstCompany.type;
-      document.getElementById("headerRoleValue").textContent = firstCompany.role;
-    }
+  // Populate metadata for first company only
+  if (!selectedCompanies.includes("all") && selectedCompanies.length) {
+    const first = companies.find(c => c.key === selectedCompanies[0]);
+    document.getElementById("headerCompanyName").textContent = first.name;
+    document.getElementById("headerLocation").textContent = `Location: ${first.location}`;
+    document.getElementById("headerTypeValue").textContent = first.type;
+    document.getElementById("headerRoleValue").textContent = first.role;
   } else {
     document.getElementById("headerCompanyName").textContent = "All Companies";
     document.getElementById("headerLocation").textContent = "";
@@ -185,35 +209,35 @@ function updateHeader() {
   }
 }
 
-// --- Event Wiring ---
+// ----------------------------------------------------
+// Render Trigger
+// ----------------------------------------------------
 function triggerRender() {
-  let selectedCompanies = Array.from(document.getElementById("companySelect").selectedOptions).map(opt => opt.value);
+  let selectedCompanies = [...document.getElementById("companySelect").selectedOptions].map(o => o.value);
   const periodType = document.getElementById("periodSelect").value;
 
+  // If "All" is selected → expand into all companies
   if (selectedCompanies.includes("all")) {
     selectedCompanies = companies.filter(c => c.key !== "all").map(c => c.key);
   }
 
   populateSubPeriods(selectedCompanies, periodType);
-
   const subPeriod = document.getElementById("subPeriodSelect").value;
+
   renderBalanceSheets(selectedCompanies, periodType, subPeriod);
   updateHeader();
 }
 
-// --- Initial Setup ---
+// ----------------------------------------------------
+// Initialization
+// ----------------------------------------------------
 document.addEventListener("DOMContentLoaded", () => {
   populateCompanyOptions();
+  document.getElementById("companySelect").value = "all";
 
-  // Default to "All Companies"
-  const companySelect = document.getElementById("companySelect");
-  companySelect.value = "all";
-
-  // Wire events
   document.getElementById("periodSelect").addEventListener("change", triggerRender);
   document.getElementById("companySelect").addEventListener("change", triggerRender);
   document.getElementById("subPeriodSelect").addEventListener("change", triggerRender);
 
-  // Initial render
   triggerRender();
 });
