@@ -11,6 +11,13 @@ const balanceSheets = {
         liabilities: { Loans: 30000 },
         equity: { RetainedEarnings: 90000 }
       }
+    },
+    quarterly: {
+      "2023-Q1": {
+        assets: { Cash: 20000, Inventory: 30000 },
+        liabilities: { Loans: 10000 },
+        equity: { RetainedEarnings: 40000 }
+      }
     }
   },
   companyB: {
@@ -48,6 +55,7 @@ const companies = [
 // ----------------------------------------------------
 function populateCompanyOptions() {
   const companySelect = document.getElementById("companySelect");
+  companySelect.setAttribute("aria-label", "Select Company");
   companySelect.innerHTML = companies
     .map(c => `<option value="${c.key}">${c.name}</option>`)
     .join("");
@@ -58,6 +66,7 @@ function populateCompanyOptions() {
 // ----------------------------------------------------
 function populateSubPeriods(companyKeys, periodType) {
   const subSelect = document.getElementById("subPeriodSelect");
+  subSelect.setAttribute("aria-label", "Select Subperiod");
   let subPeriods = new Set();
 
   companyKeys.forEach(companyKey => {
@@ -69,11 +78,14 @@ function populateSubPeriods(companyKeys, periodType) {
 
   const sorted = [...subPeriods].sort();
 
-  subSelect.innerHTML = sorted
-    .map(p => `<option value="${p}">${p}</option>`)
-    .join("");
-
-  if (sorted.length > 0) subSelect.selectedIndex = 0;
+  if (sorted.length > 0) {
+    subSelect.innerHTML = sorted
+      .map(p => `<option value="${p}">${p}</option>`)
+      .join("");
+    subSelect.selectedIndex = 0;
+  } else {
+    subSelect.innerHTML = "<option>No periods available</option>";
+  }
 }
 
 // ----------------------------------------------------
@@ -98,9 +110,12 @@ function renderCompanyTable(companyKey, subPeriod, data) {
   const totalLiabilities = Object.values(data.liabilities).reduce((a, b) => a + b, 0);
   const totalEquity = Object.values(data.equity).reduce((a, b) => a + b, 0);
 
+  const isBalanced = totalAssets === totalLiabilities + totalEquity;
+  const balanceStatus = isBalanced ? "✅ Balanced" : "⚠️ Not Balanced";
+
   return `
     <h2>Balance Sheet - ${companyName} (${subPeriod})</h2>
-    <table>
+    <table aria-label="Balance Sheet for ${companyName}">
       <thead>
         <tr><th>Assets</th><th>Liabilities</th></tr>
       </thead>
@@ -109,22 +124,26 @@ function renderCompanyTable(companyKey, subPeriod, data) {
           <td>${assetsHTML}</td>
           <td>${liabilitiesHTML}</td>
         </tr>
-
         <tr>
           <td colspan="2"><strong>${equityHTML}</strong></td>
         </tr>
-
-        <tr>
-          <td class="assets"><strong>Total Assets: $${totalAssets.toLocaleString()}</strong></td>
-          <td class="liabilities"><strong>Total Liabilities: $${totalLiabilities.toLocaleString()}</strong></td>
-        </tr>
-
-        <tr>
-          <td colspan="2" class="equity">
-            <strong>Total Equity: $${totalEquity.toLocaleString()}</strong>
-          </td>
-        </tr>
       </tbody>
+      <tfoot>
+        <tr>
+          <td class="assets"><strong>Total Assets:
+
+{totalAssets.toLocaleString()}</strong></td>
+          <td class="liabilities"><strong>Total Liabilities: 
+
+{totalLiabilities.toLocaleString()}</strong></td>
+        </tr>
+        <tr>
+          <td colspan="2" class="equity"><strong>Total Equity: $${totalEquity.toLocaleString()}</strong></td>
+        </tr>
+        <tr>
+          <td colspan="2" class="status">${balanceStatus}</td>
+        </tr>
+      </tfoot>
     </table>
   `;
 }
@@ -133,9 +152,12 @@ function renderCompanyTable(companyKey, subPeriod, data) {
 // Combined Summary (All Companies)
 // ----------------------------------------------------
 function renderSummary(subPeriod, totals) {
+  const isBalanced = totals.assets === totals.liabilities + totals.equity;
+  const balanceStatus = isBalanced ? "✅ Balanced" : "⚠️ Not Balanced";
+
   return `
     <h2>Combined Summary (${subPeriod})</h2>
-    <table>
+    <table aria-label="Combined Balance Sheet Summary">
       <thead>
         <tr>
           <th>Total Assets</th>
@@ -145,11 +167,20 @@ function renderSummary(subPeriod, totals) {
       </thead>
       <tbody>
         <tr>
-          <td class="assets">$${totals.assets.toLocaleString()}</td>
-          <td class="liabilities">$${totals.liabilities.toLocaleString()}</td>
+          <td class="assets">
+
+{totals.assets.toLocaleString()}</td>
+          <td class="liabilities">
+
+{totals.liabilities.toLocaleString()}</td>
           <td class="equity">$${totals.equity.toLocaleString()}</td>
         </tr>
       </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3" class="status">${balanceStatus}</td>
+        </tr>
+      </tfoot>
     </table>
   `;
 }
@@ -205,6 +236,7 @@ function updateHeader() {
     document.getElementById("headerCompanyName").textContent = "All Companies";
     document.getElementById("headerLocation").textContent = "";
     document.getElementById("headerTypeValue").textContent = "";
+    document.getElementById("headerTypeValue").textContent = "";
     document.getElementById("headerRoleValue").textContent = "";
   }
 }
@@ -231,10 +263,8 @@ function triggerRender() {
 // ----------------------------------------------------
 // Initialization
 // ----------------------------------------------------
-document.addEventListener("DOMContentLoaded", () => {
-  populateCompanyOptions();
+document.addEventListener("DOMContentLoaded", () => {populateCompanyOptions();
   document.getElementById("companySelect").value = "all";
-
   document.getElementById("periodSelect").addEventListener("change", triggerRender);
   document.getElementById("companySelect").addEventListener("change", triggerRender);
   document.getElementById("subPeriodSelect").addEventListener("change", triggerRender);
