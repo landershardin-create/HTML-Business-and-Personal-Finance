@@ -1,3 +1,5 @@
+// indexSummaryCards.js
+
 export function renderSummaryCards(data) {
   return `
     <div class="summary-card">Total Assets:
