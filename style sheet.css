@@ -1,3 +1,6 @@
+/* -----style sheet.css-----*/
+
+
 /* Focus outline for select elements */
 .menu-container select:focus {
   outline: 2px solid #007acc;
