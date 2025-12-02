@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Multi-Business Balance Sheet</title>
   <!-- External CSS for balance sheet styling -->
-  <link rel="stylesheet" href="css/biz balance sheet style sheet.css" />
+  <link rel="stylesheet" href="css/biz-balance-sheet-style-sheet.css" />
 </head>
 <body>
   <!-- Dynamic report header -->
@@ -18,8 +18,13 @@
 
       <!-- Company selector populated dynamically -->
       <div class="company-selector">
-        <label for="companySelect">Select Companies:</label>
-        <select id="companySelect" multiple size="3"></select>
+        <label for="businessFilter">Select Company:</label>
+        <select id="businessFilter">
+          <option value="all">All Businesses</option>
+          <option value="bizA">Business A</option>
+          <option value="bizB">Business B</option>
+          <option value="bizC">Business C</option>
+        </select>
       </div>
 
       <!-- Period selector -->
@@ -40,6 +45,20 @@
     </fieldset>
   </form>
 
+  <!-- Action buttons -->
+  <div class="actions">
+    <button id="clearBalanceBtn">Clear Balance Sheet</button>
+    <button id="addEntryBtn">Add Entry</button>
+    <input id="searchInput" type="text" placeholder="Search entries..." />
+  </div>
+
+  <!-- Category Tabs -->
+  <div class="categoryTabs">
+    <button class="categoryTab" data-category="assets">Assets</button>
+    <button class="categoryTab" data-category="liabilities">Liabilities</button>
+    <button class="categoryTab" data-category="equity">Equity</button>
+  </div>
+
   <!-- Company header details -->
   <div class="company-header" role="region" aria-label="Company Summary">
     <h2 id="headerCompanyName">Company Name</h2>
@@ -53,73 +72,79 @@
     <table class="balance-sheet">
       <thead>
         <tr>
-          <th>Assets</th>
-          <th>Liabilities</th>
-          <th>Equity</th>
+          <th>Business</th>
+          <th>Category</th>
+          <th>Account</th>
+          <th>Description</th>
+          <th>Amount</th>
         </tr>
       </thead>
       <tbody id="balanceSheetData">
         <!-- Populated dynamically -->
       </tbody>
+      <tfoot>
+        <tr><td colspan="4">Total Assets</td><td id="totalAssets">$0</td></tr>
+        <tr><td colspan="4">Total Liabilities</td><td id="totalLiabilities">$0</td></tr>
+        <tr><td colspan="4">Total Equity</td><td id="totalEquity">$0</td></tr>
+      </tfoot>
     </table>
   </div>
 
   <!-- Loading indicator -->
   <div id="loading" hidden>Loading...</div>
-<script>
-(() => {
-  console.log("✅ Multi-Business Balance Sheet HTML loaded");
 
-  function safeInvoke(fn, ...args) {
-    if (typeof fn === "function") {
-      fn(...args);
-    } else {
-      console.warn("⚠️ Attempted to call an undefined function");
-    }
-  }
+  <script>
+  (() => {
+    console.log("✅ Multi-Business Balance Sheet HTML loaded");
 
-  function loadScript(path, callback) {
-    const script = document.createElement("script");
-    script.src = path;
-    script.type = "text/javascript";
-    script.onload = () => {
-      console.log(`✅ Loaded script: ${path}`);
-      if (typeof callback === "function") callback();
-    };
-    script.onerror = () => {
-      console.error(`❌ Failed to load script: ${path}`);
-      // Optional fallback: loadScript("/js/business-balance-sheet.js");
-    };
-    document.body.appendChild(script);
-  }
-
-  function bindButton(id, handler) {
-    const btn = document.getElementById(id);
-    if (btn) btn.addEventListener("click", () => safeInvoke(handler));
-  }
-
-  document.addEventListener("DOMContentLoaded", () => {
-    bindButton("clearBalanceBtn", clearAllEntries);
-    bindButton("addEntryBtn", addEntry);
-
-    const businessSelect = document.getElementById("businessFilter");
-    if (businessSelect) businessSelect.addEventListener("change", () => safeInvoke(filterBalanceSheet));
-
-    const searchInput = document.getElementById("searchInput");
-    if (searchInput) searchInput.addEventListener("keyup", () => safeInvoke(filterBalanceSheet));
-
-    document.body.addEventListener("click", e => {
-      if (e.target.classList.contains("categoryTab")) {
-        safeInvoke(switchCategoryView, e.target.dataset.category);
+    function safeInvoke(fn, ...args) {
+      if (typeof fn === "function") {
+        fn(...args);
+      } else {
+        console.warn("⚠️ Attempted to call an undefined function");
       }
+    }
+
+    function loadScript(path, callback) {
+      const script = document.createElement("script");
+      script.src = path;
+      script.type = "text/javascript";
+      script.onload = () => {
+        console.log(`✅ Loaded script: ${path}`);
+        if (typeof callback === "function") callback();
+      };
+      script.onerror = () => {
+        console.error(`❌ Failed to load script: ${path}`);
+      };
+      document.body.appendChild(script);
+    }
+
+    function bindButton(id, handler) {
+      const btn = document.getElementById(id);
+      if (btn) btn.addEventListener("click", () => safeInvoke(handler));
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      bindButton("clearBalanceBtn", clearAllEntries);
+      bindButton("addEntryBtn", addEntry);
+
+      const businessSelect = document.getElementById("businessFilter");
+      if (businessSelect) businessSelect.addEventListener("change", () => safeInvoke(filterBalanceSheet));
+
+      const searchInput = document.getElementById("searchInput");
+      if (searchInput) searchInput.addEventListener("keyup", () => safeInvoke(filterBalanceSheet));
+
+      document.body.addEventListener("click", e => {
+        if (e.target.classList.contains("categoryTab")) {
+          safeInvoke(switchCategoryView, e.target.dataset.category);
+        }
+      });
+
+      const DEFAULT_SCRIPT =
+        "https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/js/business-balance-sheet.js";
+      loadScript(window.balanceSheetScriptPath || DEFAULT_SCRIPT);
     });
-
-    const DEFAULT_SCRIPT =
-      "https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/js/business-balance-sheet.js";
-    loadScript(window.balanceSheetScriptPath || DEFAULT_SCRIPT);
-  });
-})();
-
-</script>
+  })();
+  </script>
 </body>
 </html>
