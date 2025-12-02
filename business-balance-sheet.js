@@ -271,3 +271,62 @@ document.addEventListener("DOMContentLoaded", () => {populateCompanyOptions();
 
   triggerRender();
 });
+{
+  "companies": [
+    {
+      "id": "bizA",
+      "name": "Business A",
+      "location": "Huntsville, AL",
+      "type": "LLC",
+      "role": "Owner",
+      "balanceSheet": {
+        "assets": [
+          { "account": "Cash", "description": "Operating account", "amount": 25000 },
+          { "account": "Accounts Receivable", "description": "Customer invoices", "amount": 12000 }
+        ],
+        "liabilities": [
+          { "account": "Bank Loan", "description": "5-year loan", "amount": 50000 }
+        ],
+        "equity": [
+          { "account": "Owner’s Capital", "description": "Initial investment", "amount": 100000 }
+        ]
+      }
+    },
+    {
+      "id": "bizB",
+      "name": "Business B",
+      "location": "Birmingham, AL",
+      "type": "Corporation",
+      "role": "CEO",
+      "balanceSheet": {
+        "assets": [
+          { "account": "Inventory", "description": "Finished goods", "amount": 40000 }
+        ],
+        "liabilities": [
+          { "account": "Accounts Payable", "description": "Supplier invoices", "amount": 15000 }
+        ],
+        "equity": [
+          { "account": "Retained Earnings", "description": "Profits reinvested", "amount": 25000 }
+        ]
+      }
+    },
+    {
+      "id": "bizC",
+      "name": "Business C",
+      "location": "Decatur, AL",
+      "type": "Partnership",
+      "role": "Partner",
+      "balanceSheet": {
+        "assets": [
+          { "account": "Equipment", "description": "Machinery", "amount": 75000 }
+        ],
+        "liabilities": [
+          { "account": "Lease Obligation", "description": "Office lease", "amount": 20000 }
+        ],
+        "equity": [
+          { "account": "Partner Contributions", "description": "Capital invested", "amount": 55000 }
+        ]
+      }
+    }
+  ]
+}
