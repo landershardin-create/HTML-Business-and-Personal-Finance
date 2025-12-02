@@ -1,4 +1,4 @@
-// --- local persistent storage.js ---
+// --- business local persistent storage.js ---
 
 function saveTabState(tabId, type) {
   const tabs = JSON.parse(localStorage.getItem("dashboardTabs") || "[]");
