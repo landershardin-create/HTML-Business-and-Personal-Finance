@@ -66,8 +66,67 @@
 
   <!-- Loading indicator -->
   <div id="loading" hidden>Loading...</div>
+console.log("✅ Multi-Business Balance Sheet HTML loaded");
 
-  <!-- External JavaScript -->
-  <script src="js/business-balance-sheet.js"></script>
+// Dynamic JS loader
+function loadScript(path, callback) {
+  const script = document.createElement("script");
+  script.src = path;
+  script.type = "text/javascript";
+  script.onload = () => {
+    console.log(`✅ Loaded script: ${path}`);
+    if (typeof callback === "function") callback();
+  };
+  script.onerror = () => console.error(`❌ Failed to load script: ${path}`);
+  document.body.appendChild(script);
+}
+
+// Attach event listeners after DOM is ready
+document.addEventListener("DOMContentLoaded", () => {
+  // Clear all balance sheet entries
+  const clearBtn = document.getElementById("clearBalanceBtn");
+  if (clearBtn) {
+    clearBtn.addEventListener("click", () => {
+      if (typeof clearAllEntries === "function") clearAllEntries();
+    });
+  }
+
+  // Add new entry (asset, liability, or equity)
+  const addBtn = document.getElementById("addEntryBtn");
+  if (addBtn) {
+    addBtn.addEventListener("click", () => {
+      if (typeof addEntry === "function") addEntry();
+    });
+  }
+
+  // Filter by business entity
+  const businessSelect = document.getElementById("businessFilter");
+  if (businessSelect) {
+    businessSelect.addEventListener("change", () => {
+      if (typeof filterBalanceSheet === "function") filterBalanceSheet();
+    });
+  }
+
+  // Search entries by keyword
+  const searchInput = document.getElementById("searchInput");
+  if (searchInput) {
+    searchInput.addEventListener("keyup", () => {
+      if (typeof filterBalanceSheet === "function") filterBalanceSheet();
+    });
+  }
+
+  // Toggle between Assets, Liabilities, Equity views
+  const categoryTabs = document.querySelectorAll(".categoryTab");
+  categoryTabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      if (typeof switchCategoryView === "function") {
+        switchCategoryView(tab.dataset.category);
+      }
+    });
+  });
+
+  // Dynamically load your external JS file
+  loadScript("https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/js/business-balance-sheet.js");
+});
 </body>
 </html>
