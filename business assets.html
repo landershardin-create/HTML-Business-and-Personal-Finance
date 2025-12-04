@@ -88,8 +88,9 @@
   </div>
 </div>
 
+<!-- Extended Script -->
 <script>
-  console.log("✅ Business Asset Tracker HTML loaded");
+  console.log("✅ Business Cash Flow HTML loaded");
 
   // Dynamic JS loader
   function loadScript(path, callback) {
@@ -106,21 +107,23 @@
 
   // Attach event listeners after DOM is ready
   document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("clearAssetsBtn").addEventListener("click", () => {
-      if (typeof clearAllAssets === "function") clearAllAssets();
-    });
-    document.getElementById("addAssetBtn").addEventListener("click", () => {
-      if (typeof addAsset === "function") addAsset();
-    });
-    document.getElementById("businessFilter").addEventListener("change", () => {
-      if (typeof filterAssets === "function") filterAssets();
-    });
-    document.getElementById("searchInput").addEventListener("keyup", () => {
-      if (typeof filterAssets === "function") filterAssets();
-    });
+    const companySelect = document.getElementById("companySelect");
+    const viewSelect = document.getElementById("viewSelect");
 
-    // Dynamically load your external JS file
-    loadScript("https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/js/business-asset-tracker.js");
+    if (companySelect) {
+      companySelect.addEventListener("change", () => {
+        if (typeof updateDashboard === "function") updateDashboard();
+      });
+    }
+
+    if (viewSelect) {
+      viewSelect.addEventListener("change", () => {
+        if (typeof updateDashboard === "function") updateDashboard();
+      });
+    }
+
+    // Dynamically load your external JS file for cash flow logic
+    loadScript("https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/main/js/business-cash-flow.js");
   });
 </script>
 </body>
