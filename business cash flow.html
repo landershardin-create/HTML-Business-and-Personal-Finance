@@ -184,7 +184,135 @@
     loadCompanyManager();
   </script>
 
-  <!-- External business logic -->
-  <script src="https://landershardin-create.github.io/HTML-Business-and-Personal-Finance/js/business-cash-flow.js"></script>
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Multi-Business Asset Tracker with Depreciation</title>
+  <link rel="stylesheet" href="https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/css/biz-assets-style-sheet.css" />
+</head>
+<body>
+<div class="container">
+  <h2>Multi-Business Asset Tracker</h2>
+  <div class="section">
+    <button id="clearAssetsBtn">Clear All Assets</button>
+  </div>
+
+  <!-- Dashboard Hub -->
+  <div id="dashboardHub">
+    <h2 id="dashboardTitle">Dashboard: All Businesses</h2>
+    <!-- Charts, tables, KPIs, etc. -->
+  </div>
+
+  <!-- Business Selector -->
+  <label for="businessSelect">Select Business:</label>
+  <select id="businessSelect"></select>
+
+  <!-- Business Filter -->
+  <div class="section">
+    <h3>Filter by Business</h3>
+    <select id="businessFilter">
+      <option value="">All Businesses</option>
+      <!-- Options will be populated dynamically -->
+    </select>
+  </div>
+
+  <!-- Asset Input Form -->
+  <div class="section">
+    <h3>Add Asset</h3>
+    <label>Asset Tag / Barcode: <input type="text" id="assetTag"></label><br><br>
+    <label>Asset Name: <input type="text" id="assetName"></label><br><br>
+    <label>Category: <input type="text" id="assetCategory"></label><br><br>
+
+    <!-- New Asset Type Selector -->
+    <label>Asset Type: 
+      <select id="assetType">
+        <option value="Tangible">Tangible</option>
+        <option value="Intangible">Intangible</option>
+      </select>
+    </label><br><br>
+
+    <!-- New Date of Purchase -->
+    <label>Date of Purchase: <input type="date" id="assetDate"></label><br><br>
+
+    <label>Value ($): <input type="number" id="assetValue" step="0.01"></label><br><br>
+    <label>Depreciation Rate (% per year): <input type="number" id="assetDep" step="0.01"></label><br><br>
+    <label>Years in Service: <input type="number" id="assetYears"></label><br><br>
+    <button id="addAssetBtn">Add Asset</button>
+  </div>
+  
+  <!-- Search/Filter Bar -->
+  <div class="section">
+    <h3>Search Assets</h3>
+    <input type="text" id="searchInput" placeholder="Search by tag, name, or category...">
+  </div>
+
+  <!-- Asset Table -->
+  <div class="section">
+    <h3>Asset Records</h3>
+    <table id="assetTable">
+      <thead>
+        <tr>
+          <th>Business</th>
+          <th>Asset Tag</th>
+          <th>Name</th>
+          <th>Category</th>
+          <th>Type</th>
+          <th>Date of Purchase</th>
+          <th>Value</th>
+          <th>Depreciation Rate</th>
+          <th>Annual Depreciation</th>
+          <th>Accumulated Depreciation</th>
+          <th>Net Book Value</th>
+          <th>Edit</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div class="totals" id="totals"></div>
+  </div>
+</div>
+
+<!-- Extended Script -->
+<script>
+  console.log("✅ Business Cash Flow HTML loaded");
+
+  // Dynamic JS loader
+  function loadScript(path, callback) {
+    const script = document.createElement("script");
+    script.src = path;
+    script.type = "text/javascript";
+    script.onload = () => {
+      console.log(`✅ Loaded script: ${path}`);
+      if (typeof callback === "function") callback();
+    };
+    script.onerror = () => console.error(`❌ Failed to load script: ${path}`);
+    document.body.appendChild(script);
+  }
+
+  // Attach event listeners after DOM is ready
+  document.addEventListener("DOMContentLoaded", () => {
+    const companySelect = document.getElementById("companySelect");
+    const viewSelect = document.getElementById("viewSelect");
+
+    if (companySelect) {
+      companySelect.addEventListener("change", () => {
+        if (typeof updateDashboard === "function") updateDashboard();
+      });
+    }
+
+    if (viewSelect) {
+      viewSelect.addEventListener("change", () => {
+        if (typeof updateDashboard === "function") updateDashboard();
+      });
+    }
+
+    // Dynamically load your external JS file for cash flow logic
+    loadScript("https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/main/js/business-cash-flow.js");
+  });
+</script>
+</body>
+</html>
 </body>
 </html>
