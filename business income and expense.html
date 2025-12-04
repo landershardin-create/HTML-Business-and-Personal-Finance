@@ -74,7 +74,72 @@
     // Initialize on page load
     loadCompanyManager();
   </script>
+  // business-income-and-expense.js
+console.log("✅ Business Income & Expense logic loaded");
 
-  <script src="https://landershardin-create.github.io/HTML-Business-and-Personal-Finance/js/business-income-and-expense.js"></script>
+/**
+ * Sample data structure for business transactions
+ * Replace with live data or API integration
+ */
+const transactions = [
+  { type: "income", category: "Sales", amount: 5000 },
+  { type: "income", category: "Consulting", amount: 2000 },
+  { type: "expense", category: "Rent", amount: 1200 },
+  { type: "expense", category: "Utilities", amount: 300 },
+  { type: "expense", category: "Supplies", amount: 450 }
+];
+
+/**
+ * Calculate totals by type
+ */
+function calculateTotals(data) {
+  return data.reduce(
+    (totals, item) => {
+      if (item.type === "income") totals.income += item.amount;
+      if (item.type === "expense") totals.expense += item.amount;
+      return totals;
+    },
+    { income: 0, expense: 0 }
+  );
+}
+
+/**
+ * Render dashboard summary
+ */
+function renderIncomeExpenseSummary() {
+  const totals = calculateTotals(transactions);
+  const net = totals.income - totals.expense;
+
+  const summaryElement = document.getElementById("incomeExpenseSummary");
+  if (summaryElement) {
+    summaryElement.innerHTML = `
+      <h3>Business Income & Expense Summary</h3>
+      <ul>
+        <li><strong>Total Income:</strong>
+
+{totals.income.toFixed(2)}</li>
+        <li><strong>Total Expenses:</strong> 
+
+{totals.expense.toFixed(2)}</li>
+        <li><strong>Net Profit:</strong> $${net.toFixed(2)}</li>
+      </ul>
+    `;
+  }
+}
+
+/**
+ * Update dashboard when filters change
+ */
+function updateIncomeExpenseDashboard() {
+  // In a real system, filter transactions by company/view/income/expense
+  // For now, just re-render summary
+  renderIncomeExpenseSummary();
+}
+
+// Initialize dashboard on load
+document.addEventListener("DOMContentLoaded", () => {
+  renderIncomeExpenseSummary();
+});
+</script>
 </body>
 </html>
