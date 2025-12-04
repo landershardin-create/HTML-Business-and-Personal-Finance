@@ -1,104 +1,54 @@
-// --- business-cash-flow.js---
-  
-      const companies = {
-      AlphaCorp: {
-        name: "AlphaCorp",
-        location: "New York, NY",
-        type: "Retail",
-        role: "Owner",
-        journal: [
-          { activity: "operating", description: "Sales revenue", date: "2025-01-10", amount: 15000 },
-          { activity: "operating", description: "Rent payment", date: "2025-02-01", amount: -3000 },
-          { activity: "investing", description: "New store equipment", date: "2025-03-15", amount: -4000 },
-          { activity: "financing", description: "Bank loan", date: "2025-04-20", amount: 8000 }
-        ]
-      },
-      BetaEnterprises: {
-        name: "BetaEnterprises",
-        location: "Austin, TX",
-        type: "Tech Services",
-        role: "Consultant",
-        journal: [
-          { activity: "operating", description: "Client payments", date: "2025-01-20", amount: 10000 },
-          { activity: "operating", description: "Software subscriptions", date: "2025-02-05", amount: -2000 },
-          { activity: "investing", description: "Laptop purchase", date: "2025-03-10", amount: -1500 },
-          { activity: "financing", description: "Owner draw", date: "2025-04-01", amount: -1000 }
-        ]
-      }
-    };
+    const businessSelect = document.getElementById("businessSelect");
+    const inflowInput = document.getElementById("inflow");
+    const outflowInput = document.getElementById("outflow");
+    const netResult = document.getElementById("net");
 
-    function formatCurrency(amount) {
-      return `$${amount.toFixed(2)}`;
-    }
+    // Fetch businesses from your company manager dashboard API or JSON file
+    // Replace 'companies.json' with your actual endpoint
+    fetch("companies.json")
+      .then(response => response.json())
+      .then(businesses => {
+        // Populate drop-down
+        businesses.forEach((biz, index) => {
+          const option = document.createElement("option");
+          option.value = index;
+          option.textContent = biz.name;
+          businessSelect.appendChild(option);
+        });
 
-    function getPeriod(dateStr, view) {
-      const date = new Date(dateStr);
-      const month = date.getMonth();
-      const year = date.getFullYear();
+        // Initialize with first business
+        businessSelect.value = 0;
+        inflowInput.value = businesses[0].inflow;
+        outflowInput.value = businesses[0].outflow;
+        calculateNet();
 
-      if (view === "monthly") {
-        return `${year}-${String(month + 1).padStart(2, "0")}`;
-      } else if (view === "quarterly") {
-        const quarter = Math.floor(month / 3) + 1;
-        return `Q${quarter} ${year}`;
-      }
-      return `${year}`; // annual
-    }
+        // Update fields when a business is selected
+        businessSelect.addEventListener("change", () => {
+          const selectedBiz = businesses[businessSelect.value];
+          inflowInput.value = selectedBiz.inflow;
+          outflowInput.value = selectedBiz.outflow;
+          calculateNet();
+        });
 
-    function populateCashFlow(companyKey) {
-      const company = companies[companyKey];
-      const view = document.getElementById("viewSelect").value;
-      const { journal, name, location, type, role } = company;
+        // Recalculate when inflow/outflow are edited
+        inflowInput.addEventListener("input", calculateNet);
+        outflowInput.addEventListener("input", calculateNet);
 
-      document.getElementById("headerCompanyName").textContent = name;
-      document.getElementById("headerLocation").textContent = location;
-      document.getElementById("headerTypeValue").textContent = type;
-      document.getElementById("headerRoleValue").textContent = role;
+        function calculateNet() {
+          const inflow = parseFloat(inflowInput.value) || 0;
+          const outflow = parseFloat(outflowInput.value) || 0;
+          const net = inflow - outflow;
+          netResult.innerHTML = `
+            <span class="inflow">Inflows:
 
-      let totals = {};
-      const operatingBody = document.querySelector("#operating-table tbody");
-      const investingBody = document.querySelector("#investing-table tbody");
-      const financingBody = document.querySelector("#financing-table tbody");
+{inflow.toLocaleString()}</span><br>
+            <span class="outflow">Outflows: 
 
-      operatingBody.innerHTML = "";
-      investingBody.innerHTML = "";
-      financingBody.innerHTML = "";
-
-      journal.forEach(entry => {
-        const period = getPeriod(entry.date, view);
-        if (!totals[period]) {
-          totals[period] = { operating: 0, investing: 0, financing: 0 };
+{outflow.toLocaleString()}</span><br>
+            <span class="net">Net Cash Flow: $${net.toLocaleString()}</span>
+          `;
         }
-        totals[period][entry.activity] += entry.amount;
-
-        const row = `<tr><td>${entry.description}</td><td>${entry.date}</td><td>${formatCurrency(entry.amount)}</td></tr>`;
-        if (entry.activity === "operating") operatingBody.innerHTML += row;
-        else if (entry.activity === "investing") investingBody.innerHTML += row;
-        else if (entry.activity === "financing") financingBody.innerHTML += row;
+      })
+      .catch(err => {
+        console.error("Error loading businesses:", err);
       });
-
-      let totalOperating = 0, totalInvesting = 0, totalFinancing = 0;
-      for (const period in totals) {
-        totalOperating += totals[period].operating;
-        totalInvesting += totals[period].investing;
-        totalFinancing += totals[period].financing;
-      }
-
-      document.getElementById("total-operating").textContent = formatCurrency(totalOperating);
-      document.getElementById("total-investing").textContent = formatCurrency(totalInvesting);
-      document.getElementById("total-financing").textContent = formatCurrency(totalFinancing);
-      document.getElementById("net-cash").textContent = formatCurrency(totalOperating + totalInvesting + totalFinancing);
-    }
-
-    document.getElementById("companySelect").addEventListener("change", e => {
-      populateCashFlow(e.target.value);
-    });
-
-    document.getElementById("viewSelect").addEventListener("change", () => {
-      const companyKey = document.getElementById("companySelect").value;
-      populateCashFlow(companyKey);
-    });
-
-    // Initial load
-    populateCashFlow("AlphaCorp");
- 
