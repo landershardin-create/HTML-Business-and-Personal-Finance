@@ -1,296 +1,133 @@
-// --- business-accounting-journal.js---
+// ✅ Business Accounting Journal Logic
+console.log("✅ business-accounting-journal.js loaded");
 
-let accountTypeChart;
-let monthlyTotalsChart;
-let lastDeletedEntry = null;
+// --- Utility: Load companies from JSON ---
+async function populateCompanyDropdowns() {
+  try {
+    const res = await fetch("data/company-manager-dashboard.json");
+    const companies = await res.json();
 
-const entryForm = document.getElementById('entryForm');
-const journalEntriesList = document.createElement('ul');
-journalEntriesList.id = "journalEntriesList";
-document.getElementById('journalEntries').appendChild(journalEntriesList);
-
-const totalsDisplay = document.createElement('div');
-totalsDisplay.id = "companyTotals";
-totalsDisplay.style.marginTop = "10px";
-document.getElementById('journalEntries').appendChild(totalsDisplay);
-
-// --- Load saved entries on page load ---
-window.addEventListener('DOMContentLoaded', () => {
-  const savedEntries = JSON.parse(localStorage.getItem('entries')) || [];
-  renderEntries(savedEntries);
-});
-
-// --- Handle new entry creation ---
-entryForm.addEventListener('submit', e => {
-  e.preventDefault();
-
-  const entryLabel = document.getElementById('entryLabel').value.trim();
-  const amount = parseFloat(document.getElementById('amount').value);
-  const company = document.getElementById('entryCompany').value;
-  const accountId = document.getElementById('linkedAccount').value;
-
-  // Look up account type from account list (stored in localStorage)
-  const savedAccounts = JSON.parse(localStorage.getItem('accounts')) || [];
-  const account = savedAccounts.find(acc => acc.id == accountId);
-  const accountType = account ? account.type || "Uncategorized" : "Uncategorized";
-
-  if (entryLabel && !isNaN(amount) && company) {
-    const entry = {
-      id: Date.now(),
-      company,
-      label: entryLabel,
-      amount,
-      accountId,
-      accountType,
-      timestamp: new Date().toISOString()
-    };
-
-    // Save to localStorage
-    const savedEntries = JSON.parse(localStorage.getItem('entries')) || [];
-    savedEntries.push(entry);
-    localStorage.setItem('entries', JSON.stringify(savedEntries));
-
-    renderEntries(savedEntries);
+    const dropdownIds = ["companyHeaderSelect","journalCompany","entryCompany","accountCompany"];
+    dropdownIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.innerHTML = '<option value="">-- Select Company --</option>';
+        companies.forEach(c => {
+          const opt = document.createElement("option");
+          opt.value = c.id;
+          opt.textContent = c.name;
+          el.appendChild(opt);
+        });
+      }
+    });
+  } catch (err) {
+    console.error("❌ Failed to load companies:", err);
   }
+}
 
-  entryForm.reset();
+// --- Journal Creation ---
+document.getElementById("journalForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const companyId = document.getElementById("journalCompany").value;
+  const title = document.getElementById("journalTitle").value;
+  const description = document.getElementById("journalDescription").value;
+
+  const journals = JSON.parse(localStorage.getItem("journals")) || [];
+  journals.push({ companyId, title, description, created: new Date().toISOString() });
+  localStorage.setItem("journals", JSON.stringify(journals));
+
+  alert("✅ Journal created");
 });
 
-// --- Render entries filtered by active company ---
+// --- Entry Creation ---
+document.getElementById("entryForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const companyId = document.getElementById("entryCompany").value;
+  const accountId = document.getElementById("linkedAccount").value;
+  const label = document.getElementById("entryLabel").value;
+  const amount = parseFloat(document.getElementById("amount").value);
+
+  const entries = JSON.parse(localStorage.getItem("entries")) || [];
+  entries.push({ companyId, accountId, label, amount, date: new Date().toISOString() });
+  localStorage.setItem("entries", JSON.stringify(entries));
+
+  renderEntries(entries);
+  renderCharts(entries);
+});
+
+// --- Account Creation ---
+document.getElementById("accountForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const companyId = document.getElementById("accountCompany").value;
+  const name = document.getElementById("accountName").value;
+  const type = document.getElementById("accountType").value;
+
+  const accounts = JSON.parse(localStorage.getItem("accounts")) || [];
+  accounts.push({ companyId, name, type });
+  localStorage.setItem("accounts", JSON.stringify(accounts));
+
+  alert("✅ Account created");
+});
+
+// --- Render Entries ---
 function renderEntries(entries) {
-  journalEntriesList.innerHTML = "";
-  totalsDisplay.innerHTML = "";
-  const activeCompany = document.getElementById('companyHeaderSelect').value;
+  const list = document.getElementById("journalEntriesList");
+  list.innerHTML = "";
+  const activeCompany = localStorage.getItem("activeCompany");
 
-  const filtered = entries.filter(entry => !activeCompany || entry.company === activeCompany);
+  const filtered = entries.filter(e => e.companyId === activeCompany);
+  filtered.forEach(e => {
+    const li = document.createElement("li");
+    li.textContent = `${e.label}:
 
-  let grandTotal = 0;
-  const typeTotals = {};
+{e.amount}`;
+    list.appendChild(li);
+  });
+
+  const total = filtered.reduce((sum, e) => sum + e.amount, 0);
+  document.getElementById("companyTotals").textContent = `Total: 
+
+{total}`;
+}
+
+// --- Render Charts ---
+function renderCharts(entries) {
+  const ctxType = document.getElementById("accountTypeChart").getContext("2d");
+  const ctxMonthly = document.getElementById("monthlyTotalsChart").getContext("2d");
+
+  const accounts = JSON.parse(localStorage.getItem("accounts")) || [];
+  const accountTypes = {};
   const monthlyTotals = {};
 
-  filtered.forEach(entry => {
-    grandTotal += entry.amount;
-    typeTotals[entry.accountType] = (typeTotals[entry.accountType] || 0) + entry.amount;
+  entries.forEach(entry => {
+    const account = accounts.find(a => a.companyId === entry.companyId && a.id === entry.accountId);
+    const type = account ? account.type : "Uncategorized";
+    accountTypes[type] = (accountTypes[type] || 0) + entry.amount;
 
-    const monthKey = new Date(entry.timestamp).toLocaleString('default', { month: 'short', year: 'numeric' });
-    monthlyTotals[monthKey] = (monthlyTotals[monthKey] || 0) + entry.amount;
-
-    const li = document.createElement('li');
-    li.textContent = `${entry.label} - $${entry.amount.toLocaleString(undefined, {minimumFractionDigits:2})} (${entry.company}, ${entry.accountType}) [${entry.timestamp}]`;
-
-    // Delete button with undo safety
-    const deleteBtn = document.createElement('button');
-    deleteBtn.textContent = "❌";
-    deleteBtn.type = "button";
-    deleteBtn.addEventListener('click', () => {
-      const confirmDelete = confirm(`Remove entry "${entry.label}" from ${entry.company}?`);
-      if (confirmDelete) {
-        lastDeletedEntry = entry;
-        let savedEntries = JSON.parse(localStorage.getItem('entries')) || [];
-        savedEntries = savedEntries.filter(e => e.id !== entry.id);
-        localStorage.setItem('entries', JSON.stringify(savedEntries));
-        renderEntries(savedEntries);
-
-        // Show undo button
-        const undoBtn = document.createElement('button');
-        undoBtn.textContent = "Undo Delete";
-        undoBtn.onclick = () => {
-          const savedEntries = JSON.parse(localStorage.getItem('entries')) || [];
-          savedEntries.push(lastDeletedEntry);
-          localStorage.setItem('entries', JSON.stringify(savedEntries));
-          renderEntries(savedEntries);
-          undoBtn.remove();
-        };
-        totalsDisplay.appendChild(undoBtn);
-      }
-    });
-
-    li.appendChild(deleteBtn);
-    journalEntriesList.appendChild(li);
+    const month = new Date(entry.date).toLocaleString("default", { month: "short" });
+    monthlyTotals[month] = (monthlyTotals[month] || 0) + entry.amount;
   });
 
-  // ✅ Fixed totals display with formatted numbers
-  const formattedTotal = grandTotal.toLocaleString(undefined, {minimumFractionDigits:2});
-  if (activeCompany) {
-    totalsDisplay.innerHTML = `<strong>Total for ${activeCompany}:
-
-{formattedTotal}</strong><br>`;
-  } else {
-    totalsDisplay.innerHTML = `<strong>All Companies Total: 
-
-{formattedTotal}</strong><br>`;
-  }
-
-  // Breakdown by account type
-  for (const [type, total] of Object.entries(typeTotals)) {
-    const p = document.createElement('p');
-    p.textContent = `${type}: $${total.toLocaleString(undefined, {minimumFractionDigits:2})}`;
-    totalsDisplay.appendChild(p);
-  }
-
-  // Render pie chart (account type breakdown)
-  const ctxPie = document.getElementById('accountTypeChart').getContext('2d');
-  if (accountTypeChart) accountTypeChart.destroy();
-  accountTypeChart = new Chart(ctxPie, {
-    type: 'pie',
+  new Chart(ctxType, {
+    type: "pie",
     data: {
-      labels: Object.keys(typeTotals),
-      datasets: [{
-        data: Object.values(typeTotals),
-        backgroundColor: ['#4CAF50','#FF9800','#2196F3','#9C27B0','#F44336']
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { position: 'bottom' },
-        title: {
-          display: true,
-          text: activeCompany ? `Breakdown for ${activeCompany}` : 'Breakdown for All Companies'
-        },
-        tooltip: {
-          callbacks: {
-            label: function(context) {
-              const value = context.raw;
-              return `$${value.toLocaleString(undefined, {minimumFractionDigits:2})}`;
-            }
-          }
-        }
-      }
+      labels: Object.keys(accountTypes),
+      datasets: [{ data: Object.values(accountTypes) }]
     }
   });
 
-  // Render bar chart (monthly totals)
-  const ctxBar = document.getElementById('monthlyTotalsChart').getContext('2d');
-  if (monthlyTotalsChart) monthlyTotalsChart.destroy();
-  monthlyTotalsChart = new Chart(ctxBar, {
-    type: 'bar',
+  new Chart(ctxMonthly, {
+    type: "bar",
     data: {
       labels: Object.keys(monthlyTotals),
-      datasets: [{
-        label: 'Monthly Totals',
-        data: Object.values(monthlyTotals),
-        backgroundColor: '#2196F3'
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false },
-        title: {
-          display: true,
-          text: activeCompany ? `Monthly Totals for ${activeCompany}` : 'Monthly Totals for All Companies'
-        },
-        tooltip: {
-          callbacks: {
-            label: function(context) {
-              const value = context.raw;
-              return `
-
-{value.toLocaleString(undefined, {minimumFractionDigits:2})}`;
-            }
-          }
-        }
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: {
-            callback: function(value) {
-              return `
-
-{value.toLocaleString(undefined, {minimumFractionDigits:2})}`;
-            }
-          }
-        }
-      }
+      datasets: [{ data: Object.values(monthlyTotals) }]
     }
   });
 }
 
-// --- Populate linked accounts ---
-function populateLinkedAccounts(company) {
-  const linkedAccountSelect = document.getElementById('linkedAccount');
-  linkedAccountSelect.innerHTML = '<option value="">-- Select Account --</option>';
-
-  const accounts = JSON.parse(localStorage.getItem('accounts')) || [];
-  const filtered = accounts.filter(acc => acc.company === company);
-
-  if (filtered.length > 0) {
-    const optgroup = document.createElement('optgroup');
-    optgroup.label = company;
-
-    filtered.forEach(acc => {
-      const option = document.createElement('option');
-      option.value = acc.id;
-      option.textContent = `${acc.name} (${acc.type})`;
-      optgroup.appendChild(option);
-    });
-
-    linkedAccountSelect.appendChild(optgroup);
-  }
-}
-
-// --- Sync company selection ---
-document.getElementById('entryCompany').addEventListener('change', e => {
-  populateLinkedAccounts(e.target.value);
-});
-
-document.getElementById('companyHeaderSelect').addEventListener('change', e => {
-  const company = e.target.value;
-  document.getElementById('journalCompany').value = company;
-  document.getElementById('entryCompany').value = company;
-  document.getElementById('accountCompany').value = company;
-  populateLinkedAccounts(company);
-
-  const savedEntries = JSON.parse(localStorage.getItem('entries')) || [];
+// --- Initialize ---
+document.addEventListener("DOMContentLoaded", () => {
+  const savedEntries = JSON.parse(localStorage.getItem("entries")) || [];
   renderEntries(savedEntries);
+  renderCharts(savedEntries);
 });
-
-// --- Handle new account creation ---
-document.getElementById('accountForm').addEventListener('submit', e => {
-  e.preventDefault();
-
-  const company = document.getElementById('accountCompany').value;
-  const name = document.getElementById('accountName').value;
-  const type = document.getElementById('accountType').value;
-
-  const newAccount = {
-    id: Date.now(),
-    company,
-    name,
-    type
-  };
-
-  let accounts = JSON.parse(localStorage.getItem('accounts')) || [];
-  accounts.push(newAccount);
-  localStorage.setItem('accounts', JSON.stringify(accounts));
-
-  populateLinkedAccounts(company);
-  e.target.reset();
-  });
-
-// --- Populate company dropdowns ---
-function populateCompanyDropdowns() {
-  const companies = JSON.parse(localStorage.getItem('companies')) || [];
-
-  const dropdownIds = ["companyHeaderSelect", "journalCompany", "entryCompany", "accountCompany"];
-  dropdownIds.forEach(id => {
-    const select = document.getElementById(id);
-    if (!select) return;
-
-    // Clear existing options
-    select.innerHTML = '<option value="">-- Select Company --</option>';
-
-    // Populate from localStorage
-    companies.forEach(c => {
-      const option = document.createElement('option');
-      option.value = c.id;
-      option.textContent = c.name;
-      select.appendChild(option);
-    });
-  });
-}
-
-// Run on page load
-window.addEventListener('DOMContentLoaded', populateCompanyDropdowns);
