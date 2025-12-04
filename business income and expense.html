@@ -39,14 +39,16 @@
     <p id="headerRole">Role: <span id="headerRoleValue"></span></p>
   </div>
 
+  <!-- Summary -->
   <div class="summary" id="summary"></div>
+
+  <!-- Report Table -->
   <table id="report">
     <thead>
       <tr>
         <th>Category</th>
         <th>Type</th>
         <th>Amount</th>
-        <th class="right-align" id="expenseTotalHeader">Total</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -71,75 +73,67 @@
         .join("");
     }
 
-    // Initialize on page load
-    loadCompanyManager();
-  </script>
-  // business-income-and-expense.js
-console.log("✅ Business Income & Expense logic loaded");
+    // Sample transactions
+    const transactions = [
+      { type: "income", category: "Sales", amount: 5000 },
+      { type: "income", category: "Consulting", amount: 2000 },
+      { type: "expense", category: "Rent", amount: 1200 },
+      { type: "expense", category: "Utilities", amount: 300 },
+      { type: "expense", category: "Supplies", amount: 450 }
+    ];
 
-/**
- * Sample data structure for business transactions
- * Replace with live data or API integration
- */
-const transactions = [
-  { type: "income", category: "Sales", amount: 5000 },
-  { type: "income", category: "Consulting", amount: 2000 },
-  { type: "expense", category: "Rent", amount: 1200 },
-  { type: "expense", category: "Utilities", amount: 300 },
-  { type: "expense", category: "Supplies", amount: 450 }
-];
+    function calculateTotals(data) {
+      return data.reduce(
+        (totals, item) => {
+          if (item.type === "income") totals.income += item.amount;
+          if (item.type === "expense") totals.expense += item.amount;
+          return totals;
+        },
+        { income: 0, expense: 0 }
+      );
+    }
 
-/**
- * Calculate totals by type
- */
-function calculateTotals(data) {
-  return data.reduce(
-    (totals, item) => {
-      if (item.type === "income") totals.income += item.amount;
-      if (item.type === "expense") totals.expense += item.amount;
-      return totals;
-    },
-    { income: 0, expense: 0 }
-  );
-}
+    function renderIncomeExpenseSummary() {
+      const totals = calculateTotals(transactions);
+      const net = totals.income - totals.expense;
 
-/**
- * Render dashboard summary
- */
-function renderIncomeExpenseSummary() {
-  const totals = calculateTotals(transactions);
-  const net = totals.income - totals.expense;
-
-  const summaryElement = document.getElementById("incomeExpenseSummary");
-  if (summaryElement) {
-    summaryElement.innerHTML = `
-      <h3>Business Income & Expense Summary</h3>
-      <ul>
-        <li><strong>Total Income:</strong>
+      const summaryElement = document.getElementById("summary");
+      summaryElement.innerHTML = `
+        <h3>Business Income & Expense Summary</h3>
+        <ul>
+          <li><strong>Total Income:</strong>
 
 {totals.income.toFixed(2)}</li>
-        <li><strong>Total Expenses:</strong> 
+          <li><strong>Total Expenses:</strong> 
 
 {totals.expense.toFixed(2)}</li>
-        <li><strong>Net Profit:</strong> $${net.toFixed(2)}</li>
-      </ul>
-    `;
-  }
-}
+          <li><strong>Net Profit:</strong> $${net.toFixed(2)}</li>
+        </ul>
+      `;
+    }
 
-/**
- * Update dashboard when filters change
- */
-function updateIncomeExpenseDashboard() {
-  // In a real system, filter transactions by company/view/income/expense
-  // For now, just re-render summary
-  renderIncomeExpenseSummary();
-}
+    function renderReportTable() {
+      const tbody = document.querySelector("#report tbody");
+      tbody.innerHTML = transactions
+        .map(t => `
+          <tr>
+            <td>${t.category}</td>
+            <td class="${t.type}">${t.type}</td>
+            <td>$${t.amount.toFixed(2)}</td>
+          </tr>
+        `)
+        .join("");
+    }
 
-// Initialize dashboard on load
-document.addEventListener("DOMContentLoaded", () => {
-  renderIncomeExpenseSummary();
-});
-</script>
+    function updateIncomeExpenseDashboard() {
+      renderIncomeExpenseSummary();
+      renderReportTable();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadCompanyManager();
+      updateIncomeExpenseDashboard();
+    });
+  </script>
 </body>
 </html>
