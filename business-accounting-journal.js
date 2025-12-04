@@ -268,6 +268,9 @@ document.getElementById('accountForm').addEventListener('submit', e => {
 
   populateLinkedAccounts(company);
   e.target.reset();
+  });
+
+// --- Populate company dropdowns ---
 function populateCompanyDropdowns() {
   const companies = JSON.parse(localStorage.getItem('companies')) || [];
 
@@ -291,4 +294,3 @@ function populateCompanyDropdowns() {
 
 // Run on page load
 window.addEventListener('DOMContentLoaded', populateCompanyDropdowns);
-});
