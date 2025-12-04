@@ -62,7 +62,43 @@
   </div>
 
   <script>
+ <!-- Extended Script -->
+<script>
+  console.log("✅ Business Cash Flow HTML loaded");
 
-  </script>
+  // Dynamic JS loader
+  function loadScript(path, callback) {
+    const script = document.createElement("script");
+    script.src = path;
+    script.type = "text/javascript";
+    script.onload = () => {
+      console.log(`✅ Loaded script: ${path}`);
+      if (typeof callback === "function") callback();
+    };
+    script.onerror = () => console.error(`❌ Failed to load script: ${path}`);
+    document.body.appendChild(script);
+  }
+
+  // Attach event listeners after DOM is ready
+  document.addEventListener("DOMContentLoaded", () => {
+    const companySelect = document.getElementById("companySelect");
+    const viewSelect = document.getElementById("viewSelect");
+
+    if (companySelect) {
+      companySelect.addEventListener("change", () => {
+        if (typeof updateDashboard === "function") updateDashboard();
+      });
+    }
+
+    if (viewSelect) {
+      viewSelect.addEventListener("change", () => {
+        if (typeof updateDashboard === "function") updateDashboard();
+      });
+    }
+
+    // Dynamically load your external JS file for cash flow logic
+    loadScript("https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/main/js/business-cash-flow.js");
+  });
+</script>
 </body>
 </html>
