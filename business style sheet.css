@@ -1,24 +1,14 @@
 /*-----business style sheet.css-----*/
 
 
-body {
-  font-family: 'Segoe UI', sans-serif;
-  padding: 20px;
-  background: #f4f4f4;
-}
-label {
-  display: block;
-  margin: 10px 0;
-}
-button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background: #0078D4;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-h3 {
-  margin-top: 20px;
-  font-size: 1.2em;
-}
+body { font-family: Arial, sans-serif; margin: 20px; }
+    .container { max-width: 1000px; margin: auto; }
+    .section { margin-top: 20px; padding: 15px; border: 1px solid #ccc; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #f4f4f4; }
+    .totals { margin-top: 10px; font-weight: bold; white-space: pre-line; }
+    .income { color: green; }
+    .expense { color: red; }
+    .summary { margin-top: 1em; font-size: 1.2em; }
+    .right-align { text-align: right; }
