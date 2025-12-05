@@ -15,14 +15,24 @@ body {
   padding: 0 15px;
 }
 
-/* Section styling */
+/* Section styling with distinct borders */
 .section {
   margin-top: 20px;
   padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  border: 2px solid #ccc;          /* stronger border */
+  border-radius: 8px;              /* rounded corners */
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Optional: add a subtle header-like border accent */
+.section::before {
+  content: "";
+  display: block;
+  height: 4px;
+  background: #0078d4;             /* accent color */
+  margin-bottom: 12px;
+  border-radius: 4px 4px 0 0;
 }
 
 /* Table styling */
@@ -70,14 +80,14 @@ tr:hover {
 
 /* Income/Expense indicators */
 .income {
-  color: #2e7d32; /* richer green */
+  color: #2e7d32;
 }
 
 .expense {
-  color: #c62828; /* stronger red */
+  color: #c62828;
 }
 
 /* Utility classes */
 .right-align {
   text-align: right;
-}
+}}
