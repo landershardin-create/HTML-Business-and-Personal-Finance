@@ -6,8 +6,8 @@
   <title>Business Debt-to-Equity Financial Dashboard</title>
   <style>
     body { font-family: sans-serif; margin: 2em; }
-    h1 { color: #2c3e50; }
-    select { margin-top: 1em; padding: 0.5em; font-size: 1em; margin-right: 1em; }
+    h1, h2, h3 { color: #2c3e50; }
+    select, input, button { margin-top: 0.5em; padding: 0.5em; font-size: 1em; margin-right: 1em; }
     table { width: 100%; border-collapse: collapse; margin-top: 1em; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
     th { background-color: #f0f0f0; }
@@ -28,7 +28,7 @@
       <input type="number" id="loanAmount" value="50000" />
       <label>Equity Amount ($):</label>
       <input type="number" id="equityAmount" value="75000" />
-      <button onclick="calculateDebtEquity()">Calculate Ratio</button>
+      <button id="calculateDebtEquityBtn">Calculate Ratio</button>
       <div class="result" id="ratioResult"></div>
     </div>
 
@@ -41,7 +41,7 @@
       <input type="number" id="assetsPercent" value="35" />
       <label>Reserves (%):</label>
       <input type="number" id="reservesPercent" value="25" />
-      <button onclick="calculateLoanDistribution()">Distribute Loan</button>
+      <button id="calculateLoanDistributionBtn">Distribute Loan</button>
       <div class="result" id="loanDistributionResult"></div>
     </div>
 
@@ -52,7 +52,7 @@
       <input type="number" id="founderEquity" value="60" />
       <label>Investor Equity (%):</label>
       <input type="number" id="investorEquity" value="40" />
-      <button onclick="calculateEquityBreakdown()">Calculate Equity</button>
+      <button id="calculateEquityBreakdownBtn">Calculate Equity</button>
       <div class="result" id="equityBreakdownResult"></div>
     </div>
 
@@ -65,66 +65,19 @@
       <input type="number" id="useMarketing" value="15000" />
       <label>Use of Proceeds - Infrastructure ($):</label>
       <input type="number" id="useInfra" value="20000" />
-      <button onclick="calculateUseSource()">Summarize Proceeds</button>
+      <button id="calculateUseSourceBtn">Summarize Proceeds</button>
       <div class="result" id="useSourceResult"></div>
     </div>
 
     <!-- Financial Summary -->
     <div class="section summary">
       <h3>Financial Summary</h3>
-      <button onclick="renderSummary()">Refresh Summary</button>
+      <button id="refreshSummaryBtn">Refresh Summary</button>
       <div id="financialSummary"></div>
     </div>
   </div>
-<script>
-  <!-- Extended Script -->
-  console.log("✅ Business Debt to Equity HTML initialized");
 
-  // Dynamic JS loader
-  function loadScript(path, callback) {
-    const script = document.createElement("script");
-    script.src = path;
-    script.type = "text/javascript";
-    script.onload = () => {
-      console.log(`✅ Loaded script: ${path}`);
-      if (typeof callback === "function") callback();
-    };
-    script.onerror = () => console.error(`❌ Failed to load script: ${path}`);
-    document.body.appendChild(script);
-  }
-
-  // Attach event listeners after DOM is ready
-  document.addEventListener("DOMContentLoaded", () => {
-    const companySelect = document.getElementById("companySelect");
-    const timeRangeSelect = document.getElementById("timeRangeSelect");
-
-    if (companySelect) {
-      companySelect.addEventListener("change", () => {
-        if (typeof updateIncomeExpenseDashboard === "function") {
-          updateIncomeExpenseDashboard();
-        }
-      });
-    }
-
-    if (timeRangeSelect) {
-      timeRangeSelect.addEventListener("change", () => {
-        if (typeof updateIncomeExpenseDashboard === "function") {
-          updateIncomeExpenseDashboard();
-        }
-      });
-    }
-
-    // Dynamically load external JS file for business income & expense logic
-    loadScript(
-      "https://landershardin-create.github.io/HTML-Business-and-Personal-Finance/js/business-debt-to-equity.js",
-      () => {
-        // Initialize dashboard after script loads
-        if (typeof updateIncomeExpenseDashboard === "function") {
-          updateIncomeExpenseDashboard();
-        }
-      }
-    );
-  });
-</script>
+  <!-- Modular JS Loader -->
+  <script type="module" src="js/dashboard.js"></script>
 </body>
 </html>
