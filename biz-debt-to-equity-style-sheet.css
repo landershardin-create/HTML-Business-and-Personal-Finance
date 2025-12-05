@@ -2,20 +2,23 @@
 
 /* Dashboard container */
 .dashboard {
-  max-width: 960px;
+  max-width: 1200px;
   margin: auto;
   padding: 20px;
   background-color: #fdfdfd;
   border: 2px solid #ccc;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+
+  display: grid;
+  grid-template-columns: 1fr;        /* default: single column */
+  gap: 20px;                         /* spacing between sections */
 }
 
-/* Section styling with clear borders */
+/* Section styling */
 .section {
-  margin-top: 20px;
   padding: 20px;
-  border: 2px solid #0078d4;   /* distinct border color */
+  border: 2px solid #0078d4;
   border-radius: 8px;
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
@@ -70,6 +73,19 @@ button:hover {
 
 /* Summary section */
 .summary {
-  border: 2px solid #444;   /* stronger border for emphasis */
+  border: 2px solid #444;
   background-color: #f4f4f4;
-}}}
+}
+
+/* Responsive grid: 2 columns on medium screens, 3 on large */
+@media (min-width: 768px) {
+  .dashboard {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .dashboard {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}}}}
