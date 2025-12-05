@@ -76,7 +76,55 @@
       <div id="financialSummary"></div>
     </div>
   </div>
+<script>
+  <!-- Extended Script -->
+  console.log("✅ Business Debt to Equity HTML initialized");
 
-<script src="https://landershardin-create.github.io/HTML-Business-and-Personal-Finance/js/business-debt-to-equity.js"></script>
+  // Dynamic JS loader
+  function loadScript(path, callback) {
+    const script = document.createElement("script");
+    script.src = path;
+    script.type = "text/javascript";
+    script.onload = () => {
+      console.log(`✅ Loaded script: ${path}`);
+      if (typeof callback === "function") callback();
+    };
+    script.onerror = () => console.error(`❌ Failed to load script: ${path}`);
+    document.body.appendChild(script);
+  }
+
+  // Attach event listeners after DOM is ready
+  document.addEventListener("DOMContentLoaded", () => {
+    const companySelect = document.getElementById("companySelect");
+    const timeRangeSelect = document.getElementById("timeRangeSelect");
+
+    if (companySelect) {
+      companySelect.addEventListener("change", () => {
+        if (typeof updateIncomeExpenseDashboard === "function") {
+          updateIncomeExpenseDashboard();
+        }
+      });
+    }
+
+    if (timeRangeSelect) {
+      timeRangeSelect.addEventListener("change", () => {
+        if (typeof updateIncomeExpenseDashboard === "function") {
+          updateIncomeExpenseDashboard();
+        }
+      });
+    }
+
+    // Dynamically load external JS file for business income & expense logic
+    loadScript(
+      "https://landershardin-create.github.io/HTML-Business-and-Personal-Finance/js/business-debt-to-equity.js",
+      () => {
+        // Initialize dashboard after script loads
+        if (typeof updateIncomeExpenseDashboard === "function") {
+          updateIncomeExpenseDashboard();
+        }
+      }
+    );
+  });
+</script>
 </body>
 </html>
