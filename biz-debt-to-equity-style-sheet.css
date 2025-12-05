@@ -1,93 +1,75 @@
 /*-----biz-debt-to-equity-style-sheet.css-----*/
 
-body {
-  font-family: "Segoe UI", Arial, sans-serif;
-  margin: 20px;
-  background-color: #fafafa;
-  color: #333;
-  line-height: 1.6;
-}
-
-/* Layout container */
-.container {
+/* Dashboard container */
+.dashboard {
   max-width: 960px;
   margin: auto;
-  padding: 0 15px;
+  padding: 20px;
+  background-color: #fdfdfd;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
 }
 
-/* Section styling with distinct borders */
+/* Section styling with clear borders */
 .section {
   margin-top: 20px;
   padding: 20px;
-  border: 2px solid #ccc;          /* stronger border */
-  border-radius: 8px;              /* rounded corners */
+  border: 2px solid #0078d4;   /* distinct border color */
+  border-radius: 8px;
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-/* Optional: add a subtle header-like border accent */
-.section::before {
-  content: "";
+/* Section headers */
+.section h3 {
+  margin-top: 0;
+  color: #0078d4;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 8px;
+}
+
+/* Inputs and labels */
+label {
   display: block;
-  height: 4px;
-  background: #0078d4;             /* accent color */
-  margin-bottom: 12px;
-  border-radius: 4px 4px 0 0;
-}
-
-/* Table styling */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 15px;
-  font-size: 0.95em;
-}
-
-th, td {
-  border: 1px solid #e0e0e0;
-  padding: 10px 12px;
-  text-align: left;
-}
-
-th {
-  background: #f9f9f9;
-  font-weight: 600;
-  color: #444;
-}
-
-tr:nth-child(even) {
-  background-color: #fdfdfd;
-}
-
-tr:hover {
-  background-color: #f1f7ff;
-}
-
-/* Totals and summary */
-.totals {
-  margin-top: 15px;
-  font-weight: bold;
-  white-space: pre-line;
-  color: #222;
-}
-
-.summary {
-  margin-top: 1.2em;
-  font-size: 1.1em;
+  margin-top: 10px;
   font-weight: 500;
-  color: #555;
 }
 
-/* Income/Expense indicators */
-.income {
-  color: #2e7d32;
+input[type="number"] {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
-.expense {
-  color: #c62828;
+/* Buttons */
+button {
+  margin-top: 15px;
+  padding: 10px 15px;
+  background-color: #0078d4;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
-/* Utility classes */
-.right-align {
-  text-align: right;
-}}
+button:hover {
+  background-color: #005a9e;
+}
+
+/* Results */
+.result {
+  margin-top: 12px;
+  padding: 10px;
+  border: 1px dashed #ccc;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+}
+
+/* Summary section */
+.summary {
+  border: 2px solid #444;   /* stronger border for emphasis */
+  background-color: #f4f4f4;
+}}}
