@@ -6,14 +6,12 @@
   <title>Welcome to Your Dashboard</title>
   <style>
     body {
-      margin: 2em;
+      margin: 0; /* reset margin so footer aligns properly */
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f0f2f5;
       color: #333;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
       min-height: 100vh;
     }
 
@@ -23,15 +21,16 @@
       width: 100%;
       padding: 20px 0;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      text-align: center;
     }
 
     h1 {
       margin: 0;
       font-size: 2rem;
-      text-align: center;
     }
 
     main {
+      flex: 1; /* pushes footer down */
       padding: 40px 20px;
       text-align: center;
     }
@@ -51,10 +50,12 @@
     }
 
     footer {
-      margin-top: 40px;
-      font-size: 0.9rem;
+      font-size: 0.75rem; /* smaller text */
       color: #555;
       text-align: center;
+      border-top: 1px solid #ccc; /* separator line */
+      padding: 10px 0; /* spacing above/below text */
+      background-color: #f9f9f9; /* subtle background */
     }
   </style>
 </head>
