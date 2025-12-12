@@ -2,7 +2,6 @@
 <script>
   console.log("✅ Business Journal & Account Manager HTML loaded");
 
-  // --- Dynamic JS loader ---
   function loadScript(path, callback) {
     const script = document.createElement("script");
     script.src = path;
@@ -15,32 +14,49 @@
     document.body.appendChild(script);
   }
 
-  // --- DOM Ready ---
-  document.addEventListener("DOMContentLoaded", () => {
-    // Load persistence first
-    loadScript("https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/js/business local persistence storage.js", () => {
-      
-      // Then load business logic
-      loadScript("https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/js/business-accounting-journal.js", () => {
-        
-        // Populate dropdowns
-        if (typeof populateCompanyDropdowns === "function") {
-          populateCompanyDropdowns();
-        }
+  function syncCompanyDropdowns(dropdownIds, activeCompany) {
+    dropdownIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = activeCompany;
+    });
+  }
 
-        // Restore active company using persistence API
+  async function populateDropdowns(dropdownIds) {
+    try {
+      const companies = (typeof StorageAPI !== "undefined" && StorageAPI.listCompanies)
+        ? await StorageAPI.listCompanies()
+        : [];
+      dropdownIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.innerHTML = '<option value="">-- Select Company --</option>';
+        companies.forEach(c => {
+          const opt = document.createElement("option");
+          opt.value = c.id;
+          opt.textContent = c.name;
+          el.appendChild(opt);
+        });
+      });
+    } catch (err) {
+      console.error("❌ Failed to populate companies:", err);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    loadScript("https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/main/js/business-local-persistence-storage.js?raw=true", () => {
+      loadScript("https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/main/js/business-accounting-journal.js?raw=true", async () => {
+        
+        const dropdownIds = ["companyHeaderSelect","journalCompany","entryCompany","accountCompany"];
+        await populateDropdowns(dropdownIds);
+
         const activeCompany = (typeof StorageAPI !== "undefined" && StorageAPI.getActiveCompany)
           ? StorageAPI.getActiveCompany()
           : localStorage.getItem("activeCompany");
 
         if (activeCompany) {
-          ["companyHeaderSelect","journalCompany","entryCompany","accountCompany"].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.value = activeCompany;
-          });
+          syncCompanyDropdowns(dropdownIds, activeCompany);
         }
 
-        // Sync active company selection
         const headerSelect = document.getElementById("companyHeaderSelect");
         if (headerSelect) {
           headerSelect.addEventListener("change", e => {
@@ -57,9 +73,10 @@
             if (typeof renderEntries === "function") {
               renderEntries(savedEntries);
             }
+
+            syncCompanyDropdowns(dropdownIds, e.target.value);
           });
         }
       });
     });
   });
-</script>
