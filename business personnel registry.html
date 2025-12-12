@@ -27,40 +27,151 @@
   <div class="container" role="main">
     <h2>Personnel Manager</h2>
 
-    <!-- Existing form fields -->
+    <div class="form-group flex-row" aria-hidden="false">
+      <div>
+        <label for="companySelect">Select Company:</label>
+        <select id="companySelect" class="small" aria-label="Select company"></select>
+      </div>
+
+      <div>
+        <label for="role">Select Role:</label>
+        <select id="role" class="small" aria-label="Select role">
+          <option value="Admin">Admin</option>
+          <option value="Viewer">Viewer</option>
+        </select>
+      </div>
+
+      <div style="margin-left:auto;">
+        <div class="company-header" role="region" aria-labelledby="headerCompanyName" aria-label="Company Summary">
+          <h3 id="headerCompanyName"></h3>
+          <p id="headerLocation" style="margin:0;"></p>
+          <p id="headerType" style="margin:0;"></p>
+          <p id="headerRole" style="margin:0;"></p>
+        </div>
+      </div>
+    </div>
+
     <div id="adminPanel" aria-live="polite">
       <form id="personnelForm" novalidate>
         <fieldset>
           <legend>Add / Edit Personnel Record</legend>
 
           <!-- Existing employee info fields -->
+          <div class="flex-row">
+            <div class="form-group">
+              <label for="idnumber">Employee ID number:</label>
+              <input type="number" id="idnumber" />
+            </div>
+
+            <div class="form-group">
+              <label for="ftitle">Title:</label>
+              <input type="text" id="ftitle" />
+            </div>
+
+            <div class="form-group">
+              <label for="dtitle">Degree title:</label>
+              <input type="text" id="dtitle" />
+            </div>
+          </div>
 
           <div class="flex-row">
+            <div class="form-group">
+              <label for="fname">First Name:</label>
+              <input type="text" id="fname" />
+            </div>
+
+            <div class="form-group">
+              <label for="mname">Middle Name / Initial:</label>
+              <input type="text" id="mname" />
+            </div>
+
+            <div class="form-group">
+              <label for="lname">Last Name:</label>
+              <input type="text" id="lname" />
+            </div>
+          </div>
+
+          <div class="flex-row">
+            <div class="form-group">
+              <label for="ssn">Social Security Number:</label>
+              <input type="text" id="ssn" inputmode="numeric" pattern="^\d{3}-\d{2}-\d{4}$" placeholder="123-45-6789" />
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email:</label>
+              <input type="email" id="email" />
+            </div>
+
             <div class="form-group">
               <label for="position">Position:</label>
               <input type="text" id="position" />
             </div>
+          </div>
 
+          <div class="flex-row">
             <div class="form-group">
               <label for="department">Department:</label>
               <input type="text" id="department" />
             </div>
 
-            <!-- ✅ New Pay Rate field -->
+            <div class="form-group">
+              <label for="address">Street address:</label>
+              <input type="text" id="address" />
+            </div>
+
+            <div class="form-group">
+              <label for="city">City:</label>
+              <input type="text" id="city" />
+            </div>
+          </div>
+
+          <div class="flex-row">
+            <div class="form-group">
+              <label for="state">State:</label>
+              <input type="text" id="state" />
+            </div>
+
+            <div class="form-group">
+              <label for="zip">Zip code:</label>
+              <input type="text" id="zip" />
+            </div>
+
+            <div class="form-group">
+              <label for="doe">Date of employment:</label>
+              <input type="date" id="doe" />
+            </div>
+
+            <div class="form-group">
+              <label for="doet">Date of employment termination:</label>
+              <input type="date" id="doet" />
+            </div>
+          </div>
+
+          <!-- ✅ New Pay Rate field -->
+          <div class="flex-row">
             <div class="form-group">
               <label for="payrate">Pay Rate (per hour):</label>
               <input type="number" id="payrate" step="0.01" placeholder="e.g. 25.50" />
             </div>
           </div>
 
-          <!-- Rest of your form continues... -->
+          <div class="form-group">
+            <label for="businessNames">Business Name(s):</label>
+            <div id="businessDropdownContainer"></div>
+          </div>
 
           <div style="margin-top:0.5em;">
             <button type="submit" id="submitBtn" class="btn">Add Record</button>
             <button type="button" id="cancelEditBtn" class="btn hidden">Cancel Edit</button>
           </div>
+
         </fieldset>
       </form>
+    </div>
+
+    <div class="search-box" style="margin-top:1em;">
+      <label for="searchInput">Search:</label>
+      <input type="text" id="searchInput" placeholder="Search by any field..." style="width:100%;" />
     </div>
 
     <!-- ✅ Updated table with Pay Rate column -->
@@ -72,7 +183,7 @@
           <th>Department</th>
           <th>Email</th>
           <th>Business(es)</th>
-          <th>Pay Rate</th> <!-- New column -->
+          <th>Pay Rate</th>
           <th>Actions</th>
         </tr>
       </thead>
