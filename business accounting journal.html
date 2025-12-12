@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <title>Business Journal & Account Manager</title>
-  <link rel="stylesheet" href="https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/css/biz-accounting-journal-style-sheet.css" />
+
+  <!-- CSS URL -->
+  <link rel="stylesheet" 
+    href="https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/css/biz-accounting-journal-style-sheet.css?raw=true" />
 </head>
 <body>
 
@@ -115,52 +118,81 @@
   <canvas id="monthlyTotalsChart" width="400" height="400"></canvas>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <script>
     console.log("✅ Business Journal & Account Manager HTML loaded");
 
-    // --- Dynamic JS loader ---
+    // ---- DYNAMIC JS LOADER ----
     function loadScript(path, callback) {
       const script = document.createElement("script");
       script.src = path;
-      script.type = "text/javascript";
       script.onload = () => {
-        console.log(`✅ Loaded script: ${path}`);
-        if (typeof callback === "function") callback();
+        console.log("✅ Loaded script:", path);
+        if (callback) callback();
       };
-      script.onerror = () => console.error(`❌ Failed to load script: ${path}`);
+      script.onerror = () => console.error("❌ Failed:", path);
       document.body.appendChild(script);
     }
 
-    // --- DOM Ready ---
+    // ---- UNIFIED DROPDOWN MANAGER ----
+    function syncCompanyDropdowns(dropdownIds, storageKey = "activeCompany") {
+      const savedCompany = localStorage.getItem(storageKey);
+
+      // Initialize all dropdowns with saved value
+      dropdownIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && savedCompany) {
+          el.value = savedCompany;
+        }
+
+        // Attach change listener once
+        if (el) {
+          el.addEventListener("change", e => {
+            localStorage.setItem(storageKey, e.target.value);
+
+            // Update all dropdowns to match
+            dropdownIds.forEach(otherId => {
+              const otherEl = document.getElementById(otherId);
+              if (otherEl && otherEl !== el) {
+                otherEl.value = e.target.value;
+              }
+            });
+
+            // Optional: re-render entries for selected company
+            const savedEntries = JSON.parse(localStorage.getItem("entries")) || [];
+            if (typeof renderEntries === "function") {
+              renderEntries(savedEntries);
+            }
+          });
+        }
+      });
+    }
+
+    // ---- MAIN INITIALIZER ----
     document.addEventListener("DOMContentLoaded", () => {
-      // Populate dropdowns
-      if (typeof populateCompanyDropdowns === "function") {
-        populateCompanyDropdowns();
-      }
+      console.log("⏳ DOM ready, waiting for business JS...");
 
-      // Restore active company
-      const activeCompany = localStorage.getItem("activeCompany");
-      if (activeCompany) {
-        ["companyHeaderSelect","journalCompany","entryCompany","accountCompany"].forEach(id => {
-          const el = document.getElementById(id);
-          if (el) el.value = activeCompany;
-        });
-      }
+      // Load main business logic
+      loadScript(
+        "https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/main/js/business-accounting-journal.js?raw=true",
+        () => {
+          console.log("🚀 Business logic available — initializing...");
 
-      // Sync active company selection
-      const headerSelect = document.getElementById("companyHeaderSelect");
-      if (headerSelect) {
-        headerSelect.addEventListener("change", e => {
-          localStorage.setItem("activeCompany", e.target.value);
-          const savedEntries = JSON.parse(localStorage.getItem("entries")) || [];
-          if (typeof renderEntries === "function") {
-            renderEntries(savedEntries);
+          if (typeof populateCompanyDropdowns === "function") {
+            populateCompanyDropdowns();
+          } else {
+            console.warn("⚠ populateCompanyDropdowns() not found");
           }
-        });
-      }
 
-      // Dynamically load external JS logic
-      loadScript("https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/js/business-accounting-journal.js");
+          // ✅ Sync all dropdowns with unified manager
+          syncCompanyDropdowns([
+            "companyHeaderSelect",
+            "journalCompany",
+            "entryCompany",
+            "accountCompany"
+          ]);
+        }
+      );
     });
   </script>
 </body>
