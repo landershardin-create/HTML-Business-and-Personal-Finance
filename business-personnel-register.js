@@ -57,6 +57,7 @@ function renderTable() {
         <td>${rec.department}</td>
         <td>${rec.email}</td>
         <td>${rec.businessNames.join(', ')}</td>
+        <td>${rec.payrate ? `$${parseFloat(rec.payrate).toFixed(2)}/hr` : ''}</td>
         <td>
           <button onclick="editRecord(${idx})">Edit</button>
           <button onclick="deleteRecord(${idx})">Delete</button>
@@ -81,6 +82,7 @@ form.addEventListener('submit', e => {
     email: document.getElementById('email').value,
     position: document.getElementById('position').value,
     department: document.getElementById('department').value,
+    payrate: document.getElementById('payrate').value, // ✅ new field
     address: document.getElementById('address').value,
     city: document.getElementById('city').value,
     state: document.getElementById('state').value,
@@ -116,6 +118,7 @@ window.editRecord = function(idx) {
   document.getElementById('email').value = rec.email;
   document.getElementById('position').value = rec.position;
   document.getElementById('department').value = rec.department;
+  document.getElementById('payrate').value = rec.payrate; // ✅ populate payrate
   document.getElementById('address').value = rec.address;
   document.getElementById('city').value = rec.city;
   document.getElementById('state').value = rec.state;
