@@ -1,3 +1,5 @@
+// --- businesd journal & account manager.js---
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   console.log("✅ Business Journal & Account Manager HTML loaded");
