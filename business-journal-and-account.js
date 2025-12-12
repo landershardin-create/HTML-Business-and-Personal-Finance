@@ -1,4 +1,4 @@
-// --- businesd journal & account manager.js---
+// --- businesd journal & account.js---
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
