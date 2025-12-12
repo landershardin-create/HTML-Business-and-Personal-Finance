@@ -1,4 +1,4 @@
-// --- business-debt-payroll.js---
+// --- business-payroll-register js---
    
          function showCompany() {
       const selected = document.getElementById("companySelect").value;
