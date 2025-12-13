@@ -1,5 +1,3 @@
-// company-dashboard.js
-
 const companyForm = document.getElementById('companyForm');
 const companyList = document.getElementById('companyList');
 const carouselDisplay = document.getElementById('carouselDisplay');
@@ -22,6 +20,7 @@ companyForm.addEventListener('submit', function (e) {
       name: document.getElementById('companyName').value,
       ein: document.getElementById('companyEIN').value,
       sein: document.getElementById('companySEIN').value,
+      salesTax: document.getElementById('companySalesTax').value, // ✅ NEW FIELD
       street: document.getElementById('streetAddress').value,
       city: document.getElementById('city').value,
       state: document.getElementById('state').value,
@@ -55,6 +54,7 @@ function renderCompanyList() {
       <strong>${company.name}</strong><br/>
       EIN: ${company.ein}<br/>
       SEIN: ${company.sein}<br/>
+      Sales Tax #: ${company.salesTax}<br/> <!-- ✅ NEW FIELD -->
       ${company.logo ? `<img src="${company.logo}" class="company-logo"/>` : ''}
     `;
     companyList.appendChild(div);
@@ -72,6 +72,7 @@ function displayCompany(index) {
     <h4>${company.name}</h4>
     <p>EIN: ${company.ein}</p>
     <p>SEIN: ${company.sein}</p>
+    <p>Sales Tax #: ${company.salesTax}</p> <!-- ✅ NEW FIELD -->
     <p>${company.city}, ${company.state}</p>
     ${company.logo ? `<img src="${company.logo}" class="company-logo"/>` : ''}
   `;
