@@ -38,7 +38,12 @@
         <input type="text" id="companyName" placeholder="Company name" required />
         <input type="text" id="companyEIN" placeholder="SSN# or EIN#" />
         <input type="text" id="companySEIN" placeholder="State EIN #" />
-        <input type="text" id="companySalesTax" placeholder="Local Sales Tax #" />
+
+        <!-- New State Sales Tax field -->
+        <input type="text" id="companyStateSalesTax" placeholder="State Sales Tax ID" />
+
+        <!-- Existing Local Sales Tax field -->
+        <input type="text" id="companySalesTax" placeholder="Local Sales Tax ID" />
 
         <!-- Logo Upload -->
         <label for="companyLogo">Upload Company Logo:</label>
@@ -109,6 +114,7 @@
           name: document.getElementById('companyName').value,
           ein: document.getElementById('companyEIN').value,
           sein: document.getElementById('companySEIN').value,
+          stateSalesTax: document.getElementById('companyStateSalesTax').value, // NEW FIELD
           salesTax: document.getElementById('companySalesTax').value,
           logo: event.target.result // base64 image
         };
@@ -118,7 +124,8 @@
         div.innerHTML = `<strong>${company.name}</strong><br/>
                          EIN: ${company.ein}<br/>
                          SEIN: ${company.sein}<br/>
-                         Sales Tax #: ${company.salesTax}<br/>
+                         State Sales Tax ID: ${company.stateSalesTax}<br/>
+                         Local Sales Tax ID: ${company.salesTax}<br/>
                          ${company.logo ? `<img src="${company.logo}" class="company-logo"/>` : ''}`;
         companyList.appendChild(div);
 
@@ -141,7 +148,8 @@
       carouselDisplay.innerHTML = `<h4>${company.name}</h4>
                                    <p>EIN: ${company.ein}</p>
                                    <p>SEIN: ${company.sein}</p>
-                                   <p>Sales Tax #: ${company.salesTax}</p>
+                                   <p>State Sales Tax ID: ${company.stateSalesTax}</p>
+                                   <p>Local Sales Tax ID: ${company.salesTax}</p>
                                    ${company.logo ? `<img src="${company.logo}" class="company-logo"/>` : ''}`;
     }
 
