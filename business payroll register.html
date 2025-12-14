@@ -18,6 +18,7 @@
   .type-custom { width: 110px; display: none; }
   .deduction-total { font-weight: bold; color: #125; }
   tbody tr:nth-child(even) { background: #f4f4f4; }
+  .audit-log { background: #f0f0f0; padding: 10px; border-radius: 6px; margin-top: 20px; }
 </style>
 </head>
 <body>
@@ -42,6 +43,12 @@
 
   <!-- Dynamic Business Section -->
   <div id="businessSection"></div>
+
+  <!-- Audit Log -->
+  <div class="audit-log">
+    <h3>Audit Log</h3>
+    <ul id="auditList"></ul>
+  </div>
 
 </div>
 
@@ -96,12 +103,12 @@ function renderCompany(companyKey) {
       <tbody>`;
 
   let totalNet = 0;
-  company.employees.forEach(emp => {
+  company.employees.forEach((emp, idx) => {
     const deduction = emp.ss + emp.medicare + emp.federal + emp.retirement + emp.state;
     const net = emp.gross - deduction;
     totalNet += net;
 
-    html += `<tr>
+    html += `<tr data-index="${idx}">
       <td>
         <select class="type-dropdown">
           <option ${emp.type==="Employee"?"selected":""}>Employee</option>
@@ -111,31 +118,23 @@ function renderCompany(companyKey) {
         <input class="type-custom" type="text" placeholder="Enter type">
       </td>
       <td>${emp.name}</td><td>${emp.position}</td><td>${emp.period}</td>
-      <td>
-
-{emp.gross}</td><td>
-
-{emp.ss}</td><td>
-
-{emp.medicare}</td>
-      <td>
-
-{emp.federal}</td><td>
-
-{emp.retirement}</td><td>
-
-{emp.state}</td>
-      <td class="deduction-total">
-
-{deduction}</td><td>
-
-{net}</td>
-      <td>${emp.hours}</td><td>${emp.ot}</td><td>${emp.notes}</td>
+      <td><input type="number" value="${emp.gross}" class="edit-field" data-field="gross"></td>
+      <td><input type="number" value="${emp.ss}" class="edit-field" data-field="ss"></td>
+      <td><input type="number" value="${emp.medicare}" class="edit-field" data-field="medicare"></td>
+      <td><input type="number" value="${emp.federal}" class="edit-field" data-field="federal"></td>
+      <td><input type="number" value="${emp.retirement}" class="edit-field" data-field="retirement"></td>
+      <td><input type="number" value="${emp.state}" class="edit-field" data-field="state"></td>
+      <td class="deduction-total">${deduction}</td>
+      <td class="net-pay">${net}</td>
+      <td><input type="number" value="${emp.hours}" class="edit-field" data-field="hours"></td>
+      <td><input type="number" value="${emp.ot}" class="edit-field" data-field="ot"></td>
+      <td><input type="text" value="${emp.notes}" class="edit-field" data-field="notes"></td>
     </tr>`;
   });
 
   html += `</tbody></table>
-    <div class="summary">Total Net Pay: $${totalNet}</div>`;
+    <div class="summary">Total Net Pay: $${totalNet}</div>
+    <button id="processPayroll">Process Payroll</button>`;
 
   document.getElementById("businessSection").innerHTML = html;
 
@@ -151,13 +150,18 @@ function renderCompany(companyKey) {
       }
     });
   });
-}
 
-// Initial load
-document.getElementById("companySelect").addEventListener("change", function () {
-  renderCompany(this.value);
-});
-renderCompany("acme");
-</script>
-</body>
-</html>
+  // Bind edit fields for audit logging
+  document.querySelectorAll(".edit-field").forEach(field => {
+    field.addEventListener("change", function () {
+      const row = this.closest("tr");
+      const idx = row.dataset.index;
+      const fieldName = this.dataset.field;
+      const oldValue = company.employees[idx][fieldName];
+      const newValue = this.value;
+      company.employees[idx][fieldName] = isNaN(newValue) ? newValue : Number(newValue);
+
+      document.getElementById("auditList").innerHTML += 
+        `<li>${company.employees[idx].name} - ${fieldName} changed from ${oldValue} to ${newValue}</li>`;
+    });
+  });
