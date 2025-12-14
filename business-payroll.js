@@ -24,6 +24,16 @@ function hideCustomType(inputEl) {
   }
 }
 
+// Lookup rate from personnel registry
+function getRateFromRegistry(companyId, name) {
+  const rows = document.querySelectorAll(`#${companyId}-personnel tbody tr`);
+  for (const row of rows) {
+    const [empName, rate] = Array.from(row.children).map(td => td.textContent);
+    if (empName === name) return parseFloat(rate);
+  }
+  return 0;
+}
+
 // Calculate deductions + net pay for a row
 function calculateRow(row) {
   const gross = parseFloat(row.querySelector(".gross").value) || 0;
@@ -62,14 +72,21 @@ function logAudit(message) {
   list.appendChild(item);
 }
 
-// Populate payroll from personnel registry
-function populateFromPersonnel(companyId) {
-  const personnelRows = document.querySelectorAll(`#${companyId}-personnel tbody tr`);
+// Populate payroll from time keeping + personnel registry
+function populateFromTimeKeeping(companyId) {
+  const timeRows = document.querySelectorAll(`#${companyId}-timekeeping tbody tr`);
   const payrollBody = document.querySelector(`#${companyId} tbody`);
   payrollBody.innerHTML = "";
 
-  personnelRows.forEach(row => {
-    const [name, position, period, hours, ot] = Array.from(row.children).map(td => td.textContent);
+  timeRows.forEach(row => {
+    const [name, position, period, hours, ot, rateCell] = Array.from(row.children).map(td => td.textContent);
+
+    let rate = parseFloat(rateCell);
+    if (isNaN(rate) || rate === 0) {
+      rate = getRateFromRegistry(companyId, name);
+    }
+
+    const gross = (parseFloat(hours) * rate) + (parseFloat(ot) * rate * 1.5);
 
     const tr = document.createElement("tr");
     tr.dataset.employee = name;
@@ -85,16 +102,17 @@ function populateFromPersonnel(companyId) {
       <td>${name}</td>
       <td>${position}</td>
       <td>${period}</td>
-      <td><input type="number" class="edit-field gross" data-field="gross" value="0"></td>
+      <td><input type="number" class="edit-field gross" data-field="gross" value="${gross.toFixed(2)}" readonly></td>
       <td><input type="number" class="edit-field ss" data-field="ss" value="0"></td>
       <td><input type="number" class="edit-field medicare" data-field="medicare" value="0"></td>
       <td><input type="number" class="edit-field federal" data-field="federal" value="0"></td>
       <td><input type="number" class="edit-field retirement" data-field="retirement" value="0"></td>
       <td><input type="number" class="edit-field state" data-field="state" value="0"></td>
       <td class="deduction-total">$0.00</td>
-      <td class="net">$0.00</td>
+      <td class="net">$${gross.toFixed(2)}</td>
       <td>${hours}</td>
       <td>${ot}</td>
+      <td><input type="number" class="edit-field rate" data-field="rate" value="${rate}"></td>
       <td><input type="text" class="edit-field notes" data-field="notes" value=""></td>
     `;
     payrollBody.appendChild(tr);
@@ -106,9 +124,9 @@ function initPayrollRegister() {
   // Bind company selector
   document.getElementById("companySelect").addEventListener("change", showCompany);
 
-  // Populate payroll sections from personnel registry
+  // Populate payroll sections from time keeping
   document.querySelectorAll(".business-section").forEach(section => {
-    populateFromPersonnel(section.id);
+    populateFromTimeKeeping(section.id);
     calculateCompanyTotals(section);
   });
 
