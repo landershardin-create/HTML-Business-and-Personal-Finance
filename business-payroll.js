@@ -62,35 +62,84 @@ function logAudit(message) {
   list.appendChild(item);
 }
 
+// Populate payroll from personnel registry
+function populateFromPersonnel(companyId) {
+  const personnelRows = document.querySelectorAll(`#${companyId}-personnel tbody tr`);
+  const payrollBody = document.querySelector(`#${companyId} tbody`);
+  payrollBody.innerHTML = "";
+
+  personnelRows.forEach(row => {
+    const [name, position, period, hours, ot] = Array.from(row.children).map(td => td.textContent);
+
+    const tr = document.createElement("tr");
+    tr.dataset.employee = name;
+    tr.innerHTML = `
+      <td>
+        <select class="type-dropdown">
+          <option selected>Employee</option>
+          <option>Contractor</option>
+          <option value="Custom">Custom...</option>
+        </select>
+        <input class="type-custom" type="text" placeholder="Enter type">
+      </td>
+      <td>${name}</td>
+      <td>${position}</td>
+      <td>${period}</td>
+      <td><input type="number" class="edit-field gross" data-field="gross" value="0"></td>
+      <td><input type="number" class="edit-field ss" data-field="ss" value="0"></td>
+      <td><input type="number" class="edit-field medicare" data-field="medicare" value="0"></td>
+      <td><input type="number" class="edit-field federal" data-field="federal" value="0"></td>
+      <td><input type="number" class="edit-field retirement" data-field="retirement" value="0"></td>
+      <td><input type="number" class="edit-field state" data-field="state" value="0"></td>
+      <td class="deduction-total">$0.00</td>
+      <td class="net">$0.00</td>
+      <td>${hours}</td>
+      <td>${ot}</td>
+      <td><input type="text" class="edit-field notes" data-field="notes" value=""></td>
+    `;
+    payrollBody.appendChild(tr);
+  });
+}
+
 // Initialization
 function initPayrollRegister() {
   // Bind company selector
   document.getElementById("companySelect").addEventListener("change", showCompany);
 
+  // Populate payroll sections from personnel registry
+  document.querySelectorAll(".business-section").forEach(section => {
+    populateFromPersonnel(section.id);
+    calculateCompanyTotals(section);
+  });
+
   // Bind type dropdowns
-  document.querySelectorAll(".type-dropdown").forEach(selectEl => {
-    selectEl.addEventListener("change", () => showCustomType(selectEl));
+  document.addEventListener("change", e => {
+    if (e.target.classList.contains("type-dropdown")) {
+      showCustomType(e.target);
+    }
   });
 
   // Bind custom type inputs
-  document.querySelectorAll(".type-custom").forEach(inputEl => {
-    inputEl.addEventListener("blur", () => hideCustomType(inputEl));
-  });
+  document.addEventListener("blur", e => {
+    if (e.target.classList.contains("type-custom")) {
+      hideCustomType(e.target);
+    }
+  }, true);
 
   // Bind editable fields for audit + recalculation
-  document.querySelectorAll(".edit-field").forEach(field => {
-    field.addEventListener("change", function () {
-      const row = this.closest("tr");
-      const fieldName = this.dataset.field;
-      const oldValue = this.defaultValue;
-      const newValue = this.value;
-      this.defaultValue = newValue; // update baseline
+  document.addEventListener("change", e => {
+    if (e.target.classList.contains("edit-field")) {
+      const row = e.target.closest("tr");
+      const fieldName = e.target.dataset.field;
+      const oldValue = e.target.defaultValue;
+      const newValue = e.target.value;
+      e.target.defaultValue = newValue;
       logAudit(`${row.dataset.employee} - ${fieldName} changed from ${oldValue} to ${newValue}`);
       calculateCompanyTotals(row.closest(".business-section"));
-    });
+    }
   });
 
-  // Bind process button
+  // Bind process buttons
   document.querySelectorAll(".process-payroll").forEach(btn => {
     btn.addEventListener("click", function () {
       const section = this.closest(".business-section");
@@ -101,11 +150,6 @@ function initPayrollRegister() {
 
   // Initial company display
   showCompany();
-
-  // Initial calculations
-  document.querySelectorAll(".business-section").forEach(section => {
-    calculateCompanyTotals(section);
-  });
 }
 
 // Run on DOM ready
