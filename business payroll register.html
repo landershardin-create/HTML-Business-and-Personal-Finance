@@ -10,15 +10,9 @@
   table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
   th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
   th { background-color: #eee; }
-  .business-header { margin-top: 40px; font-size: 1.2em; color: #333; }
   .summary { font-weight: bold; margin-top: 10px; }
-  .company-header { text-align: center; margin-bottom: 20px; }
-  #companySelect { margin: 10px auto 30px; display: block; padding: 8px; font-size: 1em; }
-  .type-dropdown { width: 130px; }
-  .type-custom { width: 110px; display: none; }
   .deduction-total { font-weight: bold; color: #125; }
   tbody tr:nth-child(even) { background: #f4f4f4; }
-  .audit-log { background: #f0f0f0; padding: 10px; border-radius: 6px; margin-top: 20px; }
 </style>
 </head>
 <body>
@@ -26,142 +20,101 @@
 
   <h1>Payroll Register</h1>
 
-  <!-- Company Header Summary -->
-  <div class="company-header" role="region" aria-label="Company Summary">
-    <h2 id="headerCompanyName">Company Name</h2>
-    <p id="headerLocation">City, State</p>
-    <p>Type: <span id="headerType"></span></p>
-    <p>Role: <span id="headerRole"></span></p>
-  </div>
+  <table id="payrollTable">
+    <thead>
+      <tr>
+        <th>Name</th><th>Position</th><th>Period</th>
+        <th>Gross Pay</th><th>Social Security</th><th>Medicare</th>
+        <th>Federal Tax</th><th>Retirement</th><th>State Tax</th>
+        <th>Total Deduction</th><th>Net Pay</th><th>Hours</th><th>OT</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
-  <!-- Company Selector -->
-  <label for="companySelect"><strong>Select Company:</strong></label>
-  <select id="companySelect">
-    <option value="acme">Acme Corp</option>
-    <option value="zenith">Zenith LLC</option>
-  </select>
-
-  <!-- Dynamic Business Section -->
-  <div id="businessSection"></div>
-
-  <!-- Audit Log -->
-  <div class="audit-log">
-    <h3>Audit Log</h3>
-    <ul id="auditList"></ul>
-  </div>
+  <div class="summary" id="summary"></div>
 
 </div>
 
 <script>
-// Company + Employee Data
-const companyData = {
-  acme: {
-    name: "Acme Corp",
-    location: "Nashville, TN",
-    type: "Entertainment",
-    role: "Music Performance / Production",
-    employees: [
-      { type: "Employee", name: "Alice", position: "Guitarist", period: "Oct 2025",
-        gross: 5000, ss: 150, medicare: 30, federal: 180, retirement: 100, state: 100,
-        hours: 160, ot: 10, notes: "Exceeded targets" },
-      { type: "Employee", name: "Bob", position: "Floor Percussions", period: "Oct 2025",
-        gross: 4500, ss: 130, medicare: 28, federal: 170, retirement: 95, state: 100,
-        hours: 152, ot: 0, notes: "-" }
-    ]
-  },
-  zenith: {
-    name: "Zenith LLC",
-    location: "Atlanta, GA",
-    type: "IT Services",
-    role: "Analytics & Support",
-    employees: [
-      { type: "Employee", name: "Dana", position: "Analyst", period: "Oct 2025",
-        gross: 4200, ss: 120, medicare: 25, federal: 155, retirement: 80, state: 80,
-        hours: 158, ot: 3, notes: "Weekend support" }
-    ]
-  }
-};
+// Pull data from personnel registry table
+function loadPersonnelData() {
+  const personnelRows = document.querySelectorAll("#personnelRegistry tbody tr");
+  const payrollBody = document.querySelector("#payrollTable tbody");
+  payrollBody.innerHTML = "";
 
-// Render company section dynamically
-function renderCompany(companyKey) {
-  const company = companyData[companyKey];
-  document.getElementById("headerCompanyName").textContent = company.name;
-  document.getElementById("headerLocation").textContent = company.location;
-  document.getElementById("headerType").textContent = company.type;
-  document.getElementById("headerRole").textContent = company.role;
+  personnelRows.forEach(row => {
+    const [name, position, period, hours, ot] = Array.from(row.children).map(td => td.textContent);
 
-  let html = `<div class="business-header">Business: ${company.name}</div>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th><th>Employee Name</th><th>Position</th><th>Pay Period</th>
-          <th>Gross Pay</th><th>Social Security</th><th>Medicare</th>
-          <th>Federal Tax</th><th>Retirement</th><th>State Tax</th>
-          <th>Total Deduction</th><th>Net Pay</th><th>Hours</th><th>OT</th><th>Notes</th>
-        </tr>
-      </thead>
-      <tbody>`;
+    // Default payroll values
+    const gross = 0, ss = 0, medicare = 0, federal = 0, retirement = 0, state = 0;
 
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${name}</td>
+      <td>${position}</td>
+      <td>${period}</td>
+      <td><input type="number" class="gross" value="${gross}"></td>
+      <td><input type="number" class="ss" value="${ss}"></td>
+      <td><input type="number" class="medicare" value="${medicare}"></td>
+      <td><input type="number" class="federal" value="${federal}"></td>
+      <td><input type="number" class="retirement" value="${retirement}"></td>
+      <td><input type="number" class="state" value="${state}"></td>
+      <td class="deduction-total">$0.00</td>
+      <td class="net">$0.00</td>
+      <td>${hours}</td>
+      <td>${ot}</td>
+    `;
+    payrollBody.appendChild(tr);
+  });
+
+  recalcTotals();
+}
+
+// Calculate deductions + net pay
+function calculateRow(row) {
+  const gross = parseFloat(row.querySelector(".gross").value) || 0;
+  const ss = parseFloat(row.querySelector(".ss").value) || 0;
+  const medicare = parseFloat(row.querySelector(".medicare").value) || 0;
+  const federal = parseFloat(row.querySelector(".federal").value) || 0;
+  const retirement = parseFloat(row.querySelector(".retirement").value) || 0;
+  const state = parseFloat(row.querySelector(".state").value) || 0;
+
+  const deduction = ss + medicare + federal + retirement + state;
+  const net = gross - deduction;
+
+  row.querySelector(".deduction-total").textContent = `
+
+{deduction.toFixed(2)}`;
+  row.querySelector(".net").textContent = `
+
+{net.toFixed(2)}`;
+  return net;
+}
+
+// Recalculate totals
+function recalcTotals() {
   let totalNet = 0;
-  company.employees.forEach((emp, idx) => {
-    const deduction = emp.ss + emp.medicare + emp.federal + emp.retirement + emp.state;
-    const net = emp.gross - deduction;
-    totalNet += net;
-
-    html += `<tr data-index="${idx}">
-      <td>
-        <select class="type-dropdown">
-          <option ${emp.type==="Employee"?"selected":""}>Employee</option>
-          <option ${emp.type==="Contractor"?"selected":""}>Contractor</option>
-          <option value="Custom">Custom...</option>
-        </select>
-        <input class="type-custom" type="text" placeholder="Enter type">
-      </td>
-      <td>${emp.name}</td><td>${emp.position}</td><td>${emp.period}</td>
-      <td><input type="number" value="${emp.gross}" class="edit-field" data-field="gross"></td>
-      <td><input type="number" value="${emp.ss}" class="edit-field" data-field="ss"></td>
-      <td><input type="number" value="${emp.medicare}" class="edit-field" data-field="medicare"></td>
-      <td><input type="number" value="${emp.federal}" class="edit-field" data-field="federal"></td>
-      <td><input type="number" value="${emp.retirement}" class="edit-field" data-field="retirement"></td>
-      <td><input type="number" value="${emp.state}" class="edit-field" data-field="state"></td>
-      <td class="deduction-total">${deduction}</td>
-      <td class="net-pay">${net}</td>
-      <td><input type="number" value="${emp.hours}" class="edit-field" data-field="hours"></td>
-      <td><input type="number" value="${emp.ot}" class="edit-field" data-field="ot"></td>
-      <td><input type="text" value="${emp.notes}" class="edit-field" data-field="notes"></td>
-    </tr>`;
+  document.querySelectorAll("#payrollTable tbody tr").forEach(row => {
+    totalNet += calculateRow(row);
   });
+  document.getElementById("summary").textContent = `Total Net Pay: $${totalNet.toFixed(2)}`;
+}
 
-  html += `</tbody></table>
-    <div class="summary">Total Net Pay: $${totalNet}</div>
-    <button id="processPayroll">Process Payroll</button>`;
+// Bind events
+document.addEventListener("input", e => {
+  if (e.target.classList.contains("gross") ||
+      e.target.classList.contains("ss") ||
+      e.target.classList.contains("medicare") ||
+      e.target.classList.contains("federal") ||
+      e.target.classList.contains("retirement") ||
+      e.target.classList.contains("state")) {
+    recalcTotals();
+  }
+});
 
-  document.getElementById("businessSection").innerHTML = html;
-
-  // Rebind custom-type toggle
-  document.querySelectorAll(".type-dropdown").forEach(select => {
-    select.addEventListener("change", function () {
-      const customInput = this.parentElement.querySelector(".type-custom");
-      if (this.value === "Custom") {
-        customInput.style.display = "inline-block";
-        customInput.focus();
-      } else {
-        customInput.style.display = "none";
-      }
-    });
-  });
-
-  // Bind edit fields for audit logging
-  document.querySelectorAll(".edit-field").forEach(field => {
-    field.addEventListener("change", function () {
-      const row = this.closest("tr");
-      const idx = row.dataset.index;
-      const fieldName = this.dataset.field;
-      const oldValue = company.employees[idx][fieldName];
-      const newValue = this.value;
-      company.employees[idx][fieldName] = isNaN(newValue) ? newValue : Number(newValue);
-
-      document.getElementById("auditList").innerHTML += 
-        `<li>${company.employees[idx].name} - ${fieldName} changed from ${oldValue} to ${newValue}</li>`;
-    });
-  });
+// Initialize
+document.addEventListener("DOMContentLoaded", loadPersonnelData);
+</script>
+</body>
+</html>
