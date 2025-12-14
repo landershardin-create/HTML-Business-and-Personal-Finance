@@ -26,7 +26,7 @@
         <th>Name</th><th>Position</th><th>Period</th>
         <th>Gross Pay</th><th>Social Security</th><th>Medicare</th>
         <th>Federal Tax</th><th>Retirement</th><th>State Tax</th>
-        <th>Total Deduction</th><th>Net Pay</th><th>Hours</th><th>OT</th>
+        <th>Total Deduction</th><th>Net Pay</th><th>Hours</th><th>OT</th><th>Rate</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -36,34 +36,67 @@
 
 </div>
 
+<!-- Example time keeping table -->
+<table id="timeKeeping" style="display:none">
+  <tbody>
+    <tr><td>Alice</td><td>Guitarist</td><td>Oct 2025</td><td>160</td><td>10</td><td></td></tr>
+    <tr><td>Bob</td><td>Percussion</td><td>Oct 2025</td><td>152</td><td>0</td><td>28</td></tr>
+  </tbody>
+</table>
+
+<!-- Example personnel registry table -->
+<table id="personnelRegistry" style="display:none">
+  <tbody>
+    <tr><td>Alice</td><td>30</td></tr>
+    <tr><td>Bob</td><td>28</td></tr>
+  </tbody>
+</table>
+
 <script>
-// Pull data from personnel registry table
-function loadPersonnelData() {
-  const personnelRows = document.querySelectorAll("#personnelRegistry tbody tr");
+// Lookup rate from personnel registry
+function getRateFromRegistry(name) {
+  const rows = document.querySelectorAll("#personnelRegistry tbody tr");
+  for (const row of rows) {
+    const [empName, rate] = Array.from(row.children).map(td => td.textContent);
+    if (empName === name) return parseFloat(rate);
+  }
+  return 0;
+}
+
+// Pull data from time keeping table
+function loadTimeKeepingData() {
+  const timeRows = document.querySelectorAll("#timeKeeping tbody tr");
   const payrollBody = document.querySelector("#payrollTable tbody");
   payrollBody.innerHTML = "";
 
-  personnelRows.forEach(row => {
-    const [name, position, period, hours, ot] = Array.from(row.children).map(td => td.textContent);
+  timeRows.forEach(row => {
+    const [name, position, period, hours, ot, rateCell] = Array.from(row.children).map(td => td.textContent);
 
-    // Default payroll values
-    const gross = 0, ss = 0, medicare = 0, federal = 0, retirement = 0, state = 0;
+    // Use rate from time keeping if present, else lookup from personnel registry
+    let rate = parseFloat(rateCell);
+    if (isNaN(rate) || rate === 0) {
+      rate = getRateFromRegistry(name);
+    }
+
+    // Calculate gross pay (OT at 1.5×)
+    const gross = (parseFloat(hours) * rate) + (parseFloat(ot) * rate * 1.5);
 
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${name}</td>
       <td>${position}</td>
       <td>${period}</td>
-      <td><input type="number" class="gross" value="${gross}"></td>
-      <td><input type="number" class="ss" value="${ss}"></td>
-      <td><input type="number" class="medicare" value="${medicare}"></td>
-      <td><input type="number" class="federal" value="${federal}"></td>
-      <td><input type="number" class="retirement" value="${retirement}"></td>
-      <td><input type="number" class="state" value="${state}"></td>
+      <td><input type="number" class="gross" value="${gross.toFixed(2)}" readonly></td>
+      <td><input type="number" class="ss" value="0"></td>
+      <td><input type="number" class="medicare" value="0"></td>
+      <td><input type="number" class="federal" value="0"></td>
+      <td><input type="number" class="retirement" value="0"></td>
+      <td><input type="number" class="state" value="0"></td>
       <td class="deduction-total">$0.00</td>
-      <td class="net">$0.00</td>
+      <td class="net">$${gross.toFixed(2)}</td>
       <td>${hours}</td>
       <td>${ot}</td>
+      <td>${rate}</td>
     `;
     payrollBody.appendChild(tr);
   });
@@ -103,8 +136,7 @@ function recalcTotals() {
 
 // Bind events
 document.addEventListener("input", e => {
-  if (e.target.classList.contains("gross") ||
-      e.target.classList.contains("ss") ||
+  if (e.target.classList.contains("ss") ||
       e.target.classList.contains("medicare") ||
       e.target.classList.contains("federal") ||
       e.target.classList.contains("retirement") ||
@@ -114,7 +146,7 @@ document.addEventListener("input", e => {
 });
 
 // Initialize
-document.addEventListener("DOMContentLoaded", loadPersonnelData);
+document.addEventListener("DOMContentLoaded", loadTimeKeepingData);
 </script>
 </body>
 </html>
