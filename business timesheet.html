@@ -12,24 +12,21 @@
   </style>
 </head>
 <body>
-  <h2>Timesheet Tracker
-    <!-- Company Header -->
-    <div class="company-header" role="region" aria-label="Company Summary">
-        <h2 id="headerCompanyName">Company Name</h2>
-        <p id="headerLocation">City, State</p>
-        <p id="headerType">Type: <span></span></p>
-        <p id="headerRole">Role: <span></span></p>
-    </div>
-  </h2>
+  <h2>Timesheet Tracker</h2>
+  
+  <!-- Company Header -->
+  <div class="company-header" role="region" aria-label="Company Summary">
+    <h2 id="headerCompanyName">Company Name</h2>
+    <p id="headerLocation">City, State</p>
+    <p id="headerType">Type: <span></span></p>
+    <p id="headerRole">Role: <span></span></p>
+  </div>
 
   <label for="business">Business:</label>
-  <select id="business">
-    <option value="biz001">Hardin Holdings</option>
-    <option value="biz002">Orenthal Ops</option>
-  </select>
+  <select id="business"></select>
 
   <label for="contributor">Contributor:</label>
-  <input type="text" id="contributor" placeholder="Name" />
+  <select id="contributor"></select>
 
   <label for="date">Date:</label>
   <input type="date" id="date" />
@@ -58,6 +55,65 @@
     <p id="annualTotal">Annual: 0 hrs</p>
   </div>
 
-  <script src="https://landershardin-create.github.io/HTML-Business-and-Personal-Finance/js/business-timekeeping.js"></script>
+  <script>
+    // Example personnel registry data (could be loaded from personnel.html or JSON)
+    const personnelRegistry = {
+      businesses: {
+        biz001: { name: "Hardin Holdings", location: "Harvest, AL", type: "LLC" },
+        biz002: { name: "Orenthal Ops", location: "Birmingham, AL", type: "Inc." }
+      },
+      contributors: [
+        { id: "c001", name: "Alice Johnson", business: "biz001", role: "Engineer" },
+        { id: "c002", name: "Bob Smith", business: "biz002", role: "Analyst" }
+      ]
+    };
+
+    // Populate business dropdown
+    const businessSelect = document.getElementById("business");
+    Object.entries(personnelRegistry.businesses).forEach(([id, biz]) => {
+      const option = document.createElement("option");
+      option.value = id;
+      option.textContent = biz.name;
+      businessSelect.appendChild(option);
+    });
+
+    // Populate contributor dropdown
+    const contributorSelect = document.getElementById("contributor");
+    personnelRegistry.contributors.forEach(c => {
+      const option = document.createElement("option");
+      option.value = c.id;
+      option.textContent = c.name;
+      contributorSelect.appendChild(option);
+    });
+
+    // Update header when contributor changes
+    contributorSelect.addEventListener("change", () => {
+      const contributor = personnelRegistry.contributors.find(c => c.id === contributorSelect.value);
+      if (contributor) {
+        const biz = personnelRegistry.businesses[contributor.business];
+        document.getElementById("headerCompanyName").textContent = biz.name;
+        document.getElementById("headerLocation").textContent = biz.location;
+        document.querySelector("#headerType span").textContent = biz.type;
+        document.querySelector("#headerRole span").textContent = contributor.role;
+        businessSelect.value = contributor.business;
+      }
+    });
+
+    function addEntry() {
+      const contributor = personnelRegistry.contributors.find(c => c.id === contributorSelect.value);
+      const biz = personnelRegistry.businesses[businessSelect.value];
+      const date = document.getElementById("date").value;
+      const hours = document.getElementById("hours").value;
+
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${biz.name}</td>
+        <td>${contributor.name}</td>
+        <td>${date}</td>
+        <td>${hours}</td>
+      `;
+      document.querySelector("#timesheet tbody").appendChild(row);
+    }
+  </script>
 </body>
 </html>
