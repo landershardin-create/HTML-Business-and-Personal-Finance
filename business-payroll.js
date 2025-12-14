@@ -26,22 +26,22 @@ function hideCustomType(inputEl) {
 
 // Calculate deductions + net pay for a row
 function calculateRow(row) {
-  const gross = parseFloat(row.querySelector(".gross").textContent.replace("$","")) || 0;
-  const ss = parseFloat(row.querySelector(".ss").textContent.replace("$","")) || 0;
-  const medicare = parseFloat(row.querySelector(".medicare").textContent.replace("$","")) || 0;
-  const federal = parseFloat(row.querySelector(".federal").textContent.replace("$","")) || 0;
-  const retirement = parseFloat(row.querySelector(".retirement").textContent.replace("$","")) || 0;
-  const state = parseFloat(row.querySelector(".state").textContent.replace("$","")) || 0;
+  const gross = parseFloat(row.querySelector(".gross").value) || 0;
+  const ss = parseFloat(row.querySelector(".ss").value) || 0;
+  const medicare = parseFloat(row.querySelector(".medicare").value) || 0;
+  const federal = parseFloat(row.querySelector(".federal").value) || 0;
+  const retirement = parseFloat(row.querySelector(".retirement").value) || 0;
+  const state = parseFloat(row.querySelector(".state").value) || 0;
 
   const deduction = ss + medicare + federal + retirement + state;
   const net = gross - deduction;
 
   row.querySelector(".deduction-total").textContent = `
 
-{deduction}`;
+{deduction.toFixed(2)}`;
   row.querySelector(".net").textContent = `
 
-{net}`;
+{net.toFixed(2)}`;
   return net;
 }
 
@@ -51,7 +51,15 @@ function calculateCompanyTotals(section) {
   section.querySelectorAll("tbody tr").forEach(row => {
     totalNet += calculateRow(row);
   });
-  section.querySelector(".summary").textContent = `Total Net Pay: $${totalNet}`;
+  section.querySelector(".summary").textContent = `Total Net Pay: $${totalNet.toFixed(2)}`;
+}
+
+// Append audit log entry
+function logAudit(message) {
+  const list = document.getElementById("auditList");
+  const item = document.createElement("li");
+  item.textContent = message;
+  list.appendChild(item);
 }
 
 // Initialization
@@ -67,6 +75,28 @@ function initPayrollRegister() {
   // Bind custom type inputs
   document.querySelectorAll(".type-custom").forEach(inputEl => {
     inputEl.addEventListener("blur", () => hideCustomType(inputEl));
+  });
+
+  // Bind editable fields for audit + recalculation
+  document.querySelectorAll(".edit-field").forEach(field => {
+    field.addEventListener("change", function () {
+      const row = this.closest("tr");
+      const fieldName = this.dataset.field;
+      const oldValue = this.defaultValue;
+      const newValue = this.value;
+      this.defaultValue = newValue; // update baseline
+      logAudit(`${row.dataset.employee} - ${fieldName} changed from ${oldValue} to ${newValue}`);
+      calculateCompanyTotals(row.closest(".business-section"));
+    });
+  });
+
+  // Bind process button
+  document.querySelectorAll(".process-payroll").forEach(btn => {
+    btn.addEventListener("click", function () {
+      const section = this.closest(".business-section");
+      calculateCompanyTotals(section);
+      logAudit(`Payroll processed for ${section.id}`);
+    });
   });
 
   // Initial company display
