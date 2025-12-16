@@ -15,7 +15,6 @@ function showCustomType(selectEl) {
   inputEl.style.display = isCustom ? "inline-block" : "none";
   if (isCustom) inputEl.focus();
 
-  // Sync type into row dataset
   const row = selectEl.closest("tr");
   row.dataset.type = isCustom ? inputEl.value : selectEl.value;
 }
@@ -53,21 +52,20 @@ function calculateRow(row) {
   const deduction = ss + medicare + federal + retirement + state;
   const net = gross - deduction;
 
-  // ✅ Fixed template literals
   row.querySelector(".deduction-total").textContent = `
 
 {deduction.toFixed(2)}`;
   row.querySelector(".net").textContent = `
 
 {net.toFixed(2)}`;
-  return net;
+  return { gross, deduction, net, ss, medicare, federal, retirement, state };
 }
 
 // Recalculate totals for a company section
 function calculateCompanyTotals(section) {
   let totalNet = 0;
   section.querySelectorAll("tbody tr").forEach(row => {
-    totalNet += calculateRow(row);
+    totalNet += calculateRow(row).net;
   });
   section.querySelector(".summary").textContent = `Total Net Pay: $${totalNet.toFixed(2)}`;
 }
@@ -78,6 +76,36 @@ function logAudit(message) {
   const item = document.createElement("li");
   item.textContent = message;
   list.appendChild(item);
+}
+
+// Create journal entry for an individual row
+function createJournalEntry(companyId, row) {
+  const employee = row.dataset.employee;
+  const type = row.dataset.type || "Employee";
+  const { gross, deduction, net, ss, medicare, federal, retirement, state } = calculateRow(row);
+
+  // Basic journal entry structure
+  const entry = {
+    company: companyId,
+    employee,
+    type,
+    lines: [
+      { account: "Wages Expense", debit: gross, credit: 0 },
+      { account: "Social Security Payable", debit: 0, credit: ss },
+      { account: "Medicare Payable", debit: 0, credit: medicare },
+      { account: "Federal Tax Payable", debit: 0, credit: federal },
+      { account: "Retirement Payable", debit: 0, credit: retirement },
+      { account: "State Tax Payable", debit: 0, credit: state },
+      { account: "Cash", debit: 0, credit: net }
+    ]
+  };
+
+  logAudit(`[${companyId}] Journal entry created for ${employee} (${type}) - Gross:
+
+{gross.toFixed(2)}, Net: 
+
+{net.toFixed(2)}`);
+  return entry;
 }
 
 // Populate payroll from time keeping + personnel registry
@@ -98,7 +126,7 @@ function populateFromTimeKeeping(companyId) {
 
     const tr = document.createElement("tr");
     tr.dataset.employee = name;
-    tr.dataset.type = "Employee"; // default type
+    tr.dataset.type = "Employee";
     tr.innerHTML = `
       <td>
         <select class="type-dropdown">
@@ -130,30 +158,25 @@ function populateFromTimeKeeping(companyId) {
 
 // Initialization
 function initPayrollRegister() {
-  // Bind company selector
   document.getElementById("companySelect").addEventListener("change", showCompany);
 
-  // Populate payroll sections from time keeping
   document.querySelectorAll(".business-section").forEach(section => {
     populateFromTimeKeeping(section.id);
     calculateCompanyTotals(section);
   });
 
-  // Bind type dropdowns
   document.addEventListener("change", e => {
     if (e.target.classList.contains("type-dropdown")) {
       showCustomType(e.target);
     }
   });
 
-  // Bind custom type inputs
   document.addEventListener("blur", e => {
     if (e.target.classList.contains("type-custom")) {
       hideCustomType(e.target);
     }
   }, true);
 
-  // Bind editable fields for audit + recalculation
   document.addEventListener("change", e => {
     if (e.target.classList.contains("edit-field")) {
       const row = e.target.closest("tr");
@@ -162,7 +185,6 @@ function initPayrollRegister() {
       const newValue = e.target.value;
       e.target.defaultValue = newValue;
 
-      // ✅ Audit log with company context
       const companyId = row.closest(".business-section").id;
       logAudit(`[${companyId}] ${row.dataset.employee} - ${fieldName} changed from ${oldValue} to ${newValue}`);
 
@@ -170,18 +192,22 @@ function initPayrollRegister() {
     }
   });
 
-  // Bind process buttons
+  // Process payroll: calculate totals + create journal entries
   document.querySelectorAll(".process-payroll").forEach(btn => {
     btn.addEventListener("click", function () {
       const section = this.closest(".business-section");
       calculateCompanyTotals(section);
-      logAudit(`Payroll processed for ${section.id}`);
+
+      const companyId = section.id;
+      section.querySelectorAll("tbody tr").forEach(row => {
+        createJournalEntry(companyId, row);
+      });
+
+      logAudit(`Payroll processed for ${companyId}`);
     });
   });
 
-  // Initial company display
   showCompany();
 }
 
-// Run on DOM ready
 document.addEventListener("DOMContentLoaded", initPayrollRegister);
