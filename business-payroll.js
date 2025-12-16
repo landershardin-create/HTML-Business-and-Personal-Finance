@@ -1,16 +1,10 @@
 // --- business-payroll-register.js ---
 
-// Toggle visibility of business sections and populate selected company
+// Toggle visibility of business sections
 function showCompany() {
   const selected = document.getElementById("companySelect").value;
   document.querySelectorAll(".business-section").forEach(section => {
-    if (section.id === selected) {
-      section.style.display = "block";
-      populateFromTimeKeeping(section.id);
-      calculateCompanyTotals(section);
-    } else {
-      section.style.display = "none";
-    }
+    section.style.display = section.id === selected ? "block" : "none";
   });
 }
 
@@ -20,6 +14,10 @@ function showCustomType(selectEl) {
   const isCustom = selectEl.value === "Custom";
   inputEl.style.display = isCustom ? "inline-block" : "none";
   if (isCustom) inputEl.focus();
+
+  // Sync type into row dataset
+  const row = selectEl.closest("tr");
+  row.dataset.type = isCustom ? inputEl.value : selectEl.value;
 }
 
 // Hide custom type input if empty
@@ -27,6 +25,9 @@ function hideCustomType(inputEl) {
   if (!inputEl.value.trim()) {
     inputEl.style.display = "none";
     inputEl.previousElementSibling.value = "Employee";
+    inputEl.closest("tr").dataset.type = "Employee";
+  } else {
+    inputEl.closest("tr").dataset.type = inputEl.value;
   }
 }
 
@@ -52,6 +53,7 @@ function calculateRow(row) {
   const deduction = ss + medicare + federal + retirement + state;
   const net = gross - deduction;
 
+  // ✅ Fixed template literals
   row.querySelector(".deduction-total").textContent = `
 
 {deduction.toFixed(2)}`;
@@ -70,12 +72,11 @@ function calculateCompanyTotals(section) {
   section.querySelector(".summary").textContent = `Total Net Pay: $${totalNet.toFixed(2)}`;
 }
 
-// Append audit log entry with timestamp
+// Append audit log entry
 function logAudit(message) {
   const list = document.getElementById("auditList");
   const item = document.createElement("li");
-  const timestamp = new Date().toLocaleString();
-  item.textContent = `[${timestamp}] ${message}`;
+  item.textContent = message;
   list.appendChild(item);
 }
 
@@ -97,6 +98,7 @@ function populateFromTimeKeeping(companyId) {
 
     const tr = document.createElement("tr");
     tr.dataset.employee = name;
+    tr.dataset.type = "Employee"; // default type
     tr.innerHTML = `
       <td>
         <select class="type-dropdown">
@@ -131,6 +133,12 @@ function initPayrollRegister() {
   // Bind company selector
   document.getElementById("companySelect").addEventListener("change", showCompany);
 
+  // Populate payroll sections from time keeping
+  document.querySelectorAll(".business-section").forEach(section => {
+    populateFromTimeKeeping(section.id);
+    calculateCompanyTotals(section);
+  });
+
   // Bind type dropdowns
   document.addEventListener("change", e => {
     if (e.target.classList.contains("type-dropdown")) {
@@ -153,7 +161,11 @@ function initPayrollRegister() {
       const oldValue = e.target.defaultValue;
       const newValue = e.target.value;
       e.target.defaultValue = newValue;
-      logAudit(`${row.dataset.employee} - ${fieldName} changed from ${oldValue} to ${newValue}`);
+
+      // ✅ Audit log with company context
+      const companyId = row.closest(".business-section").id;
+      logAudit(`[${companyId}] ${row.dataset.employee} - ${fieldName} changed from ${oldValue} to ${newValue}`);
+
       calculateCompanyTotals(row.closest(".business-section"));
     }
   });
