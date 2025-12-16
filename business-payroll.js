@@ -1,10 +1,16 @@
 // --- business-payroll-register.js ---
 
-// Toggle visibility of business sections
+// Toggle visibility of business sections and populate selected company
 function showCompany() {
   const selected = document.getElementById("companySelect").value;
   document.querySelectorAll(".business-section").forEach(section => {
-    section.style.display = section.id === selected ? "block" : "none";
+    if (section.id === selected) {
+      section.style.display = "block";
+      populateFromTimeKeeping(section.id);
+      calculateCompanyTotals(section);
+    } else {
+      section.style.display = "none";
+    }
   });
 }
 
@@ -64,11 +70,12 @@ function calculateCompanyTotals(section) {
   section.querySelector(".summary").textContent = `Total Net Pay: $${totalNet.toFixed(2)}`;
 }
 
-// Append audit log entry
+// Append audit log entry with timestamp
 function logAudit(message) {
   const list = document.getElementById("auditList");
   const item = document.createElement("li");
-  item.textContent = message;
+  const timestamp = new Date().toLocaleString();
+  item.textContent = `[${timestamp}] ${message}`;
   list.appendChild(item);
 }
 
@@ -123,12 +130,6 @@ function populateFromTimeKeeping(companyId) {
 function initPayrollRegister() {
   // Bind company selector
   document.getElementById("companySelect").addEventListener("change", showCompany);
-
-  // Populate payroll sections from time keeping
-  document.querySelectorAll(".business-section").forEach(section => {
-    populateFromTimeKeeping(section.id);
-    calculateCompanyTotals(section);
-  });
 
   // Bind type dropdowns
   document.addEventListener("change", e => {
