@@ -13,12 +13,23 @@
   .summary { font-weight: bold; margin-top: 10px; }
   .deduction-total { font-weight: bold; color: #125; }
   tbody tr:nth-child(even) { background: #f4f4f4; }
+  .selector { text-align: center; margin-bottom: 20px; }
 </style>
 </head>
 <body>
 <div class="register">
 
   <h1>Payroll Register</h1>
+
+  <!-- Dropdown selector -->
+  <div class="selector">
+    <label for="registerSelect">Select Register: </label>
+    <select id="registerSelect">
+      <option value="timeKeeping">Employee Register</option>
+      <option value="contractorRegister">Contractor Register</option>
+      <option value="customEarnings">Custom Earnings</option>
+    </select>
+  </div>
 
   <table id="payrollTable">
     <thead>
@@ -36,11 +47,26 @@
 
 </div>
 
-<!-- Example time keeping table -->
+<!-- Example employee time keeping table -->
 <table id="timeKeeping" style="display:none">
   <tbody>
     <tr><td>Alice</td><td>Guitarist</td><td>Oct 2025</td><td>160</td><td>10</td><td></td></tr>
     <tr><td>Bob</td><td>Percussion</td><td>Oct 2025</td><td>152</td><td>0</td><td>28</td></tr>
+  </tbody>
+</table>
+
+<!-- Example contractor register table -->
+<table id="contractorRegister" style="display:none">
+  <tbody>
+    <tr><td>Charlie</td><td>Sound Engineer</td><td>Oct 2025</td><td>100</td><td>5</td><td>40</td></tr>
+    <tr><td>Dana</td><td>Lighting Tech</td><td>Oct 2025</td><td>120</td><td>8</td><td>35</td></tr>
+  </tbody>
+</table>
+
+<!-- Example custom earnings record table -->
+<table id="customEarnings" style="display:none">
+  <tbody>
+    <tr><td>Eve</td><td>Consultant</td><td>Oct 2025</td><td>80</td><td>0</td><td>50</td></tr>
   </tbody>
 </table>
 
@@ -49,6 +75,9 @@
   <tbody>
     <tr><td>Alice</td><td>30</td></tr>
     <tr><td>Bob</td><td>28</td></tr>
+    <tr><td>Charlie</td><td>40</td></tr>
+    <tr><td>Dana</td><td>35</td></tr>
+    <tr><td>Eve</td><td>50</td></tr>
   </tbody>
 </table>
 
@@ -63,22 +92,20 @@ function getRateFromRegistry(name) {
   return 0;
 }
 
-// Pull data from time keeping table
-function loadTimeKeepingData() {
-  const timeRows = document.querySelectorAll("#timeKeeping tbody tr");
+// Load data from selected register table
+function loadRegisterData(tableId) {
+  const sourceRows = document.querySelectorAll(`#${tableId} tbody tr`);
   const payrollBody = document.querySelector("#payrollTable tbody");
   payrollBody.innerHTML = "";
 
-  timeRows.forEach(row => {
+  sourceRows.forEach(row => {
     const [name, position, period, hours, ot, rateCell] = Array.from(row.children).map(td => td.textContent);
 
-    // Use rate from time keeping if present, else lookup from personnel registry
     let rate = parseFloat(rateCell);
     if (isNaN(rate) || rate === 0) {
       rate = getRateFromRegistry(name);
     }
 
-    // Calculate gross pay (OT at 1.5×)
     const gross = (parseFloat(hours) * rate) + (parseFloat(ot) * rate * 1.5);
 
     const tr = document.createElement("tr");
@@ -136,17 +163,17 @@ function recalcTotals() {
 
 // Bind events
 document.addEventListener("input", e => {
-  if (e.target.classList.contains("ss") ||
-      e.target.classList.contains("medicare") ||
-      e.target.classList.contains("federal") ||
-      e.target.classList.contains("retirement") ||
-      e.target.classList.contains("state")) {
+  if (["ss","medicare","federal","retirement","state"].includes(e.target.classList[0])) {
     recalcTotals();
   }
 });
 
-// Initialize
-document.addEventListener("DOMContentLoaded", loadTimeKeepingData);
+// Initialize with default selection
+document.addEventListener("DOMContentLoaded", () => {
+  const selector = document.getElementById("registerSelect");
+  loadRegisterData(selector.value);
+  selector.addEventListener("change", () => loadRegisterData(selector.value));
+});
 </script>
 </body>
 </html>
