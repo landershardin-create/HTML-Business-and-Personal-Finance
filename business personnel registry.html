@@ -155,6 +155,18 @@
             </div>
           </div>
 
+          <!-- ✅ New Personnel Type dropdown -->
+          <div class="flex-row">
+            <div class="form-group">
+              <label for="persontype">Personnel Type:</label>
+              <select id="persontype">
+                <option value="Employee">Employee</option>
+                <option value="Contractor">Contractor</option>
+                <option value="Custom">Custom</option>
+              </select>
+            </div>
+          </div>
+
           <div class="form-group">
             <label for="businessNames">Business Name(s):</label>
             <div id="businessDropdownContainer"></div>
@@ -174,7 +186,7 @@
       <input type="text" id="searchInput" placeholder="Search by any field..." style="width:100%;" />
     </div>
 
-    <!-- ✅ Updated table with Pay Rate column -->
+    <!-- ✅ Updated table with Personnel Type column -->
     <table id="recordsTable" aria-live="polite" style="margin-bottom:2em;">
       <thead>
         <tr>
@@ -184,6 +196,7 @@
           <th>Email</th>
           <th>Business(es)</th>
           <th>Pay Rate</th>
+          <th>Personnel Type</th>
           <th>Actions</th>
         </tr>
       </thead>
