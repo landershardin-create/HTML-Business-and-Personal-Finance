@@ -2,22 +2,32 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Debt-to-Equity Calculator</title>
+  <title>Multi-Personal Profile Debt-to-Equity Calculator</title>
   <!-- Link external CSS -->
   <link rel="stylesheet" href="https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/css/personal debt to equity.css">
 </head>
 <body>
-  <div class="container">
-    <h2>Debt-to-Equity Ratio Calculator</h2>
-    
-    <label for="debt">Total Debt ($):</label>
-    <input type="number" id="debt" placeholder="Enter your total debt">
+    <div class="container">
+    <h2>Personal Debt-to-Equity Calculator</h2>
 
-    <label for="equity">Total Equity ($):</label>
-    <input type="number" id="equity" placeholder="Enter your total equity">
+    <!-- Profile Selection -->
+    <label for="profileSelect">Select Profile:</label>
+    <select id="profileSelect">
+      <option value="1">Profile 1</option>
+      <option value="2">Profile 2</option>
+      <option value="3">Profile 3</option>
+    </select>
+
+    <!-- Debt & Equity Inputs -->
+    <label for="debt">Debt ($):</label>
+    <input type="number" id="debt" placeholder="Enter debt">
+
+    <label for="equity">Equity ($):</label>
+    <input type="number" id="equity" placeholder="Enter equity">
 
     <button id="calculateBtn">Calculate</button>
 
+    <!-- Result Display -->
     <div class="result" id="result"></div>
   </div>
 
