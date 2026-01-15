@@ -22,13 +22,97 @@
       padding: 8px 12px;
       cursor: pointer;
     }
+    .dropdown-container button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    /* Login modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    .modal {
+      background: #fff;
+      padding: 20px;
+      border-radius: 6px;
+      width: 320px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+    }
+    .modal h2 {
+      margin-top: 0;
+    }
+    .modal label {
+      display:block;
+      margin-top: 12px;
+      font-size: 0.9rem;
+    }
+    .modal input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 6px;
+      box-sizing: border-box;
+    }
+    .modal .actions {
+      margin-top: 14px;
+      display:flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .status-bar {
+      position: fixed;
+      top: 8px;
+      right: 12px;
+      z-index: 1000;
+      display:flex;
+      gap:8px;
+      align-items:center;
+      font-size: 0.9rem;
+    }
+    .status-bar button {
+      padding: 6px 10px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
+  <!-- Login status and logout -->
+  <div class="status-bar" id="statusBar" aria-live="polite" style="display:none">
+    <span id="statusText"></span>
+    <button id="logoutBtn" style="display:none">Logout</button>
+  </div>
+
+  <!-- Login modal (hidden when authenticated) -->
+  <div id="loginModal" class="modal-overlay" role="dialog" aria-modal="true" style="display:none">
+    <div class="modal">
+      <h2>Login Required</h2>
+      <p>Please sign in to access the dashboard links.</p>
+      <!-- Demo credentials: user / password (client-side only) -->
+      <label for="username">Username</label>
+      <input id="username" type="text" autocomplete="username" />
+      <label for="password">Password</label>
+      <input id="password" type="password" autocomplete="current-password" />
+      <div class="actions">
+        <button id="loginBtn">Login</button>
+        <button id="cancelLoginBtn">Cancel</button>
+      </div>
+      <p style="font-size:0.85rem; color:#666; margin-top:10px;">
+        Note: This is a client-side demo login. For real protection use server-side authentication.
+      </p>
+    </div>
+  </div>
+
   <div class="dropdown-container">
     <details>
       <summary>Home</summary>
-      <button onclick="loadTab('welcome')">Welcome</button>
+      <!-- Welcome is intentionally public so the page can show an intro without forcing login -->
+      <button onclick="loadTab('welcome')" data-public="true">Welcome</button>
     </details>
 
     <details>
@@ -73,8 +157,12 @@
   <div id="content">Loading...</div>
 
   <!-- Markdown renderer -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script>
+    // Simple client-side authentication demo
+    // WARNING: This is client-side only and NOT secure for production.
+    const DEMO_CREDENTIALS = { username: 'user', password: 'password' };
+
     const sources = {
       modules: 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/modules/',
       dashboard: 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/main/'
@@ -82,7 +170,7 @@
 
     const tabs = {
       // Modules
-      welcome: { file: 'welcome.html', base: 'modules' },
+      welcome: { file: 'welcome.html', base: 'modules', public: true },
       businessassets: { file: 'business assets.html', base: 'modules' },
       businessbalsheet: { file: 'business balance sheet.html', base: 'modules' },
       businesscashflow: { file: 'business cash flow.html', base: 'modules' },
@@ -106,13 +194,141 @@
       personalprofile: { file: 'personal dashboard.html', base: 'modules' },
 
       // Dashboard
-      readme: { file: 'README.md', base: 'Dashboard' }
+      readme: { file: 'README.md', base: 'dashboard' }
     };
 
+    // Authentication helpers
+    function isAuthenticated() {
+      try {
+        return localStorage.getItem('authUser') === 'true';
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function setAuthenticated(value) {
+      try {
+        if (value) localStorage.setItem('authUser', 'true');
+        else localStorage.removeItem('authUser');
+      } catch (e) {
+        // ignore localStorage failures
+      }
+      updateUIAuthState();
+    }
+
+    // UI updates based on auth
+    function updateUIAuthState() {
+      const auth = isAuthenticated();
+      const statusBar = document.getElementById('statusBar');
+      const statusText = document.getElementById('statusText');
+      const logoutBtn = document.getElementById('logoutBtn');
+      const loginModal = document.getElementById('loginModal');
+
+      // Show/hide status bar
+      if (auth) {
+        statusBar.style.display = 'flex';
+        statusText.textContent = 'Signed in';
+        logoutBtn.style.display = 'inline-block';
+        hideLoginModal();
+      } else {
+        statusBar.style.display = 'none';
+        statusText.textContent = '';
+        logoutBtn.style.display = 'none';
+        // keep modal hidden until a protected link is requested
+      }
+
+      // Enable/disable buttons (except those explicitly marked public)
+      document.querySelectorAll('.dropdown-container button').forEach(btn => {
+        const isPublic = btn.getAttribute('data-public') === 'true';
+        if (!auth && !isPublic) {
+          btn.disabled = true;
+        } else {
+          btn.disabled = false;
+        }
+      });
+    }
+
+    function showLoginModal() {
+      const modal = document.getElementById('loginModal');
+      modal.style.display = 'flex';
+      // focus username for accessibility
+      setTimeout(() => {
+        document.getElementById('username').focus();
+      }, 50);
+    }
+
+    function hideLoginModal() {
+      const modal = document.getElementById('loginModal');
+      modal.style.display = 'none';
+    }
+
+    function attemptLogin() {
+      const u = document.getElementById('username').value.trim();
+      const p = document.getElementById('password').value;
+      // Demo credential check
+      if (u === DEMO_CREDENTIALS.username && p === DEMO_CREDENTIALS.password) {
+        setAuthenticated(true);
+        document.getElementById('content').innerHTML = '<p>Login successful. You may now access protected links.</p>';
+        return true;
+      } else {
+        alert('Invalid credentials (demo). Use username: "user", password: "password".');
+        return false;
+      }
+    }
+
+    function logout() {
+      setAuthenticated(false);
+      // After logout, show welcome and restrict access again
+      loadTab('welcome');
+      // optionally open modal to re-login, but we'll leave it hidden until user requests protected content
+    }
+
+    // Attach event listeners for login controls
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('loginBtn').addEventListener('click', () => {
+        const ok = attemptLogin();
+        if (ok) hideLoginModal();
+      });
+
+      document.getElementById('cancelLoginBtn').addEventListener('click', () => {
+        hideLoginModal();
+      });
+
+      document.getElementById('logoutBtn').addEventListener('click', () => {
+        logout();
+      });
+
+      // Allow Enter key to submit login
+      ['username', 'password'].forEach(id => {
+        const el = document.getElementById(id);
+        el.addEventListener('keydown', (ev) => {
+          if (ev.key === 'Enter') {
+            ev.preventDefault();
+            attemptLogin();
+          }
+        });
+      });
+
+      // Initialize UI based on previous auth state
+      updateUIAuthState();
+
+      // Load default tab (welcome) but only welcome is public by default
+      loadTab('welcome');
+    });
+
+    // Load a tab. If the tab is protected and the user is not authenticated, show login modal instead.
     function loadTab(tabName) {
       const tab = tabs[tabName];
       if (!tab) {
         document.getElementById('content').innerHTML = `<p>Tab "${tabName}" not found.</p>`;
+        return;
+      }
+
+      const auth = isAuthenticated();
+      if (!auth && !tab.public) {
+        // Block access and prompt login
+        showLoginModal();
+        document.getElementById('content').innerHTML = `<p>Access to "${tabName}" is restricted. Please sign in.</p>`;
         return;
       }
 
@@ -124,7 +340,7 @@
           return response.text();
         })
         .then(text => {
-          if (tab.file.endsWith('.md')) {
+          if (tab.file.endsWith('.md') || tab.file.toLowerCase().endsWith('.markdown')) {
             document.getElementById('content').innerHTML = marked.parse(text);
           } else {
             document.getElementById('content').innerHTML = text;
@@ -136,8 +352,11 @@
         });
     }
 
-    // Load default tab
-    window.onload = () => loadTab('welcome');
+    // Expose loadTab on window for inline onclick handlers
+    window.loadTab = loadTab;
+    window.showLoginModal = showLoginModal;
+    window.hideLoginModal = hideLoginModal;
+    window.logout = logout;
   </script>
 </body>
 </html>
