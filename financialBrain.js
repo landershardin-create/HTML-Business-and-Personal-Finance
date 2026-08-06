@@ -21,3 +21,21 @@ export function synthesizeEntity(entity) {
         timestamp: Date.now()
     };
 }
+// synthesis/financialBrain.js
+
+import { computePredictiveCashflow } from "../engines/cashflow/predictiveCashflow.js";
+
+export function synthesizeEntity(entity) {
+    const predictive = computePredictiveCashflow(entity);
+
+    return {
+        entity_id: entity.id,
+        liquidity: computeLiquidity(entity),
+        leverage: computeLeverage(entity),
+        profitability_strength: computeProfitability(entity).profitability_strength,
+        cashflow_stability: computeCashFlow(entity),
+        predictive_cashflow: predictive.predictabilityScore,
+        predictive_details: predictive,
+        timestamp: Date.now()
+    };
+}
