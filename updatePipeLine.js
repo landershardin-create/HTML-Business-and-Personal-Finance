@@ -1,26 +1,27 @@
 // automation/updatePipeline.js
 
-import { updateUnifiedFinancialTruth } from "../orchestrators/synthesisOrchestrator.js";
-import { updateCrossEntityRelations } from "../orchestrators/crossEntityOrchestrator.js";
-import { unified_state } from "../storage/unified_state.js";
+import { evaluateAlerts } from "../alerts/alertEngine.js";
+import { dispatchAlerts } from "../alerts/dispatcher.js";
+import { buildTrendProfile } from "../engines/trends/trendProfile.js";
+import { trends } from "../storage/trends.js";
 
 export function runUnifiedUpdate(reason, entity = null) {
     console.log(`Running unified update due to: ${reason}`);
 
-    // Load all entities from your persistence layer
-    const entities = window.entities || []; // replace with your actual storage
+    const entities = window.entities || [];
 
-    // Update unified financial truth
     const unified = updateUnifiedFinancialTruth(entities);
 
-    // Update cross-entity drag map
-    updateCrossEntityRelations(entities);
+    const trendProfiles = {
+        liquidity: buildTrendProfile(trends.latest("liquidity")),
+        leverage: buildTrendProfile(trends.latest("leverage")),
+        profitability: buildTrendProfile(trends.latest("profitability")),
+        cashflow: buildTrendProfile(trends.latest("cashflow"))
+    };
 
-    // Log update
-    unified_state.add({
-        ...unified,
-        update_reason: reason
-    });
+    const alerts = evaluateAlerts(unified, trendProfiles);
+
+    dispatchAlerts(alerts);
 
     return unified;
 }
