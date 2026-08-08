@@ -1,91 +1,64 @@
-# Repository diagram revision 2.0
-
-/Dashboard/
+HTML-Business-and-Personal-Finance/
 │
-├── .github/workflow/                  # CI/CD workflows
-├── .gitignore
-├── index.html                         # Main entry point
-├── indexDashboard.js                  # Dashboard logic
-├── indexOnboarding.js                 # Contributor onboarding
-├── indexRoleViews.js                  # Role-based views
-├── indexStyles.js                     # Style management
-├── indexStorage.js                    # Local storage handling
-├── indexSummaryCards.js               # Summary card components
-├── README.md
-├── SECURITY.md
-├── LICENSE
+├── index.html
+├── dashboard.html
 │
 ├── /assets/
-│   ├── /images/
-│   │   └── dashboard-preview.png
-│   ├── /fonts/
-│   └── /branding/
-│
-├── /C++/
-│   └── basic C++ login-system.cpp
-│
-├── /css/
-│   ├── business style sheet.css
-│   ├── personal style sheet.css
-│   ├── style sheet.css
-│   ├── branding.css
-│   ├── responsive.css
-│   ├── biz-accounting-journal-style-sheet.css
-│   ├── biz-balance-sheet-style-sheet.css              # NEW
-│   ├── biz-cash-flow-style-sheet.css                  # NEW
-│   ├── biz-assets-style-sheet.css                     # NEW
-│   └── contributor-manager-dashboard-style-sheet.css  # NEW
-│
-├── /js/
-│   ├── dashboard.js                      # Core dashboard logic
-│   ├── tab-loader.js                     # Handles tab switching
-│   ├── local persistent storage.js       # Local storage utilities (renamed for clarity)
-│   ├── company-dashboard.js              # Company dashboard logic
+│   ├── /css/
+│   │   ├── base.css
+│   │   ├── dashboard.css
+│   │   └── theme-dark.css
 │   │
-│   ├── business-accounting-journal.js    # Journal manager logic        # NEW
-│   ├── business-balance-sheet.js         # Balance sheet logic
-│   ├── business-cash-flow.js             # Cash flow logic              # NEW
-│   ├── business-assets.js                # Asset tracker logic          # NEW
-│   └── contributor-manager-dashboard.js  # Contributor dashboard logic  # NEW
+│   ├── /img/
+│   │   ├── icons/
+│   │   ├── panels/
+│   │   └── branding/
+│   │
+│   └── /fonts/
 │
-├── /modules/
-│   ├── business accounting journal.html
-│   ├── business balance sheet.html
-│   ├── business cash flow.html
-│   ├── business debt to equity.html
-│   ├── business income and expense.html
-│   ├── business menu.html
-│   ├── business net worth.html
-│   ├── business payroll registry.html
-│   ├── business personnel registry.html
-│   ├── business timesheet.html
-│   ├── business-account.html
-│   ├── business-journal.html
-│   ├── company dashboard.html
-│   ├── contributor dashboard.html
-│   ├── dashboard original.html
-│   ├── dashboard.html
-│   ├── welcome.html
-│   ├── index_original_1.html
-│   ├── personal accounting journal.html
-│   ├── personal balance sheet.html
-│   ├── personal cash flow.html
-│   ├── personal dashboard.html
-│   ├── personal income and expense.html
-│   ├── personal menu.html
-│   └── personal net worth.html
+├── /scripts/
+│   ├── main.js
+│   ├── router.js
+│   │
+│   ├── /auth/
+│   │   ├── github-oauth.js
+│   │   └── session.js
+│   │
+│   ├── /data/
+│   │   ├── schema.js
+│   │   ├── validate.js
+│   │   ├── normalize.js
+│   │   └── load-save.js
+│   │
+│   ├── /engines/
+│   │   ├── synthesis/
+│   │   │   ├── unified-state.js
+│   │   │   └── orchestrator.js
+│   │   │
+│   │   ├── predictive/
+│   │   ├── trends/
+│   │   ├── drag/
+│   │   ├── risk/
+│   │   ├── opportunity/
+│   │   ├── priority/
+│   │   ├── alerts/
+│   │   └── comparative/
+│   │
+│   ├── /ui/
+│   │   ├── render-dashboard.js
+│   │   ├── render-panels.js
+│   │   ├── charts.js
+│   │   └── components.js
+│   │
+│   └── /utils/
+│       ├── safe-number.js
+│       ├── http.js
+│       └── error-handler.js
 │
-├── /data/
-│   ├── financial-SQL-schemea.sql
-│   ├── financial-SQL-scaffolding.sql
-│   └── company-manager-dashboard.json
+├── /server/
+│   ├── oauth-callback.js
+│   ├── api.js
+│   └── security.js
 │
-└── /docs/
-    ├── setup.md
-    ├── README.md
-    ├── styling.md
-    ├── access-control.md
-    ├── onboarding.md
-    ├── extensibility.md
-    ├── Repository Structure diagram 1.0
-    └── testing.md   # QA and validation procedures (currently unavailable)
+├── README.md
+└── LICENSE
