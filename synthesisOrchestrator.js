@@ -1,25 +1,29 @@
 // orchestrators/synthesisOrchestrator.js
 
-import { unifiedFinancialState } from "../engines/synthesis/unifiedFinancialState.js";
-import { buildPredictiveProfile } from "../engines/predictive/predictiveEngine.js";
-import { buildDragMap } from "../engines/drag/buildDragMap.js";
-import { buildEntityTrendProfiles } from "../engines/trends/buildEntityTrendProfiles.js";
+import { buildAlerts } from "../engines/alerts/buildAlerts.js";
 
 export function updateUnifiedFinancialTruth(entities) {
-    // 1. Add predictive intelligence
     const enriched = entities.map(e => ({
         ...e,
         predictive: buildPredictiveProfile(e)
     }));
 
-    // 2. Build unified synthesis
     const unified = unifiedFinancialState(enriched);
 
-    // 3. Add drag intelligence
     unified.drag_map = buildDragMap(enriched);
-
-    // 4. Add trend intelligence
     unified.entity_trends = buildEntityTrendProfiles(enriched);
+
+    unified.alerts = {};
+
+    enriched.forEach(e => {
+        unified.alerts[e.entity_id] = buildAlerts(
+            e,
+            unified.entity_trends[e.entity_id],
+            e.predictive,
+            unified.drag_map,
+            unified.priority?.ranked?.find(p => p.entity_id === e.entity_id)?.priority || 0
+        );
+    });
 
     return unified;
 }
