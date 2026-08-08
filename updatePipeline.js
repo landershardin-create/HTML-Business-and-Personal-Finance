@@ -1,31 +1,18 @@
 // automation/updatePipeline.js
 
-import { calculateUnifiedPriority } from "../priority/calcUnifiedPriority.js";
+import { buildEntityTrendProfiles } from "../engines/trends/buildEntityTrendProfiles.js";
 
 export function runUnifiedUpdate(reason, entity = null) {
-    const entities = window.entities || [];
+    const entities = loadEntities(); // replace window.entities
 
     const unified = updateUnifiedFinancialTruth(entities);
 
     const trendProfiles = buildEntityTrendProfiles(unified.entities);
 
-    const risk = calculateUnifiedRisk(unified.entities);
-    const opportunity = calculateUnifiedOpportunity(unified.entities, trendProfiles);
-    const dragMap = buildDragMap(unified.entities); // FIX from Step 7 errors
-
-    const priority = calculateUnifiedPriority(
-        unified.entities,
-        risk,
-        opportunity,
-        trendProfiles,
-        dragMap
-    );
+    unified.entity_trends = trendProfiles;
 
     unified_state.add({
         ...unified,
-        risk,
-        opportunity,
-        priority,
         update_reason: reason
     });
 
