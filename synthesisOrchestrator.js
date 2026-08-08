@@ -1,5 +1,21 @@
 // orchestrators/synthesisOrchestrator.js
 
+import { normalizeEntityTrendProfiles } from "../engines/trends/normalizeEntityTrends.js";
+import { normalizeHistoricalTrends } from "../engines/trends/normalizeHistoricalTrends.js";
+
+const normalized_entity_trends = {};
+Object.keys(entity_trends).forEach(id => {
+    normalized_entity_trends[id] = normalizeEntityTrendProfiles(
+        enriched.find(e => e.entity_id === id),
+        entity_trends[id]
+    );
+});
+
+const normalized_historical_trends = normalizeHistoricalTrends(entityHistory.map, historical_trends);
+
+unified.entity_trends_normalized = normalized_entity_trends;
+unified.historical_trends_normalized = normalized_historical_trends;
+
 import { unifiedFinancialState } from "../engines/synthesis/unifiedFinancialState.js";
 import { buildPredictiveProfile } from "../engines/predictive/predictiveEngine.js";
 import { buildPredictiveMap } from "../engines/predictive/buildPredictiveMap.js";
