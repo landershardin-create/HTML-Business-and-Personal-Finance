@@ -20,4 +20,28 @@ export function normalizeRisk(value, type) {
         default:
             return 0;
     }
+    
+// opportunity/normalize.js
+
+export function normalizeOpportunity(value, type) {
+    switch (type) {
+        case "profitability":
+            return value > 0 ? value : 0;
+
+        case "liquidity":
+            return value > 0 ? value : 0;
+
+        case "leverage":
+            return value < 0 ? Math.abs(value) : 0;
+
+        case "cashflow":
+            return value > 0 ? value : 0;
+
+        case "volatility":
+            return value < 0 ? Math.abs(value) : 0;
+
+        default:
+            return 0;
+    }
+
 }
