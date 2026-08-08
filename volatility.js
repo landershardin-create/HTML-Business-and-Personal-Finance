@@ -9,7 +9,7 @@ export function computeVolatility(entity) {
     const avgVolatility = diffs.reduce((a, b) => a + b, 0) / diffs.length;
 
     return avgVolatility;
-}
+ }
 }
 // engines/trends/volatility.js
 
