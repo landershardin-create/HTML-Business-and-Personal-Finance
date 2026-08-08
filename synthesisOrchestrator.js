@@ -3,6 +3,19 @@
 import { entityHistory } from "../storage/entityHistory.js";
 import { buildEntitySnapshot } from "../engines/history/buildEntitySnapshot.js";
 
+import { buildPriorityMap } from "../engines/priority/buildPriorityMap.js";
+import { rankPriority } from "../engines/priority/rankPriority.js";
+
+unified.priority_map = buildPriorityMap(
+    enriched,
+    unified.risk_map,
+    unified.opportunity_map,
+    unified.drag_map,
+    unified.entity_trends,
+    unified.predictive_map
+);
+
+unified.priority = rankPriority(unified.priority_map);
 export function updateUnifiedFinancialTruth(entities) {
     const enriched = entities.map(e => ({
         ...e,
