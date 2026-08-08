@@ -1,136 +1,83 @@
 // orchestrator.js
-// Central coordinator for all analytics engines.
-// Pure orchestration: no UI, no persistence, no domain logic.
+// Full analytics pipeline orchestrator for Business + Personal Finance dashboard.
+// Runs engines in dependency order, enforces contracts, validates outputs,
+// logs telemetry, and returns unified analytics.
 
-import State from '../../system/state.js';
-import Events from '../../system/events.js';
-import Telemetry from '../../system/telemetry.js';
-
-import UnifiedState from './unified-state.js';
-
-// Engines
-import Predictive from '../predictive/index.js';
-import Trends from '../trends/index.js';
-import Risk from '../risk/index.js';
-import Opportunity from '../opportunity/index.js';
-import Priority from '../priority/index.js';
-import Alerts from '../alerts/index.js';
-import Comparative from '../comparative/index.js';
+import { EngineContracts } from '../engines/engine-contracts.js';
+import EngineScaffolding from '../engines/engine-scaffolding.js';
+import GlobalErrorBoundary from '../system/global-error-boundary.js';
+import Telemetry from '../system/telemetry.js';
 
 export const Orchestrator = {
 
     /* ---------------------------------------------------------
-     * RUN FULL PIPELINE
+     * RUN FULL ANALYTICS PIPELINE
      * --------------------------------------------------------- */
-    async runPipeline() {
+    run(unifiedState) {
         try {
-            Telemetry.log('orchestrator:start', { timestamp: Date.now() });
+            const analytics = {};
 
-            // 1. Pull unified, normalized state
-            const unified = UnifiedState.get();
+            // Resolve execution order based on dependencies
+            const order = this.resolveExecutionOrder();
 
-            // 2. Run engines in deterministic order
-            const predictive = Predictive.run(unified);
-            const trends = Trends.run(unified);
-            const risk = Risk.evaluate(unified);
-            const opportunity = Opportunity.scan(unified);
-            const priority = Priority.rank(unified);
-            const alerts = Alerts.generate(unified);
-            const comparative = Comparative.analyze(unified);
+            const engineInstances = {};
 
-            // 3. Merge engine outputs into system state
-            const analytics = {
-                predictive,
-                trends,
-                risk,
-                opportunity,
-                priority,
-                alerts,
-                comparative
-            };
+            // Execute engines in correct order
+            for (const engineName of order) {
+                const result = EngineScaffolding.run(
+                    engineName,
+                    unifiedState,
+                    engineInstances
+                );
 
-            State.update('analytics', analytics);
-
-            // 4. Emit event for UI controller
-            Events.emit('analytics:updated', analytics);
-
-            Telemetry.log('orchestrator:complete', {
-                timestamp: Date.now(),
-                engines: Object.keys(analytics)
-            });
-
-        } catch (err) {
-            Telemetry.error('orchestrator:error', err);
-            Events.emit('analytics:error', err);
-        }
-    },
-
-    /* ---------------------------------------------------------
-     * RUN SINGLE ENGINE (for targeted updates)
-     * --------------------------------------------------------- */
-    async runEngine(name) {
-        try {
-            const unified = UnifiedState.get();
-            let result = null;
-
-            switch (name) {
-                case 'predictive':
-                    result = Predictive.run(unified);
-                    break;
-                case 'trends':
-                    result = Trends.run(unified);
-                    break;
-                case 'risk':
-                    result = Risk.evaluate(unified);
-                    break;
-                case 'opportunity':
-                    result = Opportunity.scan(unified);
-                    break;
-                case 'priority':
-                    result = Priority.rank(unified);
-                    break;
-                case 'alerts':
-                    result = Alerts.generate(unified);
-                    break;
-                case 'comparative':
-                    result = Comparative.analyze(unified);
-                    break;
-                default:
-                    throw new Error(`Unknown engine: ${name}`);
+                engineInstances[engineName] = result;
+                analytics[engineName] = result;
             }
 
-            // Update only that engine’s output
-            State.update(`analytics.${name}`, result);
-
-            // Emit targeted event
-            Events.emit(`analytics:${name}:updated`, result);
-
-            Telemetry.log('orchestrator:engine', {
-                engine: name,
-                timestamp: Date.now()
+            Telemetry.log('orchestrator:run', {
+                timestamp: Date.now(),
+                engines: order
             });
+
+            return analytics;
 
         } catch (err) {
-            Telemetry.error('orchestrator:engine:error', {
-                engine: name,
-                error: err
+            GlobalErrorBoundary.capture('orchestrator', {
+                error: err.message
             });
-            Events.emit(`analytics:${name}:error`, err);
+            throw err;
         }
     },
 
     /* ---------------------------------------------------------
-     * SUBSCRIBE TO STATE CHANGES
+     * RESOLVE ENGINE EXECUTION ORDER
      * --------------------------------------------------------- */
-    initialize() {
-        // Anytime core state changes, rerun analytics
-        Events.on('state:updated', () => {
-            this.runPipeline();
-        });
+    resolveExecutionOrder() {
+        const contracts = EngineContracts;
+        const visited = new Set();
+        const order = [];
 
-        Telemetry.log('orchestrator:initialized', {
-            timestamp: Date.now()
-        });
+        const visit = name => {
+            if (visited.has(name)) return;
+
+            const contract = contracts[name];
+            if (!contract) throw new Error(`Unknown engine: ${name}`);
+
+            // Visit dependencies first
+            for (const dep of contract.dependencies) {
+                visit(dep);
+            }
+
+            visited.add(name);
+            order.push(name);
+        };
+
+        // Visit all engines
+        for (const name in contracts) {
+            visit(name);
+        }
+
+        return order;
     }
 };
 
