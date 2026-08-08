@@ -7,7 +7,7 @@ export function runUnifiedUpdate(reason, entity = null) {
 
     const unified = updateUnifiedFinancialTruth(entities);
 
-    const trendProfiles = buildEntityTrendProfiles(entities); // FIX from Step 8 errors
+    const trendProfiles = buildEntityTrendProfiles(unified.entities);
 
     const risk = calculateUnifiedRisk(unified.entities);
     const opportunity = calculateUnifiedOpportunity(unified.entities, trendProfiles);
