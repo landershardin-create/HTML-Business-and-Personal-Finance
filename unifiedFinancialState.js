@@ -1,20 +1,37 @@
-// synthesis/unifiedFinancialState.js
-
-import { synthesizeEntity } from "./financialBrain.js";
+// engines/synthesis/unifiedFinancialState.js
 
 export function unifiedFinancialState(entities) {
-    const results = entities.map(e => synthesizeEntity(e));
-
     const totals = {
-        liquidity: results.reduce((a, b) => a + b.liquidity, 0),
-        leverage: results.reduce((a, b) => a + b.leverage, 0),
-        profitability: results.reduce((a, b) => a + b.profitability_strength, 0),
-        cashflow: results.reduce((a, b) => a + b.cashflow, 0),
-        timestamp: Date.now()
+        liquidity: 0,
+        leverage: 0,
+        profitability: 0,
+        cashflow: 0,
+        predictive_cashflow: 0
     };
 
+    const entity_map = {};
+
+    entities.forEach(e => {
+        const synthesis = {
+            liquidity: e.liquidity,
+            leverage: e.leverage,
+            profitability: e.profitability_strength,
+            cashflow: e.cashflow_stability,
+            predictive_cashflow: e.predictive.predictive_cashflow
+        };
+
+        entity_map[e.entity_id] = synthesis;
+
+        totals.liquidity += synthesis.liquidity;
+        totals.leverage += synthesis.leverage;
+        totals.profitability += synthesis.profitability;
+        totals.cashflow += synthesis.cashflow;
+        totals.predictive_cashflow += synthesis.predictive_cashflow;
+    });
+
     return {
-        entities: results,
-        totals
+        totals,
+        entities,
+        entity_map
     };
 }
