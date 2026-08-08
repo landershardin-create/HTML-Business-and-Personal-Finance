@@ -32,13 +32,19 @@ export const Normalize = {
     },
 
     /* ---------------------------------------------------------
-     * CURRENCY NORMALIZATION
+     * CURRENCY NORMALIZATION ($)
      * --------------------------------------------------------- */
     currency(value) {
         const num = safeNumber(value);
+        return Math.round(num * 100) / 100; // 2 decimals
+    },
 
-        // Round to 2 decimals
-        return Math.round(num * 100) / 100;
+    /* ---------------------------------------------------------
+     * CENT NORMALIZATION (¢)
+     * --------------------------------------------------------- */
+    cent(value) {
+        // Cents should always be whole numbers
+        return Math.round(safeNumber(value));
     },
 
     /* ---------------------------------------------------------
