@@ -1,13 +1,10 @@
 HTML-Business-and-Personal-Finance/
 │
 ├── index.html
-├── dashboard.html
 │
 ├── /assets/
 │   ├── /css/
-│   │   ├── base.css
-│   │   ├── dashboard.css
-│   │   └── theme-dark.css
+│   │   └── indexStyles.css
 │   ├── /img/
 │   └── /fonts/
 │
@@ -15,15 +12,18 @@ HTML-Business-and-Personal-Finance/
 │   ├── main.js
 │   ├── router.js
 │
-│   ├── /auth/
-│   │   ├── github-oauth.js
-│   │   └── session.js
+│   ├── /ui/
+│   │   ├── dashboard.js          ← from indexDashboard.js
+│   │   ├── onboarding.js         ← from indexOnboarding.js
+│   │   ├── role-views.js         ← from indexRoleViews.js
+│   │   ├── summary-cards.js      ← from indexSummaryCards.js
+│   │   └── components.js
 │
 │   ├── /data/
+│   │   ├── storage.js            ← from indexStorage.js
 │   │   ├── schema.js
 │   │   ├── validate.js
-│   │   ├── normalize.js
-│   │   └── load-save.js
+│   │   └── normalize.js
 │
 │   ├── /engines/
 │   │   ├── predictive/
@@ -36,21 +36,15 @@ HTML-Business-and-Personal-Finance/
 │   │   ├── comparative/
 │   │   └── synthesis/
 │
-│   ├── /ui/
-│   │   ├── render-dashboard.js
-│   │   ├── render-panels.js
-│   │   ├── charts.js
-│   │   └── components.js
-│
 │   └── /utils/
 │       ├── safe-number.js
 │       ├── http.js
 │       └── error-handler.js
 │
 ├── /server/
-│   ├── oauth-callback.js
 │   ├── api.js
+│   ├── oauth-callback.js
 │   └── security.js
 │
 ├── README.md
-└── LICENSE
+└── SECURITY.md
