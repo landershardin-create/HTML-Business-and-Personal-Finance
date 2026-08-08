@@ -1,4 +1,4 @@
-// engines/cashflow/predictive_volatility.js
+// engines/cashflow/volatility.js
 
 export function computeVolatility(entity) {
     const history = entity.history.cashflow || [];
@@ -10,7 +10,7 @@ export function computeVolatility(entity) {
 
     return avgVolatility;
 }
-// engines/trends/trends_volatility.js
+// engines/trends/volatility.js
 
 export function computeTrendVolatility(history) {
     if (history.length < 2) return 0;
