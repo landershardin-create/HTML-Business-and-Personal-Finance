@@ -38,3 +38,12 @@ export function updateUnifiedFinancialTruth(entities) {
 
     return unified;
 }
+
+// orchestrators/synthesisOrchestrator.js
+
+import { trends } from "../storage/trends.js";
+
+enriched.forEach(e => {
+    const p = unified.priority_map[e.entity_id];
+    trends.add(e.entity_id, "priority", p);
+});
