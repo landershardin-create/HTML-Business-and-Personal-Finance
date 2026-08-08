@@ -10,4 +10,5 @@ export const unified_state = {
     latest() {
         return this.records.sort((a, b) => b.timestamp - a.timestamp)[0] || null;
     }
+    unified.entity_trends = trendProfiles;
 };
