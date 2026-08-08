@@ -1,8 +1,10 @@
-// main.js
+// scripts/main.js
+import { requireDashboardAuth } from "./router.js";
+import { renderDashboard } from "./ui/render-dashboard.js";
 
-import { startScheduler } from "./automation/scheduler.js";
+async function init() {
+  await requireDashboardAuth();
+  renderDashboard();
+}
 
-window.onload = () => {
-    startScheduler();
-    console.log("Financial automation system online.");
-};
+init();
