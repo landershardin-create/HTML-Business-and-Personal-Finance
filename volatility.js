@@ -10,6 +10,7 @@ export function computeVolatility(entity) {
 
     return avgVolatility;
 }
+}
 // engines/trends/volatility.js
 
 export function computeTrendVolatility(history) {
