@@ -1,26 +1,48 @@
 // server/api.js
+import express from "express";
+import cookieParser from "cookie-parser";
+import { requireAuth } from "./security.js";
 
-app.post("/api/entity/update", requireAuth, apiLimiter, async (req, res) => {
-  const entity_id = sanitizeInput(req.body.entity_id);
-  const updates = req.body.updates;
+const app = express();
+app.use(express.json());
+app.use(cookieParser());
 
-  audit("ENTITY_UPDATE_ATTEMPT", { entity_id, user: req.token.user });
-
-  if (!entity_id || typeof updates !== "object") {
-    return res.status(400).json({ error: "Invalid input" });
-  }
-
-  // Apply updates safely
-  const safeUpdates = {};
-  for (const key in updates) {
-    safeUpdates[key] = safeNumber(updates[key]);
-  }
-
-  await saveEntity(entity_id, safeUpdates);
-
-  audit("ENTITY_UPDATE_SUCCESS", { entity_id, user: req.token.user });
-
-  res.json({ success: true });
+// -----------------------------
+// AUTH
+// -----------------------------
+app.get("/api/me", requireAuth, (req, res) => {
+  res.json({ user: req.user });
 });
 
-audit("ENTITY_UPDATE", { user: req.token.user, entity_id });
+// -----------------------------
+// UNIFIED STATE
+// -----------------------------
+let unifiedState = null;
+
+app.get("/api/state", requireAuth, (req, res) => {
+  res.json(unifiedState || { version: "1.0.0", entities: [], engines: {} });
+});
+
+app.post("/api/state", requireAuth, (req, res) => {
+  unifiedState = req.body;
+  res.json({ ok: true });
+});
+
+// -----------------------------
+// ENTITIES CRUD
+// -----------------------------
+app.get("/api/entities", requireAuth, (req, res) => {
+  res.json(unifiedState?.entities || []);
+});
+
+app.post("/api/entities", requireAuth, (req, res) => {
+  unifiedState.entities.push(req.body);
+  res.json({ ok: true });
+});
+
+// -----------------------------
+// SERVER START
+// -----------------------------
+app.listen(3000, () => {
+  console.log("Backend running on http://localhost:3000");
+});
