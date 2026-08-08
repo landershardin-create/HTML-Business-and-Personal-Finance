@@ -43,5 +43,25 @@ export function normalizeOpportunity(value, type) {
         default:
             return 0;
     }
+    
+// priority/normalize.js
+
+export function normalizePriority(value, type) {
+    switch (type) {
+        case "risk":
+            return value; // risk is already normalized
+
+        case "opportunity":
+            return value; // opportunity is already normalized
+
+        case "drag":
+            return value > 0 ? value : 0;
+
+        case "trend":
+            return value < 0 ? Math.abs(value) : 0; // negative slope = danger
+
+        default:
+            return 0;
+    }
 
 }
