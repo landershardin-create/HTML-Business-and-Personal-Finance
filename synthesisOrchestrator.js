@@ -1,5 +1,28 @@
 // orchestrators/synthesisOrchestrator.js
 
+import { buildComparisonTable } from "../engines/comparative/buildComparisonTable.js";
+import { detectOutliers } from "../engines/comparative/detectOutliers.js";
+import { detectClusters } from "../engines/comparative/detectClusters.js";
+import { buildCrossEntityAlerts } from "../engines/comparative/buildCrossEntityAlerts.js";
+
+const comparison_table = buildComparisonTable(
+    unified.risk_map,
+    unified.opportunity_map,
+    unified.priority_map,
+    unified.drag_map
+);
+
+const outliers = detectOutliers(comparison_table);
+const clusters = detectClusters(comparison_table);
+const cross_entity_alerts = buildCrossEntityAlerts(outliers, clusters);
+
+unified.comparative = {
+    comparison_table,
+    outliers,
+    clusters,
+    alerts: cross_entity_alerts
+};
+
 import { normalizeEntityTrendProfiles } from "../engines/trends/normalizeEntityTrends.js";
 import { normalizeHistoricalTrends } from "../engines/trends/normalizeHistoricalTrends.js";
 
