@@ -1,30 +1,22 @@
-// storage/trends.js
+// engines/trends.js
 
-export const trends = {
-    entities: {},
+import { EngineContracts } from '../engine-contracts.js';
 
-    ensure(entity_id) {
-        if (!this.entities[entity_id]) {
-            this.entities[entity_id] = {
-                liquidity: [],
-                leverage: [],
-                profitability: [],
-                cashflow: [],
-                drag: []
-            };
-        }
-    },
+EngineContracts.trends.execute = function (state) {
+    const history = state.accounts?.history ?? [];
 
-    add(entity_id, type, value) {
-        this.ensure(entity_id);
-        this.entities[entity_id][type].push({
-            value,
-            timestamp: Date.now()
-        });
-    },
-
-    latest(entity_id, type, count = 10) {
-        this.ensure(entity_id);
-        return this.entities[entity_id][type].slice(-count);
-    }
+    return {
+        movement: computeMovement(history),
+        direction: computeDirection(history)
+    };
 };
+
+function computeMovement(history) {
+    if (history.length < 2) return 0;
+    return history[history.length - 1] - history[history.length - 2];
+}
+
+function computeDirection(history) {
+    if (history.length < 2) return 'flat';
+    return history[history.length - 1] > history[history.length - 2] ? 'up' : 'down';
+}
