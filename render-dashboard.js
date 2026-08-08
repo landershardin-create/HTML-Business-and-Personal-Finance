@@ -11,3 +11,10 @@ export function renderDashboard() {
 
   lazyLoadPanels();
 }
+
+// scripts/ui/render-panels.js
+export function lazyLoadPanels() {
+  requestIdleCallback(() => renderTrendPanel());
+  requestIdleCallback(() => renderPriorityPanel());
+  requestIdleCallback(() => renderComparativePanel());
+}
