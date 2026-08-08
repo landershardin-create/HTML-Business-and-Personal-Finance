@@ -1,10 +1,16 @@
-// scripts/main.js
+import { loadUnifiedState } from "./data/state.js";
+import { migrateSnapshot } from "./data/migrate.js";
+import { renderDashboard } from "./ui/dashboard.js";
 import { requireDashboardAuth } from "./router.js";
-import { renderDashboard } from "./ui/render-dashboard.js";
 
 async function init() {
-  await requireDashboardAuth();
-  renderDashboard();
+  const ok = await requireDashboardAuth();
+  if (!ok) return;
+
+  const snapshot = await loadUnifiedState();
+  const migrated = migrateSnapshot(snapshot);
+
+  renderDashboard(migrated);
 }
 
 init();
