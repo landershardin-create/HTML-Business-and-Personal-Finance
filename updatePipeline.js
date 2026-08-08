@@ -1,15 +1,12 @@
 // automation/updatePipeline.js
 
-import { buildEntityTrendProfiles } from "../engines/trends/buildEntityTrendProfiles.js";
+import { prepareEntities } from "../data/loadEntities.js";
 
-export function runUnifiedUpdate(reason, entity = null) {
-    const entities = loadEntities(); // replace window.entities
+export function runUnifiedUpdate(reason) {
+    const raw = loadEntitiesFromStorage();   // your persistence layer
+    const entities = prepareEntities(raw);   // schema + normalization
 
     const unified = updateUnifiedFinancialTruth(entities);
-
-    const trendProfiles = buildEntityTrendProfiles(unified.entities);
-
-    unified.entity_trends = trendProfiles;
 
     unified_state.add({
         ...unified,
