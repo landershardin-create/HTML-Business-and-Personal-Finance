@@ -1,14 +1,16 @@
-// storage/unified_state.js
+// storage/unifiedState.js
 
 export const unified_state = {
-    records: [],
+    snapshots: [],
 
-    add(state) {
-        this.records.push(state);
+    add(snapshot) {
+        this.snapshots.push({
+            ...snapshot,
+            timestamp: Date.now()
+        });
     },
 
-    latest() {
-        return this.records.sort((a, b) => b.timestamp - a.timestamp)[0] || null;
+    latest(count = 1) {
+        return this.snapshots.slice(-count);
     }
-    unified.entity_trends = trendProfiles;
 };
