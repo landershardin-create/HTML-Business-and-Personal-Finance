@@ -3,9 +3,9 @@
 import { trends } from "../storage/trends.js";
 
 export function updateUnifiedFinancialTruth(entities) {
-    const state = unifiedFinancialState(entities);
+    const unified = unifiedFinancialState(entities);
 
-    state.entities.forEach(e => {
+    unified.entities.forEach(e => {
         trends.add(e.entity_id, "liquidity", e.liquidity);
         trends.add(e.entity_id, "leverage", e.leverage);
         trends.add(e.entity_id, "profitability", e.profitability_strength);
@@ -13,6 +13,5 @@ export function updateUnifiedFinancialTruth(entities) {
         trends.add(e.entity_id, "drag", e.dragIndex || 0);
     });
 
-    unified_state.add(state);
-    return unified_state.latest();
+    return unified;
 }
