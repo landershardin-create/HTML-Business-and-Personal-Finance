@@ -23,8 +23,8 @@ export const trends = {
         });
     },
 
-    latest(entity_id, type) {
+    latest(entity_id, type, count = 10) {
         this.ensure(entity_id);
-        return this.entities[entity_id][type].slice(-10);
+        return this.entities[entity_id][type].slice(-count);
     }
 };
