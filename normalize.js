@@ -1,67 +1,124 @@
-// risk/normalize.js
+// normalize.js
+// Canonical formatting utilities for Business + Personal Finance.
+// Every value entering the system is normalized here.
 
-export function normalizeRisk(value, type) {
-    switch (type) {
-        case "liquidity":
-            return value < 0 ? Math.abs(value) : 0;
+import { safeNumber } from '../utils/safe-number.js';
 
-        case "leverage":
-            return value > 2.5 ? value - 2.5 : 0;
+export const Normalize = {
 
-        case "profitability":
-            return value < 0 ? Math.abs(value) : 0;
+    /* ---------------------------------------------------------
+     * AUTO NORMALIZATION (Fallback)
+     * --------------------------------------------------------- */
+    auto(value) {
+        if (value === null || value === undefined) return null;
 
-        case "cashflow":
-            return value < -500 ? Math.abs(value + 500) : 0;
+        switch (typeof value) {
+            case 'number':
+                return safeNumber(value);
 
-        case "volatility":
-            return value > 1000 ? value - 1000 : 0;
+            case 'string':
+                return value.trim();
 
-        default:
-            return 0;
+            case 'boolean':
+                return Boolean(value);
+
+            case 'object':
+                if (Array.isArray(value)) return [...value];
+                return { ...value };
+
+            default:
+                return value;
+        }
+    },
+
+    /* ---------------------------------------------------------
+     * CURRENCY NORMALIZATION
+     * --------------------------------------------------------- */
+    currency(value) {
+        const num = safeNumber(value);
+
+        // Round to 2 decimals
+        return Math.round(num * 100) / 100;
+    },
+
+    /* ---------------------------------------------------------
+     * PERCENT NORMALIZATION
+     * --------------------------------------------------------- */
+    percent(value) {
+        const num = safeNumber(value);
+
+        // Convert whole numbers to decimal percent
+        if (num > 1) return num / 100;
+
+        return num;
+    },
+
+    /* ---------------------------------------------------------
+     * NUMBER NORMALIZATION
+     * --------------------------------------------------------- */
+    number(value) {
+        return safeNumber(value);
+    },
+
+    /* ---------------------------------------------------------
+     * BOOLEAN NORMALIZATION
+     * --------------------------------------------------------- */
+    boolean(value) {
+        if (typeof value === 'string') {
+            const v = value.toLowerCase();
+            if (v === 'true' || v === '1' || v === 'yes') return true;
+            if (v === 'false' || v === '0' || v === 'no') return false;
+        }
+        return Boolean(value);
+    },
+
+    /* ---------------------------------------------------------
+     * ARRAY NORMALIZATION
+     * --------------------------------------------------------- */
+    array(value) {
+        if (!Array.isArray(value)) return [];
+        return [...value];
+    },
+
+    /* ---------------------------------------------------------
+     * OBJECT NORMALIZATION
+     * --------------------------------------------------------- */
+    object(value) {
+        if (typeof value !== 'object' || value === null) return {};
+        return { ...value };
+    },
+
+    /* ---------------------------------------------------------
+     * STRING NORMALIZATION
+     * --------------------------------------------------------- */
+    string(value) {
+        if (value === null || value === undefined) return '';
+        return String(value).trim();
+    },
+
+    /* ---------------------------------------------------------
+     * DATE NORMALIZATION
+     * --------------------------------------------------------- */
+    date(value) {
+        const d = new Date(value);
+        return isNaN(d.getTime()) ? null : d.toISOString();
+    },
+
+    /* ---------------------------------------------------------
+     * LIST OF NUMBERS NORMALIZATION
+     * --------------------------------------------------------- */
+    numberList(value) {
+        if (!Array.isArray(value)) return [];
+        return value.map(v => safeNumber(v));
+    },
+
+    /* ---------------------------------------------------------
+     * LIST OF OBJECTS NORMALIZATION
+     * --------------------------------------------------------- */
+    objectList(value) {
+        if (!Array.isArray(value)) return [];
+        return value.map(v => (typeof v === 'object' ? { ...v } : {}));
     }
-    
-// opportunity/normalize.js
+};
 
-export function normalizeOpportunity(value, type) {
-    switch (type) {
-        case "profitability":
-            return value > 0 ? value : 0;
-
-        case "liquidity":
-            return value > 0 ? value : 0;
-
-        case "leverage":
-            return value < 0 ? Math.abs(value) : 0;
-
-        case "cashflow":
-            return value > 0 ? value : 0;
-
-        case "volatility":
-            return value < 0 ? Math.abs(value) : 0;
-
-        default:
-            return 0;
-    }
-    
-// priority/normalize.js
-
-export function normalizePriority(value, type) {
-    switch (type) {
-        case "risk":
-            return value; // risk is already normalized
-
-        case "opportunity":
-            return value; // opportunity is already normalized
-
-        case "drag":
-            return value > 0 ? value : 0;
-
-        case "trend":
-            return value < 0 ? Math.abs(value) : 0; // negative slope = danger
-
-        default:
-            return 0;
-    }
-
-}
+export default Normalize;
