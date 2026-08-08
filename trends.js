@@ -1,20 +1,30 @@
 // storage/trends.js
 
 export const trends = {
-    liquidity: [],
-    leverage: [],
-    profitability: [],
-    cashflow: [],
-    drag: [],
+    entities: {},
 
-    add(type, value) {
-        this[type].push({
+    ensure(entity_id) {
+        if (!this.entities[entity_id]) {
+            this.entities[entity_id] = {
+                liquidity: [],
+                leverage: [],
+                profitability: [],
+                cashflow: [],
+                drag: []
+            };
+        }
+    },
+
+    add(entity_id, type, value) {
+        this.ensure(entity_id);
+        this.entities[entity_id][type].push({
             value,
             timestamp: Date.now()
         });
     },
 
-    latest(type) {
-        return this[type].slice(-10); // last 10 points
+    latest(entity_id, type) {
+        this.ensure(entity_id);
+        return this.entities[entity_id][type].slice(-10);
     }
 };
