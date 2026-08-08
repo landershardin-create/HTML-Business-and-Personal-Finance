@@ -1,5 +1,11 @@
 // orchestrators/synthesisOrchestrator.js
 
+import { buildRiskMap } from "../engines/risk/buildRiskMap.js";
+import { buildOpportunityMap } from "../engines/opportunity/buildOpportunityMap.js";
+
+unified.risk_map = buildRiskMap(enriched, unified.entity_trends, unified.predictive_map, unified.drag_map);
+unified.opportunity_map = buildOpportunityMap(enriched, unified.entity_trends, unified.predictive_map, unified.drag_map);
+
 import { buildAlerts } from "../engines/alerts/buildAlerts.js";
 
 export function updateUnifiedFinancialTruth(entities) {
