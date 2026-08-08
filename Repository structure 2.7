@@ -3,98 +3,68 @@ HTML-Business-and-Personal-Finance/
 ├── index.html
 ├── dashboard.html
 │
-├── /assets/
-│   ├── /css/
+├── assets/
+│   ├── css/
 │   │   ├── base.css
 │   │   ├── dashboard.css
-│   │   └── theme-dark.css
-│   │
-│   ├── /img/
-│   │   ├── icons/
-│   │   ├── panels/
-│   │   └── branding/
-│   │
-│   └── /fonts/
+│   │   ├── theme-dark.css
+│   │   └── variables.css
+│   ├── img/
+│   └── fonts/
 │
-├── /scripts/
+├── scripts/
 │   ├── main.js
 │   ├── router.js
-│
-│   ├── /auth/
+│   │
+│   ├── auth/
 │   │   ├── github-oauth.js
 │   │   └── session.js
-│
-│   ├── /data/
+│   │
+│   ├── data/
 │   │   ├── schema.js
 │   │   ├── validate.js
 │   │   ├── normalize.js
-│   │   └── load-save.js
-│
-│   ├── /engines/
+│   │   └── persistence.js
+│   │
+│   ├── engines/
 │   │   ├── synthesis/
 │   │   │   ├── unified-state.js
 │   │   │   └── orchestrator.js
-│   │   │
 │   │   ├── predictive/
-│   │   │   └── index.js
 │   │   ├── trends/
-│   │   │   └── index.js
-│   │   ├── drag/
-│   │   │   └── index.js
 │   │   ├── risk/
-│   │   │   └── index.js
 │   │   ├── opportunity/
-│   │   │   └── index.js
 │   │   ├── priority/
-│   │   │   └── index.js
 │   │   ├── alerts/
-│   │   │   └── index.js
 │   │   └── comparative/
 │   │       ├── detectClusters.js
 │   │       ├── detectOutliers.js
 │   │       ├── buildComparisonTable.js
 │   │       └── index.js
-│
-│   ├── /ui/
+│   │
+│   ├── ui/
+│   │   ├── controller.js
 │   │   ├── render-dashboard.js
 │   │   ├── render-panels.js
 │   │   ├── charts.js
 │   │   └── components.js
-│
-│   └── /utils/
+│   │
+│   └── utils/
 │       ├── safe-number.js
 │       ├── http.js
-│       └── error-handler.js
+│       ├── error-handler.js
+│       ├── currency.js
+│       ├── format.js
+│       └── math.js
 │
-├── /modules/
+├── modules/
 │   ├── finance/
-│   │   ├── budget.js
-│   │   ├── expenses.js
-│   │   ├── income.js
-│   │   └── net-worth.js
-│   │
 │   ├── business/
-│   │   ├── operations.js
-│   │   ├── inventory.js
-│   │   ├── accounts.js
-│   │   └── vendors.js
-│   │
 │   ├── reporting/
-│   │   ├── export-csv.js
-│   │   ├── export-pdf.js
-│   │   └── summaries.js
-│   │
 │   ├── contributors/
-│   │   ├── roles.js
-│   │   ├── permissions.js
-│   │   └── activity.js
-│   │
 │   └── system/
-│       ├── state.js
-│       ├── events.js
-│       └── telemetry.js
 │
-├── /server/
+├── server/
 │   ├── oauth-callback.js
 │   ├── api.js
 │   └── security.js
