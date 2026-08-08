@@ -1,64 +1,35 @@
-HTML-Business-and-Personal-Finance/
-│
-├── index.html
-├── dashboard.html
-│
-├── /assets/
-│   ├── /css/
-│   │   ├── base.css
-│   │   ├── dashboard.css
-│   │   └── theme-dark.css
-│   │
-│   ├── /img/
-│   │   ├── icons/
-│   │   ├── panels/
-│   │   └── branding/
-│   │
-│   └── /fonts/
-│
-├── /scripts/
-│   ├── main.js
-│   ├── router.js
-│   │
-│   ├── /auth/
-│   │   ├── github-oauth.js
-│   │   └── session.js
-│   │
-│   ├── /data/
-│   │   ├── schema.js
-│   │   ├── validate.js
-│   │   ├── normalize.js
-│   │   └── load-save.js
-│   │
-│   ├── /engines/
-│   │   ├── synthesis/
-│   │   │   ├── unified-state.js
-│   │   │   └── orchestrator.js
-│   │   │
-│   │   ├── predictive/
-│   │   ├── trends/
-│   │   ├── drag/
-│   │   ├── risk/
-│   │   ├── opportunity/
-│   │   ├── priority/
-│   │   ├── alerts/
-│   │   └── comparative/
-│   │
-│   ├── /ui/
-│   │   ├── render-dashboard.js
-│   │   ├── render-panels.js
-│   │   ├── charts.js
-│   │   └── components.js
-│   │
-│   └── /utils/
-│       ├── safe-number.js
-│       ├── http.js
-│       └── error-handler.js
-│
-├── /server/
-│   ├── oauth-callback.js
-│   ├── api.js
-│   └── security.js
-│
-├── README.md
-└── LICENSE
+/scripts/
+  main.js
+  router.js
+
+  /auth/
+    github-oauth.js
+    session.js
+
+  /data/
+    schema.js
+    validate.js
+    normalize.js
+    load-save.js
+
+  /engines/
+    predictive/
+    trends/
+    drag/
+    risk/
+    opportunity/
+    priority/
+    alerts/
+    comparative/
+    synthesis/
+
+  /ui/
+    render-dashboard.js
+    render-panels.js
+    charts.js
+    components.js
+
+  /utils/
+    safe-number.js
+    http.js
+    error-handler.js
