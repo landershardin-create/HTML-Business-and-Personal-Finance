@@ -17,3 +17,21 @@ export function verifyToken(token) {
     return null;
   }
 }
+
+// server/security.js
+
+import rateLimit from "express-rate-limit";
+
+export const apiLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 60,
+  message: "Too many requests"
+});
+
+// server/security.js
+
+export const corsOptions = {
+  origin: ["https://landers-dashboard.com"],
+  methods: ["GET", "POST"],
+  credentials: true
+};
