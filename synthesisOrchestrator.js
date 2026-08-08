@@ -1,17 +1,17 @@
 // orchestrators/synthesisOrchestrator.js
 
-import { unifiedFinancialState } from "../synthesis/unifiedFinancialState.js";
-import { unified_state } from "../storage/unified_state.js";
 import { trends } from "../storage/trends.js";
 
 export function updateUnifiedFinancialTruth(entities) {
     const state = unifiedFinancialState(entities);
 
-    // Store trends
-    trends.add("liquidity", state.totals.liquidity);
-    trends.add("leverage", state.totals.leverage);
-    trends.add("profitability", state.totals.profitability);
-    trends.add("cashflow", state.totals.cashflow);
+    state.entities.forEach(e => {
+        trends.add(e.entity_id, "liquidity", e.liquidity);
+        trends.add(e.entity_id, "leverage", e.leverage);
+        trends.add(e.entity_id, "profitability", e.profitability_strength);
+        trends.add(e.entity_id, "cashflow", e.cashflow_stability);
+        trends.add(e.entity_id, "drag", e.dragIndex || 0);
+    });
 
     unified_state.add(state);
     return unified_state.latest();
