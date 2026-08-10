@@ -20,6 +20,10 @@
 <div class="register">
 
   <h1>Payroll Register</h1>
+  <button id="exportStateRevenue" class="btn" style="margin-bottom:15px;">
+  Export Payroll for State Revenue
+</button>
+<div id="exportStatus" style="margin-bottom:20px; font-weight:bold;"></div>
 
   <table id="payrollTable">
     <thead>
@@ -194,6 +198,96 @@ document.addEventListener("click", e => {
 
 // Initialize
 document.addEventListener("DOMContentLoaded", loadTimeKeepingData);
+// ======================================================
+//  STATE REVENUE EXPORT MODULE
+//  Generates ADOR‑compatible CSV for wage reporting
+// ======================================================
+
+(function () {
+
+    // ADOR Wage Report Fields
+    const EXPORT_FIELDS = [
+        "EmployeeName",
+        "SSN",
+        "GrossWages",
+        "TaxableWages",
+        "StateWithholding",
+        "PayPeriodStart",
+        "PayPeriodEnd",
+        "PayDate"
+    ];
+
+    // Escape CSV values
+    function buildCSVRow(obj) {
+        return EXPORT_FIELDS
+            .map(f => `"${(obj[f] ?? "").toString().replace(/"/g, '""')}"`)
+            .join(",");
+    }
+
+    // Build CSV payload
+    function generateStateRevenueCSV(payrollData) {
+        const header = EXPORT_FIELDS.join(",");
+        const rows = payrollData.map(buildCSVRow);
+        return [header, ...rows].join("\n");
+    }
+
+    // Trigger file download
+    function downloadCSV(csvString, filename) {
+        const blob = new Blob([csvString], { type: "text/csv" });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        a.click();
+
+        URL.revokeObjectURL(url);
+    }
+
+    // Extract payroll rows from your existing table
+    function collectPayrollRows() {
+        const rows = document.querySelectorAll("#payrollTable tbody tr");
+        const data = [];
+
+        rows.forEach(row => {
+            const name = row.querySelector("button.selectName").dataset.name;
+            const period = row.children[2].textContent;
+
+            data.push({
+                EmployeeName: name,
+                SSN: "", // You can wire this later
+                GrossWages: row.querySelector(".gross").value,
+                TaxableWages: row.querySelector(".gross").value, // Adjust if needed
+                StateWithholding: row.querySelector(".state").value,
+                PayPeriodStart: period,
+                PayPeriodEnd: period,
+                PayDate: period
+            });
+        });
+
+        return data;
+    }
+
+    // Main export handler
+    document.getElementById("exportStateRevenue").addEventListener("click", () => {
+
+        const payrollData = collectPayrollRows();
+
+        if (!payrollData.length) {
+            document.getElementById("exportStatus").innerText =
+                "No payroll data available to export.";
+            return;
+        }
+
+        const csvPayload = generateStateRevenueCSV(payrollData);
+
+        downloadCSV(csvPayload, "ADOR_Payroll_Export.csv");
+
+        document.getElementById("exportStatus").innerText =
+            "Payroll export generated and downloaded. Ready for upload to Alabama Department of Revenue.";
+    });
+
+})();
 </script>
 </body>
 </html>
