@@ -1,0 +1,22 @@
+.income-chart {
+    width: 100%;
+    height: 300px;
+}
+
+.income-chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.income-chart-legend .legend {
+    margin-right: 12px;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+.legend.personal { color: var(--success); }
+.legend.business { color: var(--accent); }
+.legend.vending { color: var(--warning); }
+.legend.architecture { color: var(--info); }
+.legend.system { color: var(--danger); }
