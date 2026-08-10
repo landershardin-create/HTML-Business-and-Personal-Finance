@@ -1,0 +1,30 @@
+.lb-chart {
+    display: grid;
+    grid-template-columns: repeat(20, 1fr);
+    gap: 4px;
+    margin-top: 12px;
+}
+
+.lb-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 140px;
+}
+
+.lb-bar-fill {
+    width: 100%;
+    background: var(--accent);
+    border-radius: 3px;
+    transition: height 0.3s ease;
+}
+
+.lb-bar.danger .lb-bar-fill {
+    background: var(--danger);
+}
+
+.lb-bar-label {
+    font-size: 0.7rem;
+    margin-top: 4px;
+    opacity: 0.7;
+}
