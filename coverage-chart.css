@@ -1,0 +1,30 @@
+.coverage-chart-grid {
+    display: grid;
+    grid-template-columns: repeat(20, 1fr);
+    gap: 4px;
+    margin-top: 12px;
+}
+
+.coverage-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 120px;
+}
+
+.coverage-bar-fill {
+    width: 100%;
+    background: var(--accent);
+    border-radius: 3px;
+    transition: height 0.3s ease;
+}
+
+.coverage-bar.coverage .coverage-bar-fill {
+    background: var(--success);
+}
+
+.coverage-bar-label {
+    font-size: 0.7rem;
+    margin-top: 4px;
+    opacity: 0.7;
+}
