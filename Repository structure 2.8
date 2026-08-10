@@ -24,37 +24,54 @@ HTML-Business-and-Personal-Finance/
 │   │   ├── schema.js
 │   │   ├── validate.js
 │   │   ├── normalize.js
-│   │   └── persistence.js
+│   │   ├── persistence.js
+│   │   └── format.js        ← moved from utils
 │   │
 │   ├── engines/
+│   │   ├── engine-contracts.js
+│   │   ├── engine-scaffolding.js
+│   │   │
 │   │   ├── synthesis/
 │   │   │   ├── unified-state.js
 │   │   │   └── orchestrator.js
+│   │   │
 │   │   ├── predictive/
 │   │   ├── trends/
 │   │   ├── risk/
 │   │   ├── opportunity/
 │   │   ├── priority/
 │   │   ├── alerts/
-│   │   └── comparative/
-│   │       ├── detectClusters.js
-│   │       ├── detectOutliers.js
-│   │       ├── buildComparisonTable.js
-│   │       └── index.js
+│   │   ├── comparative/
+│   │   │   ├── detectClusters.js
+│   │   │   ├── detectOutliers.js
+│   │   │   ├── buildComparisonTable.js
+│   │   │   └── index.js
+│   │   │
+│   │   ├── cashFlowSynchronizer.js     ← added
+│   │   ├── stability-score.js          ← added
+│   │   └── collision-detector.js       ← added
 │   │
 │   ├── ui/
 │   │   ├── controller.js
 │   │   ├── render-dashboard.js
 │   │   ├── render-panels.js
 │   │   ├── charts.js
-│   │   └── components.js
+│   │   ├── components.js
+│   │   │
+│   │   ├── panels/
+│   │   │   ├── timeline-panel.js       ← added
+│   │   │   ├── liquidity-buffer-panel.js ← added
+│   │   │   └── ...
+│   │   │
+│   │   └── charts/
+│   │       ├── coverage-chart.js       ← added
+│   │       └── ...
 │   │
 │   └── utils/
 │       ├── safe-number.js
 │       ├── http.js
 │       ├── error-handler.js
 │       ├── currency.js
-│       ├── format.js
 │       └── math.js
 │
 ├── modules/
@@ -64,10 +81,4 @@ HTML-Business-and-Personal-Finance/
 │   ├── contributors/
 │   └── system/
 │
-├── server/
-│   ├── oauth-callback.js
-│   ├── api.js
-│   └── security.js
-│
-├── README.md
-└── LICENSE
+├── system/
