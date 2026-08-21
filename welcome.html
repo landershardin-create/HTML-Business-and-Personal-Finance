@@ -5,202 +5,44 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Welcome to Your Dashboard</title>
   <style>
-    :root {
-      --primary: #007acc;
-      --primary-dark: #005fa3;
-      --bg: #f0f2f5;
-    }
-
-    html, body {
-      height: 100%;
-    }
-
-    body {
-      margin: 0; /* reset margin so footer aligns properly */
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg);
-      color: #333;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-      position: relative;
-    }
-
-    header {
-      background-color: var(--primary);
-      color: white;
-      width: 100%;
-      padding: 20px 0;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      text-align: center;
-      position: relative;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 2rem;
-    }
-
-    /* Top-right login control (opens modal) */
-    .header-controls {
-      position: absolute;
-      top: 12px;
-      right: 16px;
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .btn {
-      padding: 6px 10px;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-      font-size: 0.95rem;
-    }
-
-    .btn-primary {
-      background: var(--primary-dark);
-      color: white;
-    }
-
-    .btn-ghost {
-      background: rgba(255,255,255,0.08);
-      color: white;
-    }
-
-    main {
-      flex: 1; /* pushes footer down */
-      padding: 40px 20px;
-      text-align: center;
-      transition: opacity 180ms ease;
-    }
-
-    img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      margin-top: 20px;
-    }
-
-    p {
-      font-size: 1.2rem;
-      max-width: 600px;
-      margin: 20px auto;
-    }
-
-    footer {
-      font-size: 0.25rem; /* smaller text */
-      color: #555;
-      text-align: center;
-      border-top: 1px solid #ccc; /* separator line */
-      padding: 10px 0; /* spacing above/below text */
-      background-color: #f9f9f9; /* subtle background */
-    }
-
-    /* Disabled-link visual and accessibility styles */
-    .disabled-link {
-      color: #999 !important;
-      pointer-events: none;
-      cursor: default;
-      text-decoration: none;
-    }
-
-    /* Full-page lock overlay / login modal */
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.55);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1200;
-    }
-
-    .modal {
-      background: #fff;
-      border-radius: 10px;
-      width: 320px;
-      padding: 20px;
-      box-shadow: 0 12px 32px rgba(0,0,0,0.35);
-      text-align: left;
-    }
-
-    .modal h2 {
-      margin: 0 0 12px 0;
-      font-size: 1.1rem;
-    }
-
-    .modal p {
-      margin: 0 0 12px 0;
-      color: #444;
-      font-size: 0.95rem;
-    }
-
-    .form-row {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-
-    .modal input[type="text"],
-    .modal input[type="password"] {
-      padding: 8px 10px;
-      font-size: 0.95rem;
-      border-radius: 6px;
-      border: 1px solid #ddd;
-    }
-
-    .modal .actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      margin-top: 4px;
-    }
-
-    .notice {
-      font-size: 0.85rem;
-      color: #666;
-    }
-
-    /* Small helper */
-    .sr-only {
-      position: absolute;
-      left: -10000px;
-      top: auto;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-    }
-
-    /* When content is hidden */
-    .hidden-until-login {
-      display: none;
-    }
+    :root { --primary: #007acc; --primary-dark: #005fa3; --bg: #f0f2f5; }
+    html, body { height: 100%; }
+    body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); color: #333; display: flex; flex-direction: column; min-height: 100vh; position: relative; }
+    header { background-color: var(--primary); color: white; width: 100%; padding: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; position: relative; }
+    h1 { margin: 0; font-size: 2rem; }
+    .header-controls { position: absolute; top: 12px; right: 16px; display: flex; gap: 8px; align-items: center; }
+    .btn { padding: 6px 10px; border-radius: 6px; border: none; cursor: pointer; font-size: 0.95rem; }
+    .btn-primary { background: var(--primary-dark); color: white; }
+    .btn-ghost { background: rgba(255,255,255,0.08); color: white; }
+    main { flex: 1; padding: 40px 20px; text-align: center; transition: opacity 180ms ease; }
+    img { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-top: 20px; }
+    p { font-size: 1.2rem; max-width: 600px; margin: 20px auto; }
+    footer { font-size: 0.25rem; color: #555; text-align: center; border-top: 1px solid #ccc; padding: 10px 0; background-color: #f9f9f9; }
+    .disabled-link { color: #999 !important; pointer-events: none; cursor: default; text-decoration: none; }
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: flex; align-items: center; justify-content: center; z-index: 1200; }
+    .modal { background: #fff; border-radius: 10px; width: 320px; padding: 20px; box-shadow: 0 12px 32px rgba(0,0,0,0.35); text-align: left; }
+    .modal h2 { margin: 0 0 12px 0; font-size: 1.1rem; }
+    .modal p { margin: 0 0 12px 0; color: #444; font-size: 0.95rem; }
+    .form-row { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+    .modal input[type="text"], .modal input[type="password"] { padding: 8px 10px; font-size: 0.95rem; border-radius: 6px; border: 1px solid #ddd; }
+    .modal .actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+    .notice { font-size: 0.85rem; color: #666; }
+    .sr-only { position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+    .hidden-until-login { display: none; }
   </style>
 </head>
 <body>
   <header>
     <h1>Business and Personal Financial Dashboard</h1>
-
     <div class="header-controls">
       <button id="open-login" class="btn btn-ghost" aria-haspopup="dialog" aria-controls="login-modal">Log in</button>
       <button id="logout-btn" class="btn btn-primary" style="display:none">Log out</button>
     </div>
   </header>
 
-  <!-- Main content initially hidden until login -->
   <main id="main-content" aria-hidden="true" class="hidden-until-login">
     <p>Track your business and personal finances with clarity, control, and confidence.</p>
-
-    <!-- Example link to demonstrate disabling behavior -->
-    <p>
-      <a data-href="https://example.com" target="_blank" rel="noopener" id="sample-link">Visit example.com</a>
-    </p>
-
-    <!-- Image uses data-src so it won't load until authentication -->
+    <p><a data-href="https://example.com" target="_blank" rel="noopener" id="sample-link">Visit example.com</a></p>
     <img data-src="https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/assets/dashboard-preview.PNG" alt="Dashboard Preview" id="dashboard-preview" />
   </main>
 
@@ -208,7 +50,6 @@
     <p>Developed by: Mr. Landers Hardin — 135 Ed Johnson road, Harvest, Alabama 35749</p>
   </footer>
 
-  <!-- Login modal / overlay -->
   <div id="login-overlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="login-title" style="display:flex;">
     <div id="login-modal" class="modal" role="document">
       <h2 id="login-title">Please sign in</h2>
@@ -223,6 +64,7 @@
           <div style="font-size:0.85rem; color:#666;">Demo: <strong>admin</strong> / <strong>password</strong></div>
           <div class="actions">
             <button type="button" id="cancel-login" class="btn">Cancel</button>
+            <button type="button" id="onboarding-btn" class="btn" data-public="true">Onboarding</button>
             <button type="submit" class="btn btn-primary">Log in</button>
           </div>
         </div>
@@ -234,19 +76,8 @@
 
   <script>
     (function () {
-      /* Client-side gated content (demo only).
-         - All anchors with data-href will be inert until login
-         - Images with data-src won't have src set until login (prevents download)
-         - fetch() and XMLHttpRequest are wrapped to block network calls until login
-         - Forms are prevented from submitting until login
-         - This is a UI-level lock for demos. For real security use server-side auth.
-      */
-
-      // Demo credentials (replace with backend integration later)
       const DEMO_USER = 'admin';
       const DEMO_PASS = 'password';
-
-      // Elements
       const overlay = document.getElementById('login-overlay');
       const loginModal = document.getElementById('login-modal');
       const loginForm = document.getElementById('login-form');
@@ -255,375 +86,74 @@
       const logoutBtn = document.getElementById('logout-btn');
       const mainContent = document.getElementById('main-content');
       const footer = document.getElementById('site-footer');
-
-      // Track auth state
+      const onboardingBtn = document.getElementById('onboarding-btn');
       let loggedIn = false;
-
-      // Save originals
       const originalFetch = window.fetch;
       const OriginalXHR = window.XMLHttpRequest;
 
-      // Utility: focus trap (simple)
       function trapFocus(modal) {
         const focusable = modal.querySelectorAll('a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])');
-        if (!focusable.length) return;
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
+        if (!focusable.length) return; const first = focusable[0]; const last = focusable[focusable.length - 1];
         modal.addEventListener('keydown', function (e) {
           if (e.key === 'Tab') {
-            if (e.shiftKey && document.activeElement === first) {
-              e.preventDefault();
-              last.focus();
-            } else if (!e.shiftKey && document.activeElement === last) {
-              e.preventDefault();
-              first.focus();
-            }
-          } else if (e.key === 'Escape') {
-            // keep gating: don't allow escape to close overlay unless cancel clicked
-            e.preventDefault();
-          }
+            if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+            else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+          } else if (e.key === 'Escape') { e.preventDefault(); }
         });
         first.focus();
       }
 
-      function openLoginModal() {
-        overlay.style.display = 'flex';
-        overlay.setAttribute('aria-hidden', 'false');
-        trapFocus(loginModal);
-      }
+      function openLoginModal() { overlay.style.display = 'flex'; overlay.setAttribute('aria-hidden', 'false'); trapFocus(loginModal); }
+      function closeLoginModal() { overlay.style.display = 'none'; overlay.setAttribute('aria-hidden', 'true'); }
 
-      function closeLoginModal() {
-        overlay.style.display = 'none';
-        overlay.setAttribute('aria-hidden', 'true');
-      }
+      function disableAnchors() { const anchors = document.querySelectorAll('a'); anchors.forEach(a => {
+        if (a.hasAttribute('data-href')) { a.classList.add('disabled-link'); a.setAttribute('aria-disabled', 'true'); a.dataset.savedTab = a.getAttribute('tabindex') || ''; a.setAttribute('tabindex', '-1'); if (a.getAttribute('href')) { a.dataset.hrefBackup = a.getAttribute('href'); a.removeAttribute('href'); } }
+        else if (a.getAttribute('href')) { a.dataset.href = a.getAttribute('href'); a.removeAttribute('href'); a.classList.add('disabled-link'); a.setAttribute('aria-disabled', 'true'); a.dataset.savedTab = a.getAttribute('tabindex') || ''; a.setAttribute('tabindex', '-1'); }
+        else { a.classList.add('disabled-link'); a.setAttribute('aria-disabled', 'true'); }
+      }); }
 
-      // Disable anchors (move href -> data-href and prevent activation)
-      function disableAnchors() {
-        const anchors = document.querySelectorAll('a');
-        anchors.forEach(a => {
-          if (a.hasAttribute('data-href')) {
-            // already prepared
-            a.classList.add('disabled-link');
-            a.setAttribute('aria-disabled', 'true');
-            a.dataset.savedTab = a.getAttribute('tabindex') || '';
-            a.setAttribute('tabindex', '-1');
-            // ensure the href does not trigger navigation
-            if (a.getAttribute('href')) {
-              a.dataset.hrefBackup = a.getAttribute('href');
-              a.removeAttribute('href');
-            }
-          } else if (a.getAttribute('href')) {
-            a.dataset.href = a.getAttribute('href');
-            a.removeAttribute('href');
-            a.classList.add('disabled-link');
-            a.setAttribute('aria-disabled', 'true');
-            a.dataset.savedTab = a.getAttribute('tabindex') || '';
-            a.setAttribute('tabindex', '-1');
-          } else {
-            // no href present - nothing to do
-            a.classList.add('disabled-link');
-            a.setAttribute('aria-disabled', 'true');
-          }
-        });
-      }
+      function enableAnchors() { const anchors = document.querySelectorAll('a'); anchors.forEach(a => {
+        const dh = a.getAttribute('data-href') || a.getAttribute('data-href-backup') || a.dataset.href || a.dataset.hrefBackup;
+        if (dh) { a.setAttribute('href', dh); }
+        a.classList.remove('disabled-link'); a.setAttribute('aria-disabled', 'false'); const prevTab = a.dataset.savedTab; if (prevTab === '') { a.removeAttribute('tabindex'); } else if (prevTab) { a.setAttribute('tabindex', prevTab); } else { a.removeAttribute('tabindex'); } delete a.dataset.savedTab;
+      }); }
 
-      // Enable anchors (restore data-href -> href and interactive properties)
-      function enableAnchors() {
-        const anchors = document.querySelectorAll('a');
-        anchors.forEach(a => {
-          // restore href from data-href or data-hrefBackup
-          const dh = a.getAttribute('data-href') || a.getAttribute('data-href-backup') || a.dataset.href || a.dataset.hrefBackup;
-          if (dh) {
-            a.setAttribute('href', dh);
-            // if it was target="_blank", keep it (data attributes preserved if present)
-          }
-          a.classList.remove('disabled-link');
-          a.setAttribute('aria-disabled', 'false');
-          const prevTab = a.dataset.savedTab;
-          if (prevTab === '') {
-            a.removeAttribute('tabindex');
-          } else if (prevTab) {
-            a.setAttribute('tabindex', prevTab);
-          } else {
-            a.removeAttribute('tabindex');
-          }
-          delete a.dataset.savedTab;
-        });
-      }
+      function blockActivation(e) { const a = e.target.closest && e.target.closest('a'); if (!a) return; if (a.classList.contains('disabled-link')) { e.preventDefault(); e.stopPropagation(); loginStatus.textContent = 'Please sign in to access links.'; setTimeout(() => { if (!loggedIn) loginStatus.textContent = ''; }, 1400); } }
 
-      // Prevent activation while disabled
-      function blockActivation(e) {
-        const a = e.target.closest && e.target.closest('a');
-        if (!a) return;
-        if (a.classList.contains('disabled-link')) {
-          e.preventDefault();
-          e.stopPropagation();
-          // brief feedback
-          loginStatus.textContent = 'Please sign in to access links.';
-          setTimeout(() => {
-            if (!loggedIn) loginStatus.textContent = '';
-          }, 1400);
+      function disableImages() { const imgs = document.querySelectorAll('img'); imgs.forEach(img => { if (img.hasAttribute('data-src')) { if (img.hasAttribute('src')) { img.dataset.srcBackup = img.getAttribute('src'); img.removeAttribute('src'); } img.setAttribute('aria-hidden', 'true'); } else if (img.hasAttribute('src')) { img.dataset.src = img.getAttribute('src'); img.removeAttribute('src'); img.setAttribute('aria-hidden', 'true'); } }); }
+      function enableImages() { const imgs = document.querySelectorAll('img'); imgs.forEach(img => { const ds = img.getAttribute('data-src') || img.dataset.src; if (ds) { img.setAttribute('src', ds); } else if (img.dataset.srcBackup) { img.setAttribute('src', img.dataset.srcBackup); } img.removeAttribute('aria-hidden'); }); }
+
+      function blockNetworking() { window.fetch = function () { if (!loggedIn) { return Promise.reject(new Error('Blocked: not authenticated')); } return originalFetch.apply(this, arguments); };
+        function BlockedXHR() { const xhr = new OriginalXHR(); const originalOpen = xhr.open; xhr.open = function (method, url) { xhr._shouldBlock = !loggedIn; return originalOpen.apply(xhr, arguments); }; const originalSend = xhr.send; xhr.send = function () { if (xhr._shouldBlock) { try { xhr.abort(); } catch (e) {} if (typeof xhr.onerror === 'function') { setTimeout(() => xhr.onerror(new ErrorEvent('error', { message: 'Blocked: not authenticated' })), 0); } return; } return originalSend.apply(xhr, arguments); }; return xhr; } window.XMLHttpRequest = BlockedXHR; }
+      function restoreNetworking() { window.fetch = originalFetch; window.XMLHttpRequest = OriginalXHR; }
+
+      function blockForms() { document.addEventListener('submit', function (e) { if (!loggedIn) { if (e.target && e.target.id === 'login-form') return; e.preventDefault(); e.stopPropagation(); loginStatus.textContent = 'Please sign in to submit forms.'; setTimeout(() => { if (!loggedIn) loginStatus.textContent = ''; }, 1400); } }, true); }
+
+      function prepareDocument() { const anchors = document.querySelectorAll('a[href]'); anchors.forEach(a => { if (!a.hasAttribute('data-href')) { a.setAttribute('data-href', a.getAttribute('href')); a.removeAttribute('href'); } }); disableAnchors(); disableImages(); blockNetworking(); blockForms(); document.addEventListener('click', blockActivation, true); document.addEventListener('auxclick', blockActivation, true); document.addEventListener('keydown', function (e) { if ((e.key === 'Enter' || e.key === ' ') && e.target && e.target.closest && e.target.closest('a')) { blockActivation(e); } }, true); }
+
+      function activateAfterLogin(username) { loggedIn = true; mainContent.classList.remove('hidden-until-login'); footer.classList.remove('hidden-until-login'); mainContent.removeAttribute('aria-hidden'); footer.removeAttribute('aria-hidden'); enableAnchors(); enableImages(); restoreNetworking(); closeLoginModal(); openLoginBtn.style.display = 'none'; logoutBtn.style.display = 'inline-block'; loginStatus.textContent = ''; mainContent.focus && mainContent.focus(); }
+
+      function doLogout() { loggedIn = false; mainContent.classList.add('hidden-until-login'); footer.classList.add('hidden-until-login'); mainContent.setAttribute('aria-hidden', 'true'); footer.setAttribute('aria-hidden', 'true'); const anchors = document.querySelectorAll('a[href]'); anchors.forEach(a => { if (!a.hasAttribute('data-href')) { a.setAttribute('data-href', a.getAttribute('href')); } a.removeAttribute('href'); }); disableAnchors(); const imgs = document.querySelectorAll('img[src]'); imgs.forEach(img => { const s = img.getAttribute('src'); if (s) { img.setAttribute('data-src', s); img.removeAttribute('src'); } }); blockNetworking(); openLoginBtn.style.display = 'inline-block'; logoutBtn.style.display = 'none'; openLoginModal(); }
+
+      loginForm.addEventListener('submit', function (e) { e.preventDefault(); const uname = (loginForm.username.value || '').trim(); const pwd = loginForm.password.value || ''; if (uname === DEMO_USER && pwd === DEMO_PASS) { activateAfterLogin(uname); } else { loginStatus.textContent = 'Invalid username or password.'; setTimeout(() => { if (!loggedIn) loginStatus.textContent = ''; }, 1600); } });
+
+      document.getElementById('cancel-login').addEventListener('click', function () { closeLoginModal(); });
+
+      onboardingBtn.addEventListener('click', function () {
+        if (typeof window.loadTab === 'function') {
+          try { window.loadTab('contributordashboard'); closeLoginModal(); return; } catch (e) {}
         }
-      }
-
-      // Prevent programmatic navigation for disabled anchors (e.g., window.location)
-      // (Note: cannot fully stop malicious scripts - this is a UI-level gate.)
-
-      // Prevent images from loading until login: move src -> data-src
-      function disableImages() {
-        const imgs = document.querySelectorAll('img');
-        imgs.forEach(img => {
-          // If already using data-src, leave it
-          if (img.hasAttribute('data-src')) {
-            // remove src to prevent load if present
-            if (img.hasAttribute('src')) {
-              img.dataset.srcBackup = img.getAttribute('src');
-              img.removeAttribute('src');
-            }
-            img.setAttribute('aria-hidden', 'true');
-          } else if (img.hasAttribute('src')) {
-            img.dataset.src = img.getAttribute('src');
-            img.removeAttribute('src');
-            img.setAttribute('aria-hidden', 'true');
-          }
-        });
-      }
-
-      function enableImages() {
-        const imgs = document.querySelectorAll('img');
-        imgs.forEach(img => {
-          const ds = img.getAttribute('data-src') || img.dataset.src;
-          if (ds) {
-            img.setAttribute('src', ds);
-          } else if (img.dataset.srcBackup) {
-            img.setAttribute('src', img.dataset.srcBackup);
-          }
-          img.removeAttribute('aria-hidden');
-        });
-      }
-
-      // Block XHR and fetch until logged in
-      function blockNetworking() {
-        // Block fetch
-        window.fetch = function () {
-          if (!loggedIn) {
-            return Promise.reject(new Error('Blocked: not authenticated'));
-          }
-          return originalFetch.apply(this, arguments);
-        };
-
-        // Block XHR
-        function BlockedXHR() {
-          const xhr = new OriginalXHR();
-          const originalOpen = xhr.open;
-          xhr.open = function (method, url) {
-            // If not logged in, mark to block
-            xhr._shouldBlock = !loggedIn;
-            return originalOpen.apply(xhr, arguments);
-          };
-          const originalSend = xhr.send;
-          xhr.send = function () {
-            if (xhr._shouldBlock) {
-              // abort silently and raise error event
-              try {
-                xhr.abort();
-              } catch (e) { /* ignore */ }
-              // emulate network error by dispatching onerror if defined
-              if (typeof xhr.onerror === 'function') {
-                setTimeout(() => xhr.onerror(new ErrorEvent('error', { message: 'Blocked: not authenticated' })), 0);
-              }
-              return;
-            }
-            return originalSend.apply(xhr, arguments);
-          };
-          return xhr;
-        }
-        window.XMLHttpRequest = BlockedXHR;
-      }
-
-      // Restore networking functions
-      function restoreNetworking() {
-        window.fetch = originalFetch;
-        window.XMLHttpRequest = OriginalXHR;
-      }
-
-      // Prevent form submissions until login
-      function blockForms() {
-        document.addEventListener('submit', function (e) {
-          if (!loggedIn) {
-            // allow the login form to submit locally
-            if (e.target && e.target.id === 'login-form') return;
-            e.preventDefault();
-            e.stopPropagation();
-            loginStatus.textContent = 'Please sign in to submit forms.';
-            setTimeout(() => {
-              if (!loggedIn) loginStatus.textContent = '';
-            }, 1400);
-          }
-        }, true);
-      }
-
-      // Prepare document on load
-      function prepareDocument() {
-        // Move plain hrefs into data-href so they won't load
-        const anchors = document.querySelectorAll('a[href]');
-        anchors.forEach(a => {
-          // move href -> data-href (if not already)
-          if (!a.hasAttribute('data-href')) {
-            a.setAttribute('data-href', a.getAttribute('href'));
-            a.removeAttribute('href');
-          }
-        });
-
-        // If some anchors were already data-href (like sample-link), leave them.
-        disableAnchors();
-        disableImages();
-        blockNetworking();
-        blockForms();
-
-        // Block click/auxclick/keydown activation on anchors
-        document.addEventListener('click', blockActivation, true);
-        document.addEventListener('auxclick', blockActivation, true);
-        document.addEventListener('keydown', function (e) {
-          if ((e.key === 'Enter' || e.key === ' ') && e.target && e.target.closest && e.target.closest('a')) {
-            blockActivation(e);
-          }
-        }, true);
-      }
-
-      // Activate everything after successful login
-      function activateAfterLogin(username) {
-        loggedIn = true;
-        // show main and footer
-        mainContent.classList.remove('hidden-until-login');
-        footer.classList.remove('hidden-until-login');
-        mainContent.removeAttribute('aria-hidden');
-        footer.removeAttribute('aria-hidden');
-
-        enableAnchors();
-        enableImages();
-        restoreNetworking();
-
-        // hide overlay
-        closeLoginModal();
-
-        // update header controls
-        openLoginBtn.style.display = 'none';
-        logoutBtn.style.display = 'inline-block';
-
-        // clear status
-        loginStatus.textContent = '';
-
-        // Focus main area
-        mainContent.focus && mainContent.focus();
-      }
-
-      // Logout: re-lock page (keeps demo credentials for future logins)
-      function doLogout() {
-        loggedIn = false;
-
-        // hide main and footer
-        mainContent.classList.add('hidden-until-login');
-        footer.classList.add('hidden-until-login');
-        mainContent.setAttribute('aria-hidden', 'true');
-        footer.setAttribute('aria-hidden', 'true');
-
-        // disable anchors/images again
-        // move href back to data-href, remove actual hrefs
-        const anchors = document.querySelectorAll('a[href]');
-        anchors.forEach(a => {
-          // move href -> data-href
-          if (!a.hasAttribute('data-href')) {
-            a.setAttribute('data-href', a.getAttribute('href'));
-          }
-          a.removeAttribute('href');
-        });
-
-        disableAnchors();
-        // Move image src back into data-src to avoid reloading until login
-        const imgs = document.querySelectorAll('img[src]');
-        imgs.forEach(img => {
-          const s = img.getAttribute('src');
-          if (s) {
-            img.setAttribute('data-src', s);
-            img.removeAttribute('src');
-          }
-        });
-
-        // Re-block networking
-        blockNetworking();
-
-        // header controls
-        openLoginBtn.style.display = 'inline-block';
-        logoutBtn.style.display = 'none';
-
-        // reopen login modal
-        openLoginModal();
-      }
-
-      // Login form handler
-      loginForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-        const uname = (loginForm.username.value || '').trim();
-        const pwd = loginForm.password.value || '';
-
-        // Demo check
-        if (uname === DEMO_USER && pwd === DEMO_PASS) {
-          activateAfterLogin(uname);
-        } else {
-          loginStatus.textContent = 'Invalid username or password.';
-          setTimeout(() => {
-            if (!loggedIn) loginStatus.textContent = '';
-          }, 1600);
-        }
+        window.location.href = 'contributor-dashboard.html';
       });
 
-      // Cancel login: keep page locked, but allow closing overlay if user chose to cancel
-      document.getElementById('cancel-login').addEventListener('click', function () {
-        // Keep gated: hide overlay but remain locked (overlay provides guidance)
-        // In some demos it's nicer to keep overlay open; here we hide but don't enable content.
-        closeLoginModal();
-      });
+      openLoginBtn.addEventListener('click', function () { openLoginModal(); });
+      logoutBtn.addEventListener('click', function () { doLogout(); });
 
-      // open login btn
-      openLoginBtn.addEventListener('click', function () {
-        openLoginModal();
-      });
-
-      // logout btn
-      logoutBtn.addEventListener('click', function () {
-        doLogout();
-      });
-
-      // Prevent new script tags from running while locked (best-effort)
-      const observer = new MutationObserver(mutations => {
-        if (loggedIn) return;
-        for (const m of mutations) {
-          for (const n of m.addedNodes) {
-            if (n && n.tagName === 'SCRIPT') {
-              // remove script to avoid loading
-              n.parentNode && n.parentNode.removeChild(n);
-            }
-          }
-        }
-      });
+      const observer = new MutationObserver(mutations => { if (loggedIn) return; for (const m of mutations) { for (const n of m.addedNodes) { if (n && n.tagName === 'SCRIPT') { n.parentNode && n.parentNode.removeChild(n); } } } });
       observer.observe(document.documentElement, { childList: true, subtree: true });
 
-      // On load: prepare doc and keep overlay visible (gated)
-      window.addEventListener('DOMContentLoaded', function () {
-        prepareDocument();
-        // Ensure overlay is visible and modal has focus
-        openLoginModal();
-      });
-
-      // Simple cleanup on unload: restore overrides so other pages aren't affected
-      window.addEventListener('pagehide', function () {
-        try {
-          window.fetch = originalFetch;
-          window.XMLHttpRequest = OriginalXHR;
-        } catch (e) { /* ignore */ }
-      });
-
+      window.addEventListener('DOMContentLoaded', function () { prepareDocument(); openLoginModal(); });
+      window.addEventListener('pagehide', function () { try { window.fetch = originalFetch; window.XMLHttpRequest = OriginalXHR; } catch (e) {} });
     })();
   </script>
 </body>
