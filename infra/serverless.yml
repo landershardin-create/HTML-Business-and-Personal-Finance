@@ -1,0 +1,68 @@
+service: html-biz-payroll
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ${env:AWS_REGION, "us-east-1"}
+  environment:
+    JWT_SECRET: ${env:JWT_SECRET}
+    USE_DYNAMODB: ${env:USE_DYNAMODB, "false"}
+    KMS_KEY_ARN: ${env:KMS_KEY_ARN}
+
+functions:
+  auth:
+    handler: serverless/handlers/auth.handler
+    events:
+      - http:
+          path: auth/login
+          method: post
+  employees:
+    handler: serverless/handlers/employees.handler
+    events:
+      - http:
+          path: employees
+          method: post
+      - http:
+          path: employees
+          method: get
+      - http:
+          path: employees/{id}
+          method: get
+  payrollRuns:
+    handler: serverless/handlers/payrollRuns.handler
+    events:
+      - http:
+          path: payroll-runs
+          method: post
+      - http:
+          path: payroll-runs
+          method: get
+      - http:
+          path: payroll-runs/{id}/export.csv
+          method: get
+
+resources:
+  Resources:
+    EmployeesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-employees
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+    PayrollRunsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-payrollruns
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST

@@ -1,0 +1,21 @@
+{
+  "name": "wealth-os-payroll",
+  "version": "0.1.0",
+  "description": "Serverless payroll engine (MVP) for HTML-Business-and-Personal-Finance",
+  "main": "serverless/handlers/index.js",
+  "scripts": {
+    "test": "jest",
+    "lint": "echo 'no linter configured'",
+    "start": "node serverless/handlers/mock-server.js"
+  },
+  "author": "landershardin-create",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.1700.0",
+    "jsonwebtoken": "^9.0.0",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0"
+  }
+}

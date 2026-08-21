@@ -1,0 +1,7 @@
+{
+  "employees": [
+    { "id": "demo-1", "name": "Alice Example", "payType": "hourly", "payRate": 30, "taxPercent": 12 },
+    { "id": "demo-2", "name": "Bob Salaried", "payType": "salaried", "payRate": 60000, "taxPercent": 15 }
+  ],
+  "payrollRuns": []
+}
