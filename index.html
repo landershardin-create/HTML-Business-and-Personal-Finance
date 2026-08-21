@@ -101,6 +101,7 @@
       <div class="actions">
         <button id="loginBtn">Login</button>
         <button id="cancelLoginBtn">Cancel</button>
+        <button id="onboardingBtn" type="button">Onboarding</button>
       </div>
       <p style="font-size:0.85rem; color:#666; margin-top:10px;">
         Note: This is a client-side demo login. For real protection use server-side authentication.
@@ -183,7 +184,7 @@
       businesspayroll: { file: 'business payroll register.html', base: 'modules' },
       businesspersonnel: { file: 'business personnel registry.html', base: 'modules' },
       businesstimekeeping: { file: 'business timesheet.html', base: 'modules' },
-      contributordashboard: { file: 'contributor-dashboard.html', base: 'modules' },
+      contributordashboard: { file: 'contributor-dashboard.html', base: 'modules', public: true },
       personalassets: { file: 'personal assets.html', base: 'modules' },
       personalbalsheet: { file: 'personal balance sheet.html', base: 'modules' },
       personalcashflow: { file: 'personal cash flow.html', base: 'modules' },
@@ -292,6 +293,11 @@
 
       document.getElementById('cancelLoginBtn').addEventListener('click', () => {
         hideLoginModal();
+      });
+
+      document.getElementById('onboardingBtn').addEventListener('click', () => {
+        hideLoginModal();
+        loadTab('contributordashboard');
       });
 
       document.getElementById('logoutBtn').addEventListener('click', () => {
