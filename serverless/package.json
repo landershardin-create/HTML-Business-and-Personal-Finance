@@ -5,8 +5,7 @@
   "main": "serverless/handlers/index.js",
   "scripts": {
     "test": "jest",
-    "lint": "echo 'no linter configured'",
-    "start": "node serverless/handlers/mock-server.js"
+    "lint": "echo 'no linter configured'"
   },
   "author": "landershardin-create",
   "license": "MIT",
